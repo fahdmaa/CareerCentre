@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact EMSI Marrakech Career Center - Get in touch with our team">
+    <title>Contact Us - EMSI Marrakech Career Center</title>
+    <link rel="stylesheet" href="public/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Contact page specific styles */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-family: var(--font-primary);
+        }
+
+        .contact-header {
+            background: linear-gradient(135deg, var(--emsi-primary-blue), var(--emsi-accent-green));
+            color: white;
+            padding: 6rem 2rem 12rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .contact-header p {
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .wavy-transition {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+
+        .wavy-transition svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 80px;
+        }
+
+        .wavy-transition .shape-fill {
+            fill: #FFFFFF;
+        }
+
+        .decorative-circle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .circle-1 {
+            width: 200px;
+            height: 200px;
+            top: -50px;
+            left: -50px;
+        }
+
+        .circle-2 {
+            width: 100px;
+            height: 100px;
+            top: 50%;
+            right: 10%;
+        }
+
+        .circle-3 {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            left: 10%;
+        }
+
+        .dotted-pattern {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.2) 2px, transparent 2px);
+            background-size: 15px 15px;
+        }
+
+        .dots-1 {
+            top: 20%;
+            right: 15%;
+        }
+
+        .dots-2 {
+            bottom: 30%;
+            left: 20%;
+        }
+
+        .profile-avatar {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f8f8;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-1 {
+            top: 20%;
+            left: 15%;
+        }
+
+        .avatar-2 {
+            top: 30%;
+            right: 25%;
+        }
+
+        .avatar-3 {
+            bottom: 45%;
+            right: 15%;
+        }
+
+        .avatar-4 {
+            bottom: 35%;
+            left: 25%;
+        }
+
+        .avatar-5 {
+            top: 40%;
+            left: 45%;
+        }
+
+        .contact-content {
+            margin-top: -8rem;
+            padding: 0 2rem 4rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .contact-info {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .contact-form-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .contact-section-title {
+            margin-bottom: 2rem;
+            font-size: 1.75rem;
+            color: var(--emsi-primary-blue);
+            font-weight: 600;
+        }
+
+        .contact-method {
+            margin-bottom: 2rem;
+        }
+
+        .contact-method h3 {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-method p {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-email {
+            color: var(--emsi-accent-green);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .contact-email:hover {
+            text-decoration: underline;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--emsi-accent-green);
+            box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .textarea-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            background-color: var(--emsi-accent-green);
+            color: white;
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #008a43;
+        }
+
+        .map-container {
+            margin-top: 4rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            height: 400px;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 74, 153, 0.1);
+            color: var(--emsi-primary-blue);
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+
+        .contact-method-content {
+            display: flex;
+            align-items: flex-start;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header with Logo -->
+<header class="main-header">
+    <div class="container">
+        <a href="index.html" class="logo-link">
+            <img src="public/images/emsi-logo.png" alt="EMSI Logo" class="logo-img">
+        </a>
+    </div>
+</header>
+
+<!-- Pill-Shaped Navigation Bar -->
+<!-- Pill-Shaped Navigation Bar -->
+<nav class="pill-navbar green fixed-bottom hide-on-scroll">
+    <ul class="pill-navbar-nav">
+        <li>
+            <a href="index.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Home</span>
+            </a>
+        </li>
+        <li>
+            <a href="about.html" class="pill-navbar-item active">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Contact</span>
+            </a>
+        </li>
+        <li>
+            <a href="jobs.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Jobs</span>
+            </a>
+        </li>
+        <li>
+            <a href="events.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Events</span>
+            </a>
+        </li>
+        <li>
+            <a href="admin-login.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Admin</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Contact Header Section -->
+<section class="contact-header">
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+    <div class="decorative-circle circle-3"></div>
+    <div class="dotted-pattern dots-1"></div>
+    <div class="dotted-pattern dots-2"></div>
+
+    <!-- Profile Avatars -->
+    <div class="profile-avatar avatar-1">
+        <img src="public/images/avatar-1.jpg" alt="Team Member">
+    </div>
+    <div class="profile-avatar avatar-2">
+        <img src="public/images/avatar-2.jpg" alt="Team Member">
+    </div>
+    <div class="profile-avatar avatar-3">
+        <img src="public/images/avatar-3.jpg" alt="Team Member">
+    </div>
+    <div class="profile-avatar avatar-4">
+        <img src="public/images/avatar-4.jpg" alt="Team Member">
+    </div>
+    <div class="profile-avatar avatar-5">
+        <img src="public/images/avatar-5.jpg" alt="Team Member">
+    </div>
+
+    <h1>Contact</h1>
+    <p>Let's start something great together. Get in touch with one of the team today!</p>
+
+    <div class="wavy-transition">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Contact Content -->
+<section class="contact-content">
+    <div class="contact-container">
+        <!-- Contact Information -->
+        <div class="contact-info">
+            <h2 class="contact-section-title">Get in touch</h2>
+
+            <div class="contact-method">
+                <div class="contact-method-content">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div>
+                        <h3>Phone</h3>
+                        <p>+212 524 423 673<br>+212 661 484 697</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-method">
+                <div class="contact-method-content">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <h3>Email</h3>
+                        <a href="mailto:centrecarriere.marrakech@emsi.ma" class="contact-email">centrecarriere.marrakech@emsi.ma</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-method">
+                <div class="contact-method-content">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <h3>EMSI Marrakech - Gueliza</h3>
+                        <p>98 Angle Bv Hassan II et rue Yougoslavie,<br>Marrakech, Morocco</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-method">
+                <div class="contact-method-content">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div>
+                        <h3>Operating Hours</h3>
+                        <p>Monday - Friday: 8:30 AM - 7:00 PM<br>Saturday: 8:30 AM - 12:30 PM<br>Sunday: Closed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form-container">
+            <h2 class="contact-section-title">Send us a message</h2>
+            <form id="contactForm" action="#" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First name</label>
+                        <input type="text" id="firstName" name="firstName" class="form-control" placeholder="Enter your first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last name</label>
+                        <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Enter your last name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone number</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="Enter your phone number">
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" class="form-control textarea-control" placeholder="Type your message here..." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Map Section -->
+    <div class="contact-container">
+        <div class="map-container">
+            <iframe src="https://www.google.com/maps/place/Ecole+Marocaine+Des+Sciences+de+l%27Ing%C3%A9nieur/data=!4m7!3m6!1s0xdafef9ce2003acb:0xbf12ed0e32f9fa0c!8m2!3d31.6312137!4d-8.0127733!16s%2Fg%2F11hv_1m0bq!19sChIJyzoA4pzvrw0RDPr5Mg7tEr8?authuser=0&hl=fr&rclk=1" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+</section>
+
+<footer class="main-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>EMSI Career Center</h4>
+                <div class="footer-contact">
+                    <p><strong>EMSI Gueliz:</strong><br>98 Angle Bv Hassan II et rue Yougoslavie<br>Marrakech, Morocco</p>
+                    <p><strong>EMSI Centre:</strong><br>5 Lot Bouizgaren, route de safi<br>Marrakech, Morocco</p>
+                    <p>Email: <a href="mailto:centrecarriere.marrakech@emsi.ma">centrecarriere.marrakech@emsi.ma</a></p>
+                    <p>Phone: <a href="tel:+212524423673">+212 524 423 673</a> | <a href="tel:+212661484697">+212 661 484 697</a></p>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h4>Resources</h4>
+                <div class="footer-links">
+                    <ul>
+                        <li><a href="#">CV Templates</a></li>
+                        <li><a href="#">Interview Tips</a></li>
+                        <li><a href="#">Career Guide</a></li>
+                        <li><a href="#">Company Directory</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h4>Connect With Us</h4>
+                <div class="footer-social">
+                    <p>Follow us on social media to stay updated with the latest opportunities and events.</p>
+                    <div class="social-icons">
+                        <a href="https://www.linkedin.com/company/career-center-emsi/posts/?feedView=all" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.instagram.com/careercenter.emsi.marrakech/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© <script>document.write(new Date().getFullYear())</script> EMSI Marrakech Career Center. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="public/main.js" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form submission handling
+        const contactForm = document.getElementById('contactForm');
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // For demonstration purposes - in a real implementation, you'd send the form data to a server
+                alert('Thank you for your message! We will get back to you soon.');
+                contactForm.reset();
+            });
+        }
+    });
+</script>
+</body>
+</html>

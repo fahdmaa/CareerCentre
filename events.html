@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Latest and upcoming career events, workshops, and fairs at EMSI Marrakech Career Center.">
+    <title>Events - EMSI Marrakech Career Center</title>
+    <link rel="stylesheet" href="public/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Header with Logo -->
+<header class="main-header">
+    <div class="container">
+        <a href="index.html" class="logo-link">
+            <img src="public/images/emsi-logo.png" alt="EMSI Logo" class="logo-img">
+        </a>
+    </div>
+</header>
+
+<!-- Pill-Shaped Navigation Bar -->
+<nav class="pill-navbar green fixed-bottom hide-on-scroll">
+    <ul class="pill-navbar-nav">
+        <li>
+            <a href="index.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Home</span>
+            </a>
+        </li>
+        <li>
+            <a href="about.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">About</span>
+            </a>
+        </li>
+        <li>
+            <a href="jobs.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Jobs</span>
+            </a>
+        </li>
+        <li>
+            <a href="events.html" class="pill-navbar-item active">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Events</span>
+            </a>
+        </li>
+        <li>
+            <a href="admin-login.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Admin</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<main class="main-content">
+    <section class="page-section">
+        <div class="container">
+            <h1 class="animate-on-scroll fade-in">Latest & Upcoming Events</h1>
+            <div class="section-content-full animate-on-scroll fade-in" style="transition-delay: 0.2s;">
+                <p class="text-center mb-3">Stay informed about workshops, career fairs, company presentations, and networking sessions organized by the EMSI Marrakech Career Center. These events are designed to enhance your skills, expand your professional network, and connect you with potential employers.</p>
+
+                <!-- Event Tab Filter -->
+                <div class="event-tabs">
+                    <button class="tab active" data-tab="upcoming">Upcoming Events</button>
+                    <button class="tab" data-tab="past">Past Events</button>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div id="upcoming-events" class="event-content active">
+                    <ul class="event-list stagger-children">
+                        <!-- Event Item 1 -->
+                        <li class="animate-on-scroll slide-up">
+                            <div>
+                                <strong>Workshop: Advanced CV & Cover Letter Strategies</strong><br>
+                                <span class="date-time">Date: June 10, <script>document.write(new Date().getFullYear())</script>, 2:00 PM - 4:00 PM</span> -
+                                <span class="location">Online (Zoom Link to be provided)</span>
+                                <p class="mt-1">Take your application materials to the next level. This workshop covers advanced techniques for tailoring your CV and cover letter to specific roles and industries, making a powerful first impression.</p>
+                            </div>
+                            <a href="#register-event-1" class="btn btn-secondary btn-small">Register Now</a>
+                        </li>
+
+                        <!-- Event Item 2 -->
+                        <li class="animate-on-scroll slide-up">
+                            <div>
+                                <strong>Company Presentation: Tech Innovators Inc.</strong><br>
+                                <span class="date-time">Date: June 15, <script>document.write(new Date().getFullYear())</script>, 10:00 AM - 12:00 PM</span> -
+                                <span class="location">EMSI Campus - Amphitheater B</span>
+                                <p class="mt-1">Discover career opportunities at Tech Innovators Inc., a leading firm in software development. Learn about their company culture, projects, and recruitment process. Q&A session included.</p>
+                            </div>
+                            <a href="#event-details-2" class="btn btn-secondary btn-small">View Details</a>
+                        </li>
+
+                        <!-- Event Item 3 -->
+                        <li class="animate-on-scroll slide-up">
+                            <div>
+                                <strong>Annual EMSI Marrakech Career Fair</strong><br>
+                                <span class="date-time">Date: July 5-6, <script>document.write(new Date().getFullYear())</script>, 9:00 AM - 5:00 PM</span> -
+                                <span class="location">EMSI Campus - Main Hall</span>
+                                <p class="mt-1">Connect with dozens of leading national and international companies looking to recruit EMSI talent. Explore job and internship opportunities, network with recruiters, and attend insightful talks.</p>
+                            </div>
+                            <a href="#career-fair-info" class="btn btn-secondary btn-small">Learn More</a>
+                        </li>
+
+                        <!-- Event Item 4 -->
+                        <li class="animate-on-scroll slide-up">
+                            <div>
+                                <strong>Seminar: Mastering Professional Networking</strong><br>
+                                <span class="date-time">Date: July 12, <script>document.write(new Date().getFullYear())</script>, 3:00 PM - 4:30 PM</span> -
+                                <span class="location">Online (Microsoft Teams)</span>
+                                <p class="mt-1">Learn effective strategies for building and leveraging your professional network, both online and offline. This seminar will cover communication skills, LinkedIn optimization, and follow-up techniques.</p>
+                            </div>
+                            <a href="#join-seminar-4" class="btn btn-secondary btn-small">Join Session</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Past Events -->
+                <div id="past-events" class="event-content">
+                    <ul class="event-list stagger-children">
+                        <!-- Past Event Item 1 -->
+                        <li class="animate-on-scroll slide-up">
+                            <div>
+                                <strong>9th Forum des Entreprises</strong><br>
+                                <span class="date-time">Date: January 6, <script>document.write(new Date().getFullYear())</script>, 9:00 AM - 6:00 PM</span> -
+                                <span class="location">Marrakech</span>
+                                <p class="mt-1">A day dedicated to exploring new professional opportunities for our students and graduates. Connect with national and international companies from various sectors.</p>
+                            </div>
+                            <a href="#view-gallery-1" class="btn btn-secondary btn-small">View Gallery</a>
+                        </li>
+
+                        <!-- Past Event Item 2 -->
+                        <li class="animate-on-scroll slide-up">
+                            <div>
+                                <strong>Recruitment Session with Groupe Al Nour</strong><br>
+                                <span class="date-time">Date: April 12, <script>document.write(new Date().getFullYear())</script>, 2:00 PM - 5:00 PM</span> -
+                                <span class="location">EMSI Marrakech Campus</span>
+                                <p class="mt-1">An opportunity for students to interact with professionals from Groupe Al Nour, a renowned player in the real estate industry.</p>
+                            </div>
+                            <a href="#view-gallery-2" class="btn btn-secondary btn-small">View Gallery</a>
+                        </li>
+
+                        <!-- Past Event Item 3 -->
+                        <li class="animate-on-scroll slide-up">
+                            <div>
+                                <strong>Workshop: Interview Skills Masterclass</strong><br>
+                                <span class="date-time">Date: March 22, <script>document.write(new Date().getFullYear())</script>, 10:00 AM - 12:00 PM</span> -
+                                <span class="location">EMSI Marrakech Campus</span>
+                                <p class="mt-1">A comprehensive workshop covering all aspects of the job interview process, from preparation to follow-up.</p>
+                            </div>
+                            <a href="#view-materials-3" class="btn btn-secondary btn-small">View Materials</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Calendar Link -->
+                <div class="text-center mt-3">
+                    <a href="#full-calendar" class="btn btn-primary">View Full Events Calendar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Event Section -->
+    <section class="page-section bg-light">
+        <div class="container">
+            <h2 class="animate-on-scroll fade-in">Featured Event</h2>
+            <div class="featured-event animate-on-scroll fade-in" style="transition-delay: 0.2s;">
+                <div class="featured-event-content">
+                    <h3>Annual EMSI Marrakech Career Fair 2025</h3>
+                    <p class="event-date"><i class="fas fa-calendar-alt"></i> July 5-6, 2025</p>
+                    <p class="event-location"><i class="fas fa-map-marker-alt"></i> EMSI Marrakech Campus - Main Hall</p>
+                    <p class="event-description">
+                        Join us for the largest career fair of the year! Connect with over 30 companies looking to recruit EMSI talent across various industries:
+                    </p>
+                    <ul class="event-highlights">
+                        <li>Meet recruiters from leading national and international companies</li>
+                        <li>Explore full-time positions, internships, and PFE opportunities</li>
+                        <li>Attend career development workshops and panel discussions</li>
+                        <li>Get your CV reviewed by industry professionals</li>
+                        <li>Network with EMSI alumni working in top companies</li>
+                    </ul>
+                    <p class="mt-2">
+                        This event is open to all EMSI students and recent graduates. Don't miss this exceptional opportunity to jumpstart your career!
+                    </p>
+                    <div class="event-actions">
+                        <a href="#register-career-fair" class="btn btn-secondary">Register Now</a>
+                        <a href="#career-fair-details" class="btn btn-outline-primary">Learn More</a>
+                    </div>
+                </div>
+                <div class="featured-event-image">
+                    <img src="public/images/career-fair.jpg" alt="EMSI Career Fair" class="featured-image">
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="main-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>EMSI Career Center</h4>
+                <div class="footer-contact">
+                    <p><strong>EMSI Gueliz:</strong><br>98 Angle Bv Hassan II et rue Yougoslavie<br>Marrakech, Morocco</p>
+                    <p><strong>EMSI Centre:</strong><br>5 Lot Bouizgaren, route de safi<br>Marrakech, Morocco</p>
+                    <p>Email: <a href="mailto:centrecarriere.marrakech@emsi.ma">centrecarriere.marrakech@emsi.ma</a></p>
+                    <p>Phone: <a href="tel:+212524423673">+212 524 423 673</a> | <a href="tel:+212661484697">+212 661 484 697</a></p>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h4>Resources</h4>
+                <div class="footer-links">
+                    <ul>
+                        <li><a href="#">CV Templates</a></li>
+                        <li><a href="#">Interview Tips</a></li>
+                        <li><a href="#">Career Guide</a></li>
+                        <li><a href="#">Company Directory</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h4>Connect With Us</h4>
+                <div class="footer-social">
+                    <p>Follow us on social media to stay updated with the latest opportunities and events.</p>
+                    <div class="social-icons">
+                        <a href="https://www.linkedin.com/company/career-center-emsi/posts/?feedView=all" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.instagram.com/careercenter.emsi.marrakech/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© <script>document.write(new Date().getFullYear())</script> EMSI Marrakech Career Center. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="public/main.js" defer></script>
+</body>
+</html>

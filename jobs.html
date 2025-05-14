@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Latest job and internship offers for EMSI Marrakech students and alumni. Filter and find your next career opportunity.">
+    <title>Job Offers - EMSI Marrakech Career Center</title>
+    <link rel="stylesheet" href="public/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* New styles for the redesigned jobs page */
+        .hero-job-search {
+            background-color: #f5f7fa;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .floating-avatars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .avatar {
+            position: absolute;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 3px solid #fff;
+        }
+
+        .avatar-1 {
+            top: 15%;
+            left: 10%;
+            background-image: url('public/images/avatar-1.jpg');
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .avatar-2 {
+            top: 28%;
+            right: 15%;
+            background-image: url('public/images/avatar-2.jpg');
+            animation: float 7s ease-in-out infinite;
+            animation-delay: 0.5s;
+        }
+
+        .avatar-3 {
+            bottom: 20%;
+            left: 20%;
+            background-image: url('public/images/avatar-3.jpg');
+            animation: float 8s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+
+        .avatar-4 {
+            bottom: 35%;
+            right: 25%;
+            background-image: url('public/images/avatar-4.jpg');
+            animation: float 9s ease-in-out infinite;
+            animation-delay: 1.5s;
+        }
+
+        .avatar-5 {
+            top: 40%;
+            right: 8%;
+            background-image: url('public/images/avatar-5.jpg');
+            animation: float 7s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+
+        .avatar-6 {
+            bottom: 15%;
+            right: 12%;
+            background-image: url('public/images/avatar-3.jpg');
+            animation: float 8s ease-in-out infinite;
+            animation-delay: 2.5s;
+        }
+
+        .dot {
+            position: absolute;
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+        }
+
+        .dot-1 {
+            top: 25%;
+            left: 15%;
+            background-color: #ff7675;
+            animation: pulse 3s infinite;
+        }
+
+        .dot-2 {
+            top: 15%;
+            right: 25%;
+            background-color: #00A651;
+            animation: pulse 4s infinite;
+            animation-delay: 1s;
+        }
+
+        .dot-3 {
+            bottom: 30%;
+            left: 10%;
+            background-color: #74b9ff;
+            animation: pulse 5s infinite;
+            animation-delay: 2s;
+        }
+
+        .hero-job-search .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-job-search h1 {
+            font-size: 3rem;
+            color: #333;
+            margin-bottom: 1rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .hero-job-search p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            animation: fadeInUp 1s ease-out;
+            animation-delay: 0.2s;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 1s ease-out;
+            animation-delay: 0.4s;
+        }
+
+        .search-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #00A651;
+            border-radius: 50%;
+            margin-right: 10px;
+            margin-left: 5px;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            border: none;
+            padding: 0.7rem 1rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-button {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: #666;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            background-color: #f1f1f1;
+            transform: translateY(-2px);
+        }
+
+        .trusted-companies {
+            padding: 3rem 0;
+            text-align: center;
+            background-color: #fff;
+        }
+
+        .trusted-companies h3 {
+            color: #666;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .company-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 3rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .logo-container {
+            width: 120px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .logo-container:nth-child(1) { animation-delay: 0.1s; }
+        .logo-container:nth-child(2) { animation-delay: 0.2s; }
+        .logo-container:nth-child(3) { animation-delay: 0.3s; }
+        .logo-container:nth-child(4) { animation-delay: 0.4s; }
+        .logo-container:nth-child(5) { animation-delay: 0.5s; }
+        .logo-container:nth-child(6) { animation-delay: 0.6s; }
+
+        .company-logo {
+            max-width: 100%;
+            max-height: 40px;
+            object-fit: contain;
+            filter: grayscale(100%);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .company-logo:hover {
+            filter: grayscale(0%);
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .logo-container {
+                width: 100px;
+                height: 50px;
+            }
+
+            .company-logo {
+                max-height: 35px;
+            }
+
+            .company-logos {
+                gap: 1.5rem;
+            }
+        }
+
+        .job-opportunities {
+            padding: 4rem 0;
+            background-color: #f9f9f9;
+        }
+
+        .opportunities-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .opportunities-header h2 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .opportunities-header p {
+            font-size: 1rem;
+            color: #666;
+            animation: fadeInUp 1s ease-out;
+            animation-delay: 0.2s;
+        }
+
+        /* New Job Card Design */
+        .job-listings {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease-out forwards;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .job-card:nth-child(1) { animation-delay: 0.1s; }
+        .job-card:nth-child(2) { animation-delay: 0.2s; }
+        .job-card:nth-child(3) { animation-delay: 0.3s; }
+        .job-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .job-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .job-bookmark {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: #00A651;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .job-bookmark:hover {
+            transform: scale(1.1);
+        }
+
+        .job-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.75rem;
+            padding-right: 2rem;
+        }
+
+        .job-description {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .job-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .job-location {
+            display: flex;
+            align-items: center;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .job-location i {
+            color: #00A651;
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .job-view-more {
+            background-color: #00A651;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .job-view-more:hover {
+            background-color: #008a43;
+            transform: translateY(-2px);
+        }
+
+        .view-all-jobs {
+            display: block;
+            width: 200px;
+            margin: 2rem auto 0;
+            padding: 0.8rem 1.5rem;
+            background-color: #00A651;
+            color: white;
+            text-align: center;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            animation: bounce 2s infinite;
+        }
+
+        .view-all-jobs:hover {
+            background-color: #008a43;
+            text-decoration: none;
+        }
+
+        .featured-companies {
+            padding: 4rem 0;
+            background-color: #fff;
+        }
+
+        .featured-companies h2 {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .company-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .company-card:nth-child(1) { animation-delay: 0.1s; }
+        .company-card:nth-child(2) { animation-delay: 0.2s; }
+        .company-card:nth-child(3) { animation-delay: 0.3s; }
+        .company-card:nth-child(4) { animation-delay: 0.4s; }
+        .company-card:nth-child(5) { animation-delay: 0.5s; }
+        .company-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+            border-color: transparent;
+        }
+
+        .company-card-logo {
+            height: 50px;
+            margin-bottom: 1rem;
+        }
+
+        .company-card-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .company-card-rating {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            color: #ffa502;
+            animation: sparkle 2s infinite;
+        }
+
+        .company-card-reviews {
+            font-size: 0.8rem;
+            color: #999;
+            margin-bottom: 1rem;
+        }
+
+        .company-card-description {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .company-card-link {
+            display: inline-block;
+            color: #00A651;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .company-card-link:hover {
+            color: #008a43;
+            transform: translateX(3px);
+        }
+
+        /* Testimonials Section Styling - FIXED VERSION */
+        .testimonials {
+            background-color: #f5f7fa;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .testimonial-container {
+            display: flex;
+            transition: transform 0.5s ease;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .testimonial-slide {
+            min-width: 100%;
+            padding: 0 1rem;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .testimonial-slide.active {
+            opacity: 1;
+            position: relative;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .testimonial-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid #00A651;
+            transform: translateY(20px);
+            animation: slideInUp 0.8s ease-out forwards;
+        }
+
+        .testimonial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-image-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #00A651;
+            box-shadow: 0 4px 10px rgba(0, 166, 81, 0.3);
+            animation: rotate 20s linear infinite;
+        }
+
+        .testimonial-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .testimonial-quote-icon {
+            color: #ffb74d;
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+        }
+
+        .testimonial-text-container {
+            color: #333;
+        }
+
+        .testimonial-quote {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            animation: fadeIn 1s ease-out;
+            animation-delay: 0.3s;
+        }
+
+        .testimonial-author-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #333;
+            animation: fadeInUp 1s ease-out;
+            animation-delay: 0.5s;
+        }
+
+        .testimonial-author-position {
+            font-size: 0.9rem;
+            color: #666;
+            animation: fadeInUp 1s ease-out;
+            animation-delay: 0.6s;
+        }
+
+        .testimonial-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 1rem;
+            align-items: center;
+            animation: fadeIn 1s ease-out;
+            animation-delay: 0.7s;
+        }
+
+        .testimonial-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .testimonial-button:hover {
+            background: #00A651;
+            color: white;
+            border-color: #00A651;
+            transform: translateY(-3px);
+        }
+
+        .testimonial-button.active {
+            background: #00A651;
+            color: white;
+            border-color: #00A651;
+        }
+
+        /* Pagination dots */
+        .testimonial-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 0 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        .testimonial-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-dot.active {
+            background-color: #00A651;
+            transform: scale(1.2);
+        }
+
+        /* Job Detail Modal Styles */
+        .job-detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .job-detail-modal.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .job-detail-content {
+            background-color: white;
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .job-detail-modal.active .job-detail-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .job-detail-header {
+            padding: 2rem;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .job-detail-company-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .job-detail-title-section {
+            flex-grow: 1;
+        }
+
+        .job-detail-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-detail-company {
+            font-size: 1.1rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-detail-company img {
+            height: 20px;
+            margin-right: 0.5rem;
+        }
+
+        .job-detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .job-detail-meta-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #666;
+            background-color: #f1f1f1;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+        }
+
+        .job-detail-meta-item i {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .job-detail-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            color: #666;
+            border: 1px solid #eee;
+        }
+
+        .job-detail-close:hover {
+            background-color: #f1f1f1;
+            transform: rotate(90deg);
+        }
+
+        .job-detail-body {
+            padding: 2rem;
+        }
+
+        .job-detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .job-detail-section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f1f1f1;
+        }
+
+        .job-detail-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .job-detail-requirements-list,
+        .job-detail-responsibilities-list {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .job-detail-requirements-list li,
+        .job-detail-responsibilities-list li {
+            margin-bottom: 0.8rem;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .job-detail-footer {
+            padding: 1.5rem 2rem;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .job-detail-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .job-detail-apply-btn {
+            padding: 0.8rem 2rem;
+            background-color: #00A651;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .job-detail-apply-btn:hover {
+            background-color: #008a43;
+            transform: translateY(-2px);
+        }
+
+        .job-detail-save-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: white;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .job-detail-save-btn i {
+            margin-right: 0.5rem;
+        }
+
+        .job-detail-save-btn:hover {
+            background-color: #f1f1f1;
+            transform: translateY(-2px);
+        }
+
+        .job-detail-share {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .job-detail-share-text {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .job-detail-share-icons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .job-detail-share-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #f1f1f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .job-detail-share-icon:hover {
+            transform: translateY(-2px);
+        }
+
+        .job-detail-share-icon.facebook:hover {
+            background-color: #3b5998;
+            color: white;
+        }
+
+        .job-detail-share-icon.twitter:hover {
+            background-color: #1da1f2;
+            color: white;
+        }
+
+        .job-detail-share-icon.linkedin:hover {
+            background-color: #0077b5;
+            color: white;
+        }
+
+        .job-detail-share-icon.email:hover {
+            background-color: #ea4335;
+            color: white;
+        }
+
+        /* Animation Keyframes */
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes sparkle {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .testimonial-content-wrapper {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5rem;
+            }
+
+            .testimonial-quote {
+                font-size: 1.4rem;
+            }
+
+            .testimonial-quote-icon {
+                text-align: center;
+            }
+
+            .job-detail-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .job-detail-company-icon {
+                margin-bottom: 1rem;
+            }
+
+            .job-detail-footer {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .job-detail-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .job-detail-share {
+                width: 100%;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .testimonial-card {
+                padding: 1.5rem;
+            }
+
+            .testimonial-image-container {
+                width: 60px;
+                height: 60px;
+            }
+
+            .testimonial-quote {
+                font-size: 1rem;
+            }
+
+            .job-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .job-view-more {
+                width: 100%;
+                text-align: center;
+            }
+
+            .job-detail-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .job-detail-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .job-detail-apply-btn,
+            .job-detail-save-btn {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
+        /* Prefers reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header with Logo -->
+<header class="main-header animate-on-scroll fade-in visible">
+    <div class="container">
+        <a href="index.html" class="logo-link">
+            <img src="public/images/emsi-logo.png" alt="EMSI Logo" class="logo-img">
+        </a>
+    </div>
+</header>
+
+<!-- Pill-Shaped Navigation Bar -->
+<nav class="pill-navbar green fixed-bottom hide-on-scroll">
+    <ul class="pill-navbar-nav">
+        <li>
+            <a href="index.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Home</span>
+            </a>
+        </li>
+        <li>
+            <a href="about.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">About</span>
+            </a>
+        </li>
+        <li>
+            <a href="jobs.html" class="pill-navbar-item active">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Jobs</span>
+            </a>
+        </li>
+        <li>
+            <a href="events.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Events</span>
+            </a>
+        </li>
+        <li>
+            <a href="admin-login.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Admin</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Hero Job Search Section -->
+<section class="hero-job-search">
+    <div class="floating-avatars">
+        <!-- Floating avatars -->
+        <div class="avatar avatar-1"></div>
+        <div class="avatar avatar-2"></div>
+        <div class="avatar avatar-3"></div>
+        <div class="avatar avatar-4"></div>
+        <div class="avatar avatar-5"></div>
+        <div class="avatar avatar-6"></div>
+
+        <!-- Decorative dots -->
+        <div class="dot dot-1"></div>
+        <div class="dot dot-2"></div>
+        <div class="dot dot-3"></div>
+    </div>
+
+    <div class="container">
+        <h1>Find jobs in new castle</h1>
+        <p>When you're searching for a job, these are a few things you can do to get the most out of your search</p>
+
+        <div class="search-box">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" class="search-input" placeholder="Job title, keyword or company">
+            <button class="search-button">Any location</button>
+        </div>
+    </div>
+</section>
+
+<!-- Trusted Companies Section -->
+<section class="trusted-companies animate-on-scroll fade-in">
+    <div class="container">
+        <h3>Trusted by recruiters from</h3>
+        <div class="company-logos">
+            <div class="logo-container">
+                <img src="public/images/oracle.svg" alt="Oracle" class="company-logo">
+            </div>
+            <div class="logo-container">
+                <img src="public/images/capgemini.svg" alt="Capgemini TS" class="company-logo">
+            </div>
+            <div class="logo-container">
+                <img src="public/images/hps.svg" alt="HPS" class="company-logo">
+            </div>
+            <div class="logo-container">
+                <img src="public/images/cih.svg" alt="CIH Bank" class="company-logo">
+            </div>
+            <div class="logo-container">
+                <img src="public/images/nestle.svg" alt="Nestle" class="company-logo">
+            </div>
+            <div class="logo-container">
+                <img src="public/images/leoni.svg" alt="LEONI" class="company-logo">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Job Opportunities Section -->
+<section class="job-opportunities animate-on-scroll fade-in">
+    <div class="container">
+        <div class="opportunities-header">
+            <div>
+                <h2><span id="job-count">0</span> Job opportunities</h2>
+                <p>Find the best jobs around the web from leading job boards. Search jobs matching your time zone and skills at top companies and apply today.</p>
+            </div>
+        </div>
+
+        <div class="job-listings" id="job-listings">
+            <!-- Job cards will be dynamically generated here -->
+        </div>
+
+        <a href="#" class="view-all-jobs">View All Jobs</a>
+    </div>
+</section>
+
+<!-- Featured Companies Section -->
+<section class="featured-companies animate-on-scroll fade-in">
+    <div class="container">
+        <h2>Featured companies actively hiring</h2>
+
+        <div class="company-grid">
+            <!-- Company Card 1 -->
+            <div class="company-card">
+                <img src="public/images/oracle.svg" alt="Oracle" class="company-card-logo">
+                <h3 class="company-card-name">Oracle</h3>
+                <div class="company-card-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span>&nbsp;(4.5)</span>
+                </div>
+                <p class="company-card-reviews">1,234+ Reviews</p>
+                <p class="company-card-description">World's Largest Technology Company</p>
+                <a href="#" class="company-card-link">View Jobs</a>
+            </div>
+
+            <!-- Company Card 2 -->
+            <div class="company-card">
+                <img src="public/images/capgemini.svg" alt="Capgemini TS" class="company-card-logo">
+                <h3 class="company-card-name">Capgemini TS</h3>
+                <div class="company-card-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <span>&nbsp;(4.0)</span>
+                </div>
+                <p class="company-card-reviews">876+ Reviews</p>
+                <p class="company-card-description">World's Largest Technology Company</p>
+                <a href="#" class="company-card-link">View Jobs</a>
+            </div>
+
+            <!-- Company Card 3 -->
+            <div class="company-card">
+                <img src="public/images/hps.svg" alt="HPS" class="company-card-logo">
+                <h3 class="company-card-name">HPS</h3>
+                <div class="company-card-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <span>&nbsp;(5.0)</span>
+                </div>
+                <p class="company-card-reviews">523+ Reviews</p>
+                <p class="company-card-description">World Largest Marketer of Software Products</p>
+                <a href="#" class="company-card-link">View Jobs</a>
+            </div>
+
+            <!-- Company Card 4 -->
+            <div class="company-card">
+                <img src="public/images/cih.svg" alt="CIH Bank" class="company-card-logo">
+                <h3 class="company-card-name">CIH Bank</h3>
+                <div class="company-card-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <span>&nbsp;(4.0)</span>
+                </div>
+                <p class="company-card-reviews">789+ Reviews</p>
+                <p class="company-card-description">World's Largest Technology Company</p>
+                <a href="#" class="company-card-link">View Jobs</a>
+            </div>
+
+            <!-- Company Card 5 -->
+            <div class="company-card">
+                <img src="public/images/nestle.svg" alt="Nestle" class="company-card-logo">
+                <h3 class="company-card-name">Nestle</h3>
+                <div class="company-card-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span>&nbsp;(4.5)</span>
+                </div>
+                <p class="company-card-reviews">942+ Reviews</p>
+                <p class="company-card-description">World's Largest Internet Company</p>
+                <a href="#" class="company-card-link">View Jobs</a>
+            </div>
+
+            <!-- Company Card 6 -->
+            <div class="company-card">
+                <img src="public/images/leoni.svg" alt="LEONI" class="company-card-logo">
+                <h3 class="company-card-name">LEONI</h3>
+                <div class="company-card-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <span>&nbsp;(4.0)</span>
+                </div>
+                <p class="company-card-reviews">615+ Reviews</p>
+                <p class="company-card-description">World-Leading Manufacturing Company</p>
+                <a href="#" class="company-card-link">View Jobs</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials animate-on-scroll fade-in">
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 3rem; color: #333;">What our users say</h2>
+
+        <div class="testimonial-container" id="testimonial-container">
+            <!-- Testimonial 1 -->
+            <div class="testimonial-slide active" id="testimonial-1">
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-image-container">
+                            <img src="public/images/avatar-1.jpg" alt="Lubosek Hnilo" class="testimonial-image">
+                        </div>
+                        <div class="testimonial-quote-icon">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
+                    </div>
+                    <div class="testimonial-text-container">
+                        <p class="testimonial-quote">
+                            EMSI Career Center platform is so easy to use. We've hired about 40-50 different people from EMSI in the last two years.
+                        </p>
+                        <div class="testimonial-author-info">
+                            <h3 class="testimonial-author-name">Lubosek Hnilo</h3>
+                            <p class="testimonial-author-position">Founder at Apple Inc</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="testimonial-slide" id="testimonial-2">
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-image-container">
+                            <img src="public/images/avatar-2.jpg" alt="Ahmed Benmoussa" class="testimonial-image">
+                        </div>
+                        <div class="testimonial-quote-icon">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
+                    </div>
+                    <div class="testimonial-text-container">
+                        <p class="testimonial-quote">
+                            The EMSI career center helped me find my dream job! Their platform is intuitive and they have connections with the best companies in the industry.
+                        </p>
+                        <div class="testimonial-author-info">
+                            <h3 class="testimonial-author-name">Ahmed Benmoussa</h3>
+                            <p class="testimonial-author-position">Senior Developer at HPS</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonial-controls">
+            <button class="testimonial-button prev" id="prev-testimonial">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <!-- Pagination dots -->
+            <div class="testimonial-dots" id="testimonial-dots">
+                <div class="testimonial-dot active" data-index="0"></div>
+                <div class="testimonial-dot" data-index="1"></div>
+            </div>
+
+            <button class="testimonial-button next active" id="next-testimonial">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="main-footer animate-on-scroll fade-in">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-column animate-on-scroll slide-up">
+                <h4>EMSI Career Center</h4>
+                <div class="footer-contact">
+                    <p><strong>EMSI Gueliz:</strong><br>98 Angle Bv Hassan II et rue Yougoslavie<br>Marrakech, Morocco</p>
+                    <p><strong>EMSI Centre:</strong><br>5 Lot Bouizgaren, route de safi<br>Marrakech, Morocco</p>
+                    <p>Email: <a href="mailto:centrecarriere.marrakech@emsi.ma">centrecarriere.marrakech@emsi.ma</a></p>
+                    <p>Phone: <a href="tel:+212524423673">+212 524 423 673</a> | <a href="tel:+212661484697">+212 661 484 697</a></p>
+                </div>
+            </div>
+
+            <div class="footer-column animate-on-scroll slide-up">
+                <h4>Resources</h4>
+                <div class="footer-links">
+                    <ul>
+                        <li><a href="#">CV Templates</a></li>
+                        <li><a href="#">Interview Tips</a></li>
+                        <li><a href="#">Career Guide</a></li>
+                        <li><a href="#">Company Directory</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-column animate-on-scroll slide-up">
+                <h4>Connect With Us</h4>
+                <div class="footer-social">
+                    <p>Follow us on social media to stay updated with the latest opportunities and events.</p>
+                    <div class="social-icons">
+                        <a href="https://www.linkedin.com/company/career-center-emsi/posts/?feedView=all" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.instagram.com/careercenter.emsi.marrakech/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom animate-on-scroll fade-in">
+            <p>© <script>document.write(new Date().getFullYear())</script> EMSI Marrakech Career Center. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Job Detail Modal Templates -->
+<div id="job-detail-modals-container">
+    <!-- Job detail modals will be dynamically generated here -->
+</div>
+
+<script src="public/main.js" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Job data
+        const jobsData = [
+            {
+                id: 'job1',
+                title: 'Front-End Developer',
+                description: 'Develop responsive web applications using the latest technologies like React and Angular.',
+                location: 'New York, NY',
+                company: 'Oracle',
+                companyLogo: 'public/images/oracle.svg',
+                icon: 'code',
+                iconColor: 'blue',
+                jobType: 'Full-time',
+                level: 'Mid-level',
+                salary: '15K - 25K',
+                postedAt: new Date(Date.now() - 10 * 60 * 60 * 1000), // 10 hours ago
+                responsibilities: [
+                    'Develop and maintain web applications using modern JavaScript frameworks',
+                    'Write clean, maintainable, and efficient code',
+                    'Collaborate with back-end developers to integrate front-end components',
+                    'Optimize applications for maximum speed and scalability',
+                    'Implement responsive design and ensure cross-browser compatibility',
+                    'Participate in code reviews and contribute to team knowledge sharing'
+                ],
+                requirements: [
+                    'Bachelor\'s degree in Computer Science or related field',
+                    '3+ years of experience in front-end development',
+                    'Proficiency in HTML, CSS, JavaScript, and modern frameworks',
+                    'Experience with RESTful APIs and asynchronous request handling',
+                    'Familiarity with version control systems (Git)',
+                    'Strong problem-solving skills and attention to detail'
+                ],
+                benefits: [
+                    'Competitive salary',
+                    'Health insurance',
+                    'Retirement plan',
+                    'Paid time off',
+                    'Professional development opportunities',
+                    'Modern office environment'
+                ]
+            },
+            {
+                id: 'job2',
+                title: 'Product Designer',
+                description: 'Create intuitive and engaging user experiences for our digital products and services.',
+                location: 'San Francisco, CA',
+                company: 'Capgemini TS',
+                companyLogo: 'public/images/capgemini.svg',
+                icon: 'paint-brush',
+                iconColor: 'green',
+                jobType: 'Part-time',
+                level: 'Mid-level',
+                salary: '12K - 18K',
+                postedAt: new Date(Date.now() - 12 * 60 * 60 * 1000), // 12 hours ago
+                responsibilities: [
+                    'Create user-centered designs by understanding business requirements',
+                    'Design wireframes, prototypes, and high-fidelity mockups',
+                    'Collaborate with cross-functional teams',
+                    'Conduct user research and usability testing',
+                    'Create and maintain design systems and style guides'
+                ],
+                requirements: [
+                    'Bachelor\'s degree in Design, HCI, or related field',
+                    '2-4 years of experience in product design or UX/UI design',
+                    'Proficiency in design tools such as Figma, Sketch, Adobe XD',
+                    'Strong portfolio demonstrating user-centered design process',
+                    'Experience with responsive design and mobile-first approaches'
+                ],
+                benefits: [
+                    'Competitive compensation',
+                    'Flexible working hours',
+                    'Remote work options',
+                    'Professional development budget',
+                    'Access to design conferences and workshops'
+                ]
+            },
+            {
+                id: 'job3',
+                title: 'Web Developer',
+                description: 'Build and maintain web applications, ensuring high-performance and responsiveness to user interactions.',
+                location: 'Boston, MA',
+                company: 'HPS',
+                companyLogo: 'public/images/hps.svg',
+                icon: 'code',
+                iconColor: 'blue',
+                jobType: 'Full-time',
+                level: 'Mid-level',
+                salary: '15K - 25K',
+                postedAt: new Date(Date.now() - 20 * 60 * 60 * 1000 - 45 * 60 * 1000), // 20 hours 45 minutes ago
+                responsibilities: [
+                    'Develop and maintain web applications using modern JavaScript frameworks',
+                    'Write clean, maintainable, and efficient code',
+                    'Collaborate with back-end developers to integrate front-end components',
+                    'Optimize applications for maximum speed and scalability',
+                    'Implement responsive design and ensure cross-browser compatibility'
+                ],
+                requirements: [
+                    'Bachelor\'s degree in Computer Science or related field',
+                    '3+ years of experience in web development',
+                    'Proficiency in HTML, CSS, JavaScript, and at least one modern framework',
+                    'Experience with RESTful APIs and asynchronous request handling',
+                    'Familiarity with version control systems (Git)'
+                ],
+                benefits: [
+                    'Competitive salary',
+                    'Health insurance',
+                    'Retirement plan',
+                    'Paid time off',
+                    'Professional development opportunities'
+                ]
+            },
+            {
+                id: 'job4',
+                title: 'UX Researcher',
+                description: 'Understand user behaviors, needs, and motivations through observation techniques and feedback methodologies.',
+                location: 'Chicago, IL',
+                company: 'Nestle',
+                companyLogo: 'public/images/nestle.svg',
+                icon: 'search',
+                iconColor: 'green',
+                jobType: 'Part-time',
+                level: 'Mid-level',
+                salary: '10K - 15K',
+                postedAt: new Date(Date.now() - 24 * 60 * 60 * 1000 - 10 * 60 * 1000), // 24 hours 10 minutes ago
+                responsibilities: [
+                    'Plan and conduct user research studies using various methodologies',
+                    'Analyze research data and translate findings into actionable insights',
+                    'Create personas, user journeys, and other UX artifacts',
+                    'Collaborate with designers, product managers, and developers',
+                    'Advocate for user-centered design principles throughout the organization'
+                ],
+                requirements: [
+                    'Bachelor\'s degree in Human-Computer Interaction, Psychology, or related field',
+                    '2+ years of experience in UX research or related field',
+                    'Experience with qualitative and quantitative research methods',
+                    'Proficiency with research tools and software',
+                    'Strong analytical and problem-solving skills'
+                ],
+                benefits: [
+                    'Competitive hourly rate',
+                    'Flexible working hours',
+                    'Remote work options',
+                    'Employee discount on Nestle products',
+                    'Professional development opportunities'
+                ]
+            },
+            {
+                id: 'job5',
+                title: 'Data Scientist',
+                description: 'Analyze complex data sets to identify patterns and insights that drive business decisions.',
+                location: 'Seattle, WA',
+                company: 'CIH Bank',
+                companyLogo: 'public/images/cih.svg',
+                icon: 'chart-line',
+                iconColor: 'blue',
+                jobType: 'Full-time',
+                level: 'Senior',
+                salary: '20K - 30K',
+                postedAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+                responsibilities: [
+                    'Develop and implement data models and algorithms',
+                    'Analyze large datasets to extract insights and trends',
+                    'Create visualizations and reports to communicate findings',
+                    'Collaborate with cross-functional teams to implement data-driven solutions',
+                    'Stay current with emerging technologies and methodologies in data science'
+                ],
+                requirements: [
+                    'Master\'s or PhD in Computer Science, Statistics, or related field',
+                    '3+ years of experience in data science or related field',
+                    'Proficiency in Python, R, or similar programming languages',
+                    'Experience with machine learning frameworks and libraries',
+                    'Strong statistical and mathematical background'
+                ],
+                benefits: [
+                    'Competitive salary',
+                    'Health and dental insurance',
+                    'Retirement plan with employer match',
+                    'Generous paid time off',
+                    'Professional development budget',
+                    'Remote work options'
+                ]
+            },
+            {
+                id: 'job6',
+                title: 'DevOps Engineer',
+                description: 'Build and maintain infrastructure and deployment pipelines for our cloud-based applications.',
+                location: 'Austin, TX',
+                company: 'LEONI',
+                companyLogo: 'public/images/leoni.svg',
+                icon: 'server',
+                iconColor: 'green',
+                jobType: 'Full-time',
+                level: 'Mid-level',
+                salary: '18K - 28K',
+                postedAt: new Date(Date.now() - 2 * 60 * 60 * 1000 - 30 * 60 * 1000), // 2 hours 30 minutes ago
+                responsibilities: [
+                    'Design, implement, and maintain CI/CD pipelines',
+                    'Automate infrastructure provisioning and configuration',
+                    'Monitor system performance and troubleshoot issues',
+                    'Implement security best practices and ensure compliance',
+                    'Collaborate with development teams to improve deployment processes'
+                ],
+                requirements: [
+                    'Bachelor\'s degree in Computer Science or related field',
+                    '3+ years of experience in DevOps or similar role',
+                    'Experience with cloud platforms (AWS, Azure, or GCP)',
+                    'Proficiency in scripting languages (Python, Bash, etc.)',
+                    'Knowledge of containerization technologies (Docker, Kubernetes)',
+                    'Experience with infrastructure as code tools (Terraform, CloudFormation)'
+                ],
+                benefits: [
+                    'Competitive salary',
+                    'Comprehensive health benefits',
+                    'Flexible work schedule',
+                    'Remote work options',
+                    'Professional development opportunities',
+                    'Modern office environment'
+                ]
+            }
+        ];
+
+        // Function to format time ago
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+
+            if (diffInSeconds < 60) {
+                return `${diffInSeconds}s ago`;
+            }
+
+            const diffInMinutes = Math.floor(diffInSeconds / 60);
+            if (diffInMinutes < 60) {
+                return `${diffInMinutes}m ago`;
+            }
+
+            const diffInHours = Math.floor(diffInMinutes / 60);
+            if (diffInHours < 24) {
+                const remainingMinutes = diffInMinutes % 60;
+                return remainingMinutes > 0 ? `${diffInHours}h ${remainingMinutes}m ago` : `${diffInHours}h ago`;
+            }
+
+            const diffInDays = Math.floor(diffInHours / 24);
+            return `${diffInDays}d ago`;
+        }
+
+        // Function to update time ago for all jobs
+        function updateTimesAgo() {
+            const timeElements = document.querySelectorAll('.job-time-ago');
+            timeElements.forEach(element => {
+                const jobId = element.dataset.jobId;
+                const job = jobsData.find(j => j.id === jobId);
+                if (job) {
+                    element.textContent = formatTimeAgo(job.postedAt);
+                }
+            });
+        }
+
+        // Function to render job cards
+        function renderJobCards() {
+            const jobListingsContainer = document.getElementById('job-listings');
+            jobListingsContainer.innerHTML = '';
+
+            jobsData.forEach(job => {
+                const jobCard = document.createElement('div');
+                jobCard.className = 'job-card';
+                jobCard.dataset.jobId = job.id;
+
+                jobCard.innerHTML = `
+                    <i class="job-bookmark far fa-bookmark"></i>
+                    <h3 class="job-title">${job.title}</h3>
+                    <p class="job-description">${job.description}</p>
+                    <div class="job-meta">
+                        <div class="job-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${job.location}</span>
+                        </div>
+                        <button class="job-view-more" data-job-id="${job.id}">View more</button>
+                    </div>
+                    <div class="job-time-ago" data-job-id="${job.id}">${formatTimeAgo(job.postedAt)}</div>
+                `;
+
+                jobListingsContainer.appendChild(jobCard);
+
+                // Add click event to job card
+                jobCard.addEventListener('click', function(e) {
+                    // Only open modal if not clicking on bookmark icon or view more button
+                    if (!e.target.closest('.job-bookmark') && !e.target.closest('.job-view-more')) {
+                        openJobModal(job.id);
+                    }
+                });
+
+                // Add click event to view more button
+                const viewMoreBtn = jobCard.querySelector('.job-view-more');
+                viewMoreBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openJobModal(job.id);
+                });
+
+                // Add click event to bookmark icon
+                const bookmarkIcon = jobCard.querySelector('.job-bookmark');
+                bookmarkIcon.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    this.classList.toggle('far');
+                    this.classList.toggle('fas');
+                });
+            });
+
+            // Update job count
+            document.getElementById('job-count').textContent = jobsData.length;
+        }
+
+        // Function to render job detail modals
+        function renderJobDetailModals() {
+            const modalsContainer = document.getElementById('job-detail-modals-container');
+            modalsContainer.innerHTML = '';
+
+            jobsData.forEach(job => {
+                const modal = document.createElement('div');
+                modal.className = 'job-detail-modal';
+                modal.id = `job-modal-${job.id}`;
+
+                modal.innerHTML = `
+                    <div class="job-detail-content">
+                        <div class="job-detail-close"><i class="fas fa-times"></i></div>
+                        <div class="job-detail-header">
+                            <div class="job-detail-company-icon ${job.iconColor}">
+                                <i class="fas fa-${job.icon}"></i>
+                            </div>
+                            <div class="job-detail-title-section">
+                                <h1 class="job-detail-title">${job.title}</h1>
+                                <div class="job-detail-company">
+                                    <img src="${job.companyLogo}" alt="${job.company}" height="20"> ${job.company} • ${job.location}
+                                </div>
+                                <div class="job-detail-meta">
+                                    <span class="job-detail-meta-item"><i class="fas fa-building"></i> ${job.jobType}</span>
+                                    <span class="job-detail-meta-item"><i class="fas fa-map-marker-alt"></i> ${job.level}</span>
+                                    <span class="job-detail-meta-item"><i class="fas fa-dollar-sign"></i> ${job.salary}</span>
+                                    <span class="job-detail-meta-item"><i class="fas fa-clock"></i> Posted <span class="job-time-ago" data-job-id="${job.id}">${formatTimeAgo(job.postedAt)}</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="job-detail-body">
+                            <div class="job-detail-section">
+                                <h2 class="job-detail-section-title">Job Description</h2>
+                                <div class="job-detail-description">
+                                    <p>${job.description}</p>
+                                </div>
+                            </div>
+                            <div class="job-detail-section">
+                                <h2 class="job-detail-section-title">Responsibilities</h2>
+                                <ul class="job-detail-responsibilities-list">
+                                    ${job.responsibilities.map(resp => `<li>${resp}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="job-detail-section">
+                                <h2 class="job-detail-section-title">Requirements</h2>
+                                <ul class="job-detail-requirements-list">
+                                    ${job.requirements.map(req => `<li>${req}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="job-detail-section">
+                                <h2 class="job-detail-section-title">Benefits</h2>
+                                <ul class="job-detail-requirements-list">
+                                    ${job.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="job-detail-footer">
+                            <div class="job-detail-actions">
+                                <button class="job-detail-apply-btn">Apply Now</button>
+                                <button class="job-detail-save-btn"><i class="far fa-heart"></i> Save Job</button>
+                            </div>
+                            <div class="job-detail-share">
+                                <span class="job-detail-share-text">Share:</span>
+                                <div class="job-detail-share-icons">
+                                    <a href="#" class="job-detail-share-icon facebook"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="#" class="job-detail-share-icon twitter"><i class="fab fa-twitter"></i></a>
+                                    <a href="#" class="job-detail-share-icon linkedin"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="#" class="job-detail-share-icon email"><i class="fas fa-envelope"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                modalsContainer.appendChild(modal);
+
+                // Add click event to close button
+                const closeBtn = modal.querySelector('.job-detail-close');
+                closeBtn.addEventListener('click', closeJobModal);
+
+                // Close modal when clicking outside the content
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeJobModal();
+                    }
+                });
+
+                // Save job functionality
+                const saveBtn = modal.querySelector('.job-detail-save-btn');
+                saveBtn.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (icon.classList.contains('far')) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                        this.innerHTML = '<i class="fas fa-heart"></i> Saved';
+                    } else {
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                        this.innerHTML = '<i class="far fa-heart"></i> Save Job';
+                    }
+                });
+
+                // Apply button functionality
+                const applyBtn = modal.querySelector('.job-detail-apply-btn');
+                applyBtn.addEventListener('click', function() {
+                    alert('Application form will open here. This feature is coming soon!');
+                });
+            });
+        }
+
+        // Function to open job detail modal
+        function openJobModal(jobId) {
+            const modal = document.getElementById(`job-modal-${jobId}`);
+            if (modal) {
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+                modal.classList.add('active');
+
+                // Add animation to modal content
+                setTimeout(() => {
+                    const content = modal.querySelector('.job-detail-content');
+                    if (content) {
+                        content.style.transform = 'translateY(0)';
+                        content.style.opacity = '1';
+                    }
+                }, 50);
+            }
+        }
+
+        // Function to close job detail modal
+        function closeJobModal() {
+            const activeModal = document.querySelector('.job-detail-modal.active');
+            if (activeModal) {
+                const content = activeModal.querySelector('.job-detail-content');
+                if (content) {
+                    content.style.transform = 'translateY(-20px)';
+                    content.style.opacity = '0';
+                }
+
+                setTimeout(() => {
+                    activeModal.classList.remove('active');
+                    document.body.style.overflow = ''; // Restore scrolling
+                }, 300);
+            }
+        }
+
+        // Initialize the page
+        renderJobCards();
+        renderJobDetailModals();
+
+        // Update times every minute
+        setInterval(updateTimesAgo, 60000);
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeJobModal();
+            }
+        });
+
+        // Testimonial Slider Functionality
+        const slides = document.querySelectorAll('.testimonial-slide');
+        const prevButton = document.getElementById('prev-testimonial');
+        const nextButton = document.getElementById('next-testimonial');
+        const dots = document.querySelectorAll('.testimonial-dot');
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+
+        // Function to update the slider state
+        function updateSlider() {
+            // Hide all slides
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // Show current slide
+            slides[currentIndex].classList.add('active');
+
+            // Update dots
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+
+            // Update button states
+            prevButton.classList.toggle('active', currentIndex === 0);
+            nextButton.classList.toggle('active', currentIndex === totalSlides - 1);
+        }
+
+        // Previous button click
+        prevButton.addEventListener('click', function() {
+            if (currentIndex > 0) {
+                currentIndex--;
+            } else {
+                // Loop back to the last slide
+                currentIndex = totalSlides - 1;
+            }
+            updateSlider();
+        });
+
+        // Next button click
+        nextButton.addEventListener('click', function() {
+            if (currentIndex < totalSlides - 1) {
+                currentIndex++;
+            } else {
+                // Loop back to the first slide
+                currentIndex = 0;
+            }
+            updateSlider();
+        });
+
+        // Dot click handlers
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', function() {
+                currentIndex = index;
+                updateSlider();
+            });
+        });
+
+        // Auto-rotation
+        let interval = setInterval(function() {
+            if (currentIndex < totalSlides - 1) {
+                currentIndex++;
+            } else {
+                currentIndex = 0;
+            }
+            updateSlider();
+        }, 7000);
+
+        // Pause auto-rotation when hovering over testimonials
+        const testimonialContainer = document.getElementById('testimonial-container');
+        testimonialContainer.addEventListener('mouseenter', function() {
+            clearInterval(interval);
+        });
+
+        testimonialContainer.addEventListener('mouseleave', function() {
+            interval = setInterval(function() {
+                if (currentIndex < totalSlides - 1) {
+                    currentIndex++;
+                } else {
+                    currentIndex = 0;
+                }
+                updateSlider();
+            }, 7000);
+        });
+
+        // Enhanced scroll animations
+        const animateOnScrollElements = document.querySelectorAll('.animate-on-scroll');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+
+                    // For staggered children animations
+                    if (entry.target.classList.contains('stagger-children')) {
+                        const children = entry.target.children;
+                        Array.from(children).forEach((child, index) => {
+                            setTimeout(() => {
+                                child.style.opacity = "1";
+                                child.style.transform = "translateY(0)";
+                            }, 100 * index);
+                        });
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        animateOnScrollElements.forEach(element => {
+            observer.observe(element);
+        });
+
+        // Floating avatars random movement
+        const avatars = document.querySelectorAll('.avatar');
+        avatars.forEach(avatar => {
+            const randomDelay = Math.random() * 2;
+            avatar.style.animationDelay = `${randomDelay}s`;
+        });
+    });
+</script>
+</body>
+</html>

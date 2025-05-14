@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Dashboard - EMSI Marrakech Career Center">
+    <title>Admin Dashboard - EMSI Marrakech Career Center</title>
+    <link rel="stylesheet" href="public/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Modern Dashboard specific styles */
+        body {
+            padding-bottom: 0;
+            margin: 0;
+            background-color: #f5f5f7;
+            font-family: var(--font-primary);
+        }
+
+        .admin-dashboard {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            background-color: #ffffff;
+            border-right: 1px solid #ebebeb;
+            color: #333;
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .admin-logo {
+            margin-bottom: 2rem;
+            width: 50px;
+            height: 50px;
+        }
+
+        .admin-logo img {
+            width: 100%;
+            height: auto;
+        }
+
+        .admin-sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .admin-sidebar-menu li {
+            margin-bottom: 1rem;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .admin-sidebar-menu a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            width: 44px;
+            height: 44px;
+        }
+
+        .admin-sidebar-menu a:hover {
+            background-color: rgba(0, 166, 81, 0.1);
+            color: #00A651;
+        }
+
+        .admin-sidebar-menu a.active {
+            background-color: rgba(0, 166, 81, 0.1);
+            color: #00A651;
+        }
+
+        .admin-sidebar-icon {
+            font-size: 1.2rem;
+        }
+
+        .admin-content {
+            padding: 2rem;
+            background-color: #f5f5f7;
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ebebeb;
+        }
+
+        .dashboard-welcome h2 {
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+
+        .dashboard-welcome p {
+            color: #666;
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+        .user-profile img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+        }
+
+        .user-profile span {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .dropdown-icon {
+            margin-left: 0.5rem;
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .stat-icon {
+            background-color: rgba(0, 166, 81, 0.1);
+            color: #00A651;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            margin-right: 1rem;
+        }
+
+        .stat-info h3 {
+            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .stat-info p {
+            margin-bottom: 0;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .dashboard-recent {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .recent-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .recent-section h3 {
+            margin-bottom: 1.25rem;
+            color: #333;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .recent-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recent-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recent-item:last-child {
+            border-bottom: none;
+        }
+
+        .recent-item-info strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .recent-item-info span {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .view-btn {
+            background-color: #f8f8f8;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .view-btn:hover {
+            background-color: #00A651;
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Dashboard content sections */
+        .dashboard-section {
+            display: none;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .action-btn {
+            background-color: #00A651;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background-color: #008a43;
+            text-decoration: none;
+            color: white;
+        }
+
+        .filter-select {
+            background-color: white;
+            border: 1px solid #ebebeb;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: #333;
+            outline: none;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 1rem 1.25rem;
+            background-color: #f9f9f9;
+            color: #666;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #ebebeb;
+        }
+
+        .data-table td {
+            padding: 1rem 1.25rem;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+
+        .data-table tr:hover td {
+            background-color: #f9f9f9;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .status-active {
+            background-color: #00A651;
+        }
+
+        .status-pending {
+            background-color: #f5a623;
+        }
+
+        .status-closed {
+            background-color: #e74c3c;
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-icons a {
+            color: #999;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+
+        .action-icons a:hover {
+            color: #333;
+        }
+
+        .edit-icon:hover {
+            color: #00A651 !important;
+        }
+
+        .delete-icon:hover {
+            color: #e74c3c !important;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ebebeb;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: #00A651;
+            box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
+        }
+
+        .settings-form {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        /* Expand/Collapse Menu */
+        .expand-menu {
+            position: fixed;
+            left: 82px;
+            top: 20px;
+            z-index: 100;
+            background-color: white;
+            width: 240px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            display: none;
+        }
+
+        .expand-menu.active {
+            display: block;
+        }
+
+        .expand-menu-item {
+            padding: 0.75rem 1.25rem;
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .expand-menu-item:hover {
+            background-color: #f8f8f8;
+            color: #00A651;
+        }
+
+        .expand-menu-icon {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+            color: #666;
+        }
+
+        @media (max-width: 991.98px) {
+            .admin-dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-sidebar {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-dashboard">
+    <aside class="admin-sidebar">
+        <div class="admin-logo">
+            <img src="public/images/logo-admin.svg" alt="EMSI Admin Logo">
+        </div>
+        <ul class="admin-sidebar-menu">
+            <li>
+                <a href="#dashboard" class="active" id="dashboard-link" title="Dashboard">
+                    <span class="admin-sidebar-icon"><i class="fas fa-th-large"></i></span>
+                </a>
+            </li>
+            <li>
+                <a href="#manage-jobs" id="jobs-link" title="Manage Jobs">
+                    <span class="admin-sidebar-icon"><i class="fas fa-briefcase"></i></span>
+                </a>
+            </li>
+            <li>
+                <a href="#manage-events" id="events-link" title="Manage Events">
+                    <span class="admin-sidebar-icon"><i class="fas fa-calendar-alt"></i></span>
+                </a>
+            </li>
+            <li>
+                <a href="#applications" id="applications-link" title="Applications">
+                    <span class="admin-sidebar-icon"><i class="fas fa-file-alt"></i></span>
+                </a>
+            </li>
+            <li>
+                <a href="#messages" id="messages-link" title="Messages">
+                    <span class="admin-sidebar-icon"><i class="fas fa-envelope"></i></span>
+                </a>
+            </li>
+            <li>
+                <a href="#users" id="users-link" title="Users">
+                    <span class="admin-sidebar-icon"><i class="fas fa-users"></i></span>
+                </a>
+            </li>
+            <li>
+                <a href="#settings" id="settings-link" title="Settings">
+                    <span class="admin-sidebar-icon"><i class="fas fa-cog"></i></span>
+                </a>
+            </li>
+            <li style="margin-top: auto;">
+                <a href="#logout" id="logout-link" title="Logout">
+                    <span class="admin-sidebar-icon"><i class="fas fa-sign-out-alt"></i></span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="admin-content">
+        <div class="content-wrapper">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="dashboard-section active">
+                <div class="dashboard-header">
+                    <div class="dashboard-welcome">
+                        <h2>Welcome, Admin!</h2>
+                        <p>Here's what's happening with your career center today.</p>
+                    </div>
+                    <div class="user-profile">
+                        <img src="public/images/admin-avatar.jpg" alt="Administrator">
+                        <span>Administrator</span>
+                        <i class="fas fa-chevron-down dropdown-icon"></i>
+                    </div>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>24</h3>
+                            <p>Active Job Listings</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>156</h3>
+                            <p>New Applications</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>8</h3>
+                            <p>Upcoming Events</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>17</h3>
+                            <p>Unread Messages</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-recent">
+                    <div class="recent-section">
+                        <h3>Recent Applications</h3>
+                        <ul class="recent-list">
+                            <li class="recent-item">
+                                <div class="recent-item-info">
+                                    <strong>Mohammed Alami</strong>
+                                    <span>Applied for: Junior Software Engineer</span>
+                                </div>
+                                <div class="recent-item-actions">
+                                    <a href="#view-application" class="view-btn">View</a>
+                                </div>
+                            </li>
+                            <li class="recent-item">
+                                <div class="recent-item-info">
+                                    <strong>Fatima Zahra</strong>
+                                    <span>Applied for: Digital Marketing Intern</span>
+                                </div>
+                                <div class="recent-item-actions">
+                                    <a href="#view-application" class="view-btn">View</a>
+                                </div>
+                            </li>
+                            <li class="recent-item">
+                                <div class="recent-item-info">
+                                    <strong>Youssef Ben</strong>
+                                    <span>Applied for: Civil Engineer</span>
+                                </div>
+                                <div class="recent-item-actions">
+                                    <a href="#view-application" class="view-btn">View</a>
+                                </div>
+                            </li>
+                            <li class="recent-item">
+                                <div class="recent-item-info">
+                                    <strong>Sara El Mansouri</strong>
+                                    <span>Applied for: Financial Analyst</span>
+                                </div>
+                                <div class="recent-item-actions">
+                                    <a href="#view-application" class="view-btn">View</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="recent-section">
+                        <h3>Recent Messages</h3>
+                        <ul class="recent-list">
+                            <li class="recent-item">
+                                <div class="recent-item-info">
+                                    <strong>Kamal Idrissi</strong>
+                                    <span>Question about career fair registration</span>
+                                </div>
+                                <div class="recent-item-actions">
+                                    <a href="#view-message" class="view-btn">View</a>
+                                </div>
+                            </li>
+                            <li class="recent-item">
+                                <div class="recent-item-info">
+                                    <strong>Société Générale</strong>
+                                    <span>New job posting inquiry</span>
+                                </div>
+                                <div class="recent-item-actions">
+                                    <a href="#view-message" class="view-btn">View</a>
+                                </div>
+                            </li>
+                            <li class="recent-item">
+                                <div class="recent-item-info">
+                                    <strong>Ahmed Tazi</strong>
+                                    <span>Request for CV review session</span>
+                                </div>
+                                <div class="recent-item-actions">
+                                    <a href="#view-message" class="view-btn">View</a>
+                                </div>
+                            </li>
+                            <li class="recent-item">
+                                <div class="recent-item-info">
+                                    <strong>Leila Benjelloun</strong>
+                                    <span>Regarding workshop participation</span>
+                                </div>
+                                <div class="recent-item-actions">
+                                    <a href="#view-message" class="view-btn">View</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage Jobs Section -->
+            <div id="jobs-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Manage Job Postings</h2>
+                    <a href="#add-job" class="action-btn">Add New Job</a>
+                </div>
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Posted Date</th>
+                        <th>Status</th>
+                        <th>Applications</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>JOB-001</td>
+                        <td>Junior Software Engineer</td>
+                        <td>Innovatech Solutions</td>
+                        <td>10-05-2025</td>
+                        <td><span class="status-indicator status-active"></span> Active</td>
+                        <td>12</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>JOB-002</td>
+                        <td>Digital Marketing Intern</td>
+                        <td>Marketing Pro Agency</td>
+                        <td>07-05-2025</td>
+                        <td><span class="status-indicator status-active"></span> Active</td>
+                        <td>8</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>JOB-003</td>
+                        <td>Civil Engineer - Site Supervisor</td>
+                        <td>BuildIT Construction</td>
+                        <td>05-05-2025</td>
+                        <td><span class="status-indicator status-active"></span> Active</td>
+                        <td>5</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>JOB-004</td>
+                        <td>Automotive Software Engineer</td>
+                        <td>Renault Group</td>
+                        <td>01-05-2025</td>
+                        <td><span class="status-indicator status-pending"></span> Pending</td>
+                        <td>0</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>JOB-005</td>
+                        <td>Financial Analyst</td>
+                        <td>Bank of Africa</td>
+                        <td>25-04-2025</td>
+                        <td><span class="status-indicator status-active"></span> Active</td>
+                        <td>7</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Manage Events Section -->
+            <div id="events-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Manage Events</h2>
+                    <a href="#add-event" class="action-btn">Add New Event</a>
+                </div>
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Event Title</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Participants</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>EVT-001</td>
+                        <td>Annual EMSI Marrakech Career Fair</td>
+                        <td>05-07-2025</td>
+                        <td>EMSI Campus - Main Hall</td>
+                        <td><span class="status-indicator status-pending"></span> Upcoming</td>
+                        <td>45</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>EVT-002</td>
+                        <td>Workshop: Advanced CV & Cover Letter Strategies</td>
+                        <td>10-06-2025</td>
+                        <td>Online (Zoom)</td>
+                        <td><span class="status-indicator status-pending"></span> Upcoming</td>
+                        <td>28</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>EVT-003</td>
+                        <td>Company Presentation: Tech Innovators Inc.</td>
+                        <td>15-06-2025</td>
+                        <td>EMSI Campus - Amphitheater B</td>
+                        <td><span class="status-indicator status-pending"></span> Upcoming</td>
+                        <td>32</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>EVT-004</td>
+                        <td>9th Forum des Entreprises</td>
+                        <td>06-01-2025</td>
+                        <td>Marrakech</td>
+                        <td><span class="status-indicator status-closed"></span> Completed</td>
+                        <td>120</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Applications Section -->
+            <div id="applications-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Applications</h2>
+                    <div>
+                        <select id="app-filter" class="filter-select">
+                            <option value="all">All Applications</option>
+                            <option value="new">New</option>
+                            <option value="reviewed">Reviewed</option>
+                            <option value="shortlisted">Shortlisted</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Applicant Name</th>
+                        <th>Job Position</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>APP-001</td>
+                        <td>Mohammed Alami</td>
+                        <td>Junior Software Engineer</td>
+                        <td>10-05-2025</td>
+                        <td><span class="status-indicator status-active"></span> New</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#shortlist" title="Shortlist" class="edit-icon"><i class="fas fa-check"></i></a>
+                                <a href="#reject" title="Reject" class="delete-icon"><i class="fas fa-times"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>APP-002</td>
+                        <td>Fatima Zahra</td>
+                        <td>Digital Marketing Intern</td>
+                        <td>09-05-2025</td>
+                        <td><span class="status-indicator status-active"></span> New</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#shortlist" title="Shortlist" class="edit-icon"><i class="fas fa-check"></i></a>
+                                <a href="#reject" title="Reject" class="delete-icon"><i class="fas fa-times"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>APP-003</td>
+                        <td>Youssef Ben</td>
+                        <td>Civil Engineer - Site Supervisor</td>
+                        <td>08-05-2025</td>
+                        <td><span class="status-indicator status-pending"></span> Reviewed</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#shortlist" title="Shortlist" class="edit-icon"><i class="fas fa-check"></i></a>
+                                <a href="#reject" title="Reject" class="delete-icon"><i class="fas fa-times"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>APP-004</td>
+                        <td>Sara El Mansouri</td>
+                        <td>Financial Analyst</td>
+                        <td>07-05-2025</td>
+                        <td><span class="status-indicator status-pending"></span> Shortlisted</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#interview" title="Schedule Interview" class="edit-icon"><i class="fas fa-calendar-alt"></i></a>
+                                <a href="#reject" title="Reject" class="delete-icon"><i class="fas fa-times"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Messages Section -->
+            <div id="messages-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Messages</h2>
+                    <div>
+                        <select id="msg-filter" class="filter-select">
+                            <option value="all">All Messages</option>
+                            <option value="unread">Unread</option>
+                            <option value="read">Read</option>
+                            <option value="replied">Replied</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Subject</th>
+                        <th>Received Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>MSG-001</td>
+                        <td>Kamal Idrissi</td>
+                        <td>Question about career fair registration</td>
+                        <td>10-05-2025</td>
+                        <td><span class="status-indicator status-active"></span> Unread</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#reply" title="Reply" class="edit-icon"><i class="fas fa-reply"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MSG-002</td>
+                        <td>Société Générale</td>
+                        <td>New job posting inquiry</td>
+                        <td>09-05-2025</td>
+                        <td><span class="status-indicator status-active"></span> Unread</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#reply" title="Reply" class="edit-icon"><i class="fas fa-reply"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MSG-003</td>
+                        <td>Ahmed Tazi</td>
+                        <td>Request for CV review session</td>
+                        <td>07-05-2025</td>
+                        <td><span class="status-indicator status-pending"></span> Read</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#reply" title="Reply" class="edit-icon"><i class="fas fa-reply"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MSG-004</td>
+                        <td>Leila Benjelloun</td>
+                        <td>Regarding workshop participation</td>
+                        <td>05-05-2025</td>
+                        <td><span class="status-indicator status-closed"></span> Replied</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#reply" title="Reply" class="edit-icon"><i class="fas fa-reply"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Users Section -->
+            <div id="users-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Users</h2>
+                    <a href="#add-user" class="action-btn">Add New User</a>
+                </div>
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>USR-001</td>
+                        <td>Administrator</td>
+                        <td>admin@emsi-marrakech.ma</td>
+                        <td>Administrator</td>
+                        <td><span class="status-indicator status-active"></span> Active</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>USR-002</td>
+                        <td>Yasmine El Khattabi</td>
+                        <td>yasmine@emsi-marrakech.ma</td>
+                        <td>Career Advisor</td>
+                        <td><span class="status-indicator status-active"></span> Active</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>USR-003</td>
+                        <td>Rachid Moussaoui</td>
+                        <td>rachid@emsi-marrakech.ma</td>
+                        <td>Events Manager</td>
+                        <td><span class="status-indicator status-active"></span> Active</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon"><i class="fas fa-edit"></i></a>
+                                <a href="#delete" title="Delete" class="delete-icon"><i class="fas fa-trash-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                    <button class="action-btn" id="save-settings">Save Changes</button>
+                </div>
+                <div class="settings-form">
+                    <form>
+                        <div class="form-group">
+                            <label for="site-title">Site Title</label>
+                            <input type="text" id="site-title" value="EMSI Marrakech Career Center" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="site-description">Site Description</label>
+                            <textarea id="site-description" class="form-control" rows="3">EMSI Marrakech Career Center - Connecting students and alumni with career opportunities and events.</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="email-notifications">Email Notifications</label>
+                            <select id="email-notifications" class="form-control">
+                                <option value="all">All notifications</option>
+                                <option value="important">Important only</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-auto-expire">Job Auto-Expire (days)</label>
+                            <input type="number" id="job-auto-expire" value="30" class="form-control">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Settings Submenu -->
+<div id="settings-submenu" class="expand-menu">
+    <a href="#my-details" class="expand-menu-item">
+        <span class="expand-menu-icon"><i class="fas fa-user-circle"></i></span>
+        My Details
+    </a>
+    <a href="#my-profile" class="expand-menu-item">
+        <span class="expand-menu-icon"><i class="fas fa-id-card"></i></span>
+        My Profile
+    </a>
+    <a href="#security" class="expand-menu-item">
+        <span class="expand-menu-icon"><i class="fas fa-shield-alt"></i></span>
+        Security
+    </a>
+    <a href="#integrations" class="expand-menu-item">
+        <span class="expand-menu-icon"><i class="fas fa-plug"></i></span>
+        Integrations
+    </a>
+    <a href="#billing" class="expand-menu-item">
+        <span class="expand-menu-icon"><i class="fas fa-credit-card"></i></span>
+        Billing
+    </a>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auth check - redirect if not logged in
+        const checkAuth = () => {
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                window.location.href = 'admin-login.html';
+            }
+        };
+
+        // Run auth check on page load
+        checkAuth();
+
+        // Navigation functionality
+        const navLinks = document.querySelectorAll('.admin-sidebar-menu a');
+        const sections = document.querySelectorAll('.dashboard-section');
+
+        // Function to show selected section and update active links
+        const showSection = (sectionId) => {
+            // Hide all sections
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all links
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected section
+            const selectedSection = document.getElementById(`${sectionId}-section`);
+            if (selectedSection) {
+                selectedSection.classList.add('active');
+            }
+
+            // Add active class to selected link
+            const selectedLink = document.getElementById(`${sectionId}-link`);
+            if (selectedLink) {
+                selectedLink.classList.add('active');
+            }
+        };
+
+        // Add click handlers to navigation links
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Get section ID from href
+                const href = this.getAttribute('href');
+                const sectionId = href.substring(1); // Remove # from href
+
+                // Check if this is the settings link to show submenu
+                if (sectionId === 'settings') {
+                    const settingsSubmenu = document.getElementById('settings-submenu');
+                    const settingsLink = document.getElementById('settings-link');
+
+                    // Position the submenu next to the link
+                    const linkRect = settingsLink.getBoundingClientRect();
+                    settingsSubmenu.style.top = `${linkRect.top}px`;
+
+                    // Toggle submenu visibility
+                    settingsSubmenu.classList.toggle('active');
+                    return;
+                }
+
+                // Hide settings submenu when clicking elsewhere
+                const settingsSubmenu = document.getElementById('settings-submenu');
+                settingsSubmenu.classList.remove('active');
+
+                // Handle logout
+                if (sectionId === 'logout') {
+                    if (confirm('Are you sure you want to logout?')) {
+                        // Clear authentication data
+                        localStorage.removeItem('authToken');
+                        localStorage.removeItem('rememberUser');
+
+                        // Redirect to login page
+                        window.location.href = 'admin-login.html';
+                    }
+                    return;
+                }
+
+                // Show selected section
+                showSection(sectionId);
+
+                // Update URL hash
+                window.location.hash = sectionId;
+            });
+        });
+
+        // Handle URL hash change
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash.substring(1); // Remove # from hash
+            if (hash) {
+                showSection(hash);
+            }
+        });
+
+        // Check URL hash on page load
+        const initialHash = window.location.hash.substring(1);
+        if (initialHash) {
+            showSection(initialHash);
+        }
+
+        // Hide settings submenu when clicking outside
+        document.addEventListener('click', function(e) {
+            const settingsSubmenu = document.getElementById('settings-submenu');
+            const settingsLink = document.getElementById('settings-link');
+
+            if (settingsSubmenu.classList.contains('active') &&
+                !settingsSubmenu.contains(e.target) &&
+                !settingsLink.contains(e.target)) {
+                settingsSubmenu.classList.remove('active');
+            }
+        });
+
+        // User profile dropdown
+        const userProfile = document.querySelector('.user-profile');
+        if (userProfile) {
+            userProfile.addEventListener('click', function() {
+                // In a real implementation, this would show a dropdown menu
+                // For now, we'll just use it as another logout option
+                if (confirm('Are you sure you want to logout?')) {
+                    // Clear authentication data
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('rememberUser');
+
+                    // Redirect to login page
+                    window.location.href = 'admin-login.html';
+                }
+            });
+        }
+
+        // Save settings alert
+        const saveSettingsBtn = document.getElementById('save-settings');
+        if (saveSettingsBtn) {
+            saveSettingsBtn.addEventListener('click', function() {
+                alert('Settings saved successfully!');
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
