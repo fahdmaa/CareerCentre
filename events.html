@@ -7,6 +7,56 @@
     <title>Events - EMSI Marrakech Career Center</title>
     <link rel="stylesheet" href="public/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Override animation opacity to ensure content is visible */
+        .page-section, .section-content-full, .event-list li, .featured-event {
+            opacity: 1 !important;
+        }
+
+        /* Add working animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-section h1 {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .event-list li {
+            animation: slideUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .event-list li:nth-child(1) { animation-delay: 0.1s; }
+        .event-list li:nth-child(2) { animation-delay: 0.2s; }
+        .event-list li:nth-child(3) { animation-delay: 0.3s; }
+        .event-list li:nth-child(4) { animation-delay: 0.4s; }
+
+        .featured-event {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Ensure event content is visible by default */
+        .event-content {
+            display: none;
+        }
+
+        .event-content.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
 
@@ -86,8 +136,8 @@
 <main class="main-content">
     <section class="page-section">
         <div class="container">
-            <h1 class="animate-on-scroll fade-in">Latest & Upcoming Events</h1>
-            <div class="section-content-full animate-on-scroll fade-in" style="transition-delay: 0.2s;">
+            <h1>Latest & Upcoming Events</h1>
+            <div class="section-content-full">
                 <p class="text-center mb-3">Stay informed about workshops, career fairs, company presentations, and networking sessions organized by the EMSI Marrakech Career Center. These events are designed to enhance your skills, expand your professional network, and connect you with potential employers.</p>
 
                 <!-- Event Tab Filter -->
@@ -98,20 +148,20 @@
 
                 <!-- Upcoming Events -->
                 <div id="upcoming-events" class="event-content active">
-                    <ul class="event-list stagger-children">
+                    <ul class="event-list">
                         <!-- Event Item 1 -->
-                        <li class="animate-on-scroll slide-up">
+                        <li>
                             <div>
                                 <strong>Workshop: Advanced CV & Cover Letter Strategies</strong><br>
                                 <span class="date-time">Date: June 10, <script>document.write(new Date().getFullYear())</script>, 2:00 PM - 4:00 PM</span> -
                                 <span class="location">Online (Zoom Link to be provided)</span>
                                 <p class="mt-1">Take your application materials to the next level. This workshop covers advanced techniques for tailoring your CV and cover letter to specific roles and industries, making a powerful first impression.</p>
                             </div>
-                            <a href="#register-event-1" class="btn btn-secondary btn-small">Register Now</a>
+                            <button class="btn btn-secondary btn-small register-btn" data-event-title="Workshop: Advanced CV & Cover Letter Strategies">Register Now</button>
                         </li>
 
                         <!-- Event Item 2 -->
-                        <li class="animate-on-scroll slide-up">
+                        <li>
                             <div>
                                 <strong>Company Presentation: Tech Innovators Inc.</strong><br>
                                 <span class="date-time">Date: June 15, <script>document.write(new Date().getFullYear())</script>, 10:00 AM - 12:00 PM</span> -
@@ -122,34 +172,34 @@
                         </li>
 
                         <!-- Event Item 3 -->
-                        <li class="animate-on-scroll slide-up">
+                        <li>
                             <div>
                                 <strong>Annual EMSI Marrakech Career Fair</strong><br>
                                 <span class="date-time">Date: July 5-6, <script>document.write(new Date().getFullYear())</script>, 9:00 AM - 5:00 PM</span> -
                                 <span class="location">EMSI Campus - Main Hall</span>
                                 <p class="mt-1">Connect with dozens of leading national and international companies looking to recruit EMSI talent. Explore job and internship opportunities, network with recruiters, and attend insightful talks.</p>
                             </div>
-                            <a href="#career-fair-info" class="btn btn-secondary btn-small">Learn More</a>
+                            <button class="btn btn-secondary btn-small register-btn" data-event-title="Annual EMSI Marrakech Career Fair">Register Now</button>
                         </li>
 
                         <!-- Event Item 4 -->
-                        <li class="animate-on-scroll slide-up">
+                        <li>
                             <div>
                                 <strong>Seminar: Mastering Professional Networking</strong><br>
                                 <span class="date-time">Date: July 12, <script>document.write(new Date().getFullYear())</script>, 3:00 PM - 4:30 PM</span> -
                                 <span class="location">Online (Microsoft Teams)</span>
                                 <p class="mt-1">Learn effective strategies for building and leveraging your professional network, both online and offline. This seminar will cover communication skills, LinkedIn optimization, and follow-up techniques.</p>
                             </div>
-                            <a href="#join-seminar-4" class="btn btn-secondary btn-small">Join Session</a>
+                            <button class="btn btn-secondary btn-small register-btn" data-event-title="Seminar: Mastering Professional Networking">Register Now</button>
                         </li>
                     </ul>
                 </div>
 
                 <!-- Past Events -->
                 <div id="past-events" class="event-content">
-                    <ul class="event-list stagger-children">
+                    <ul class="event-list">
                         <!-- Past Event Item 1 -->
-                        <li class="animate-on-scroll slide-up">
+                        <li>
                             <div>
                                 <strong>9th Forum des Entreprises</strong><br>
                                 <span class="date-time">Date: January 6, <script>document.write(new Date().getFullYear())</script>, 9:00 AM - 6:00 PM</span> -
@@ -160,7 +210,7 @@
                         </li>
 
                         <!-- Past Event Item 2 -->
-                        <li class="animate-on-scroll slide-up">
+                        <li>
                             <div>
                                 <strong>Recruitment Session with Groupe Al Nour</strong><br>
                                 <span class="date-time">Date: April 12, <script>document.write(new Date().getFullYear())</script>, 2:00 PM - 5:00 PM</span> -
@@ -171,7 +221,7 @@
                         </li>
 
                         <!-- Past Event Item 3 -->
-                        <li class="animate-on-scroll slide-up">
+                        <li>
                             <div>
                                 <strong>Workshop: Interview Skills Masterclass</strong><br>
                                 <span class="date-time">Date: March 22, <script>document.write(new Date().getFullYear())</script>, 10:00 AM - 12:00 PM</span> -
@@ -194,8 +244,8 @@
     <!-- Featured Event Section -->
     <section class="page-section bg-light">
         <div class="container">
-            <h2 class="animate-on-scroll fade-in">Featured Event</h2>
-            <div class="featured-event animate-on-scroll fade-in" style="transition-delay: 0.2s;">
+            <h2>Featured Event</h2>
+            <div class="featured-event">
                 <div class="featured-event-content">
                     <h3>Annual EMSI Marrakech Career Fair 2025</h3>
                     <p class="event-date"><i class="fas fa-calendar-alt"></i> July 5-6, 2025</p>
@@ -214,7 +264,7 @@
                         This event is open to all EMSI students and recent graduates. Don't miss this exceptional opportunity to jumpstart your career!
                     </p>
                     <div class="event-actions">
-                        <a href="#register-career-fair" class="btn btn-secondary">Register Now</a>
+                        <button class="btn btn-secondary register-btn" data-event-title="Annual EMSI Marrakech Career Fair 2025">Register Now</button>
                         <a href="#career-fair-details" class="btn btn-outline-primary">Learn More</a>
                     </div>
                 </div>
@@ -225,6 +275,78 @@
         </div>
     </section>
 </main>
+
+<!-- Registration Modal -->
+<div id="registrationModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Event Registration</h3>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p class="event-title-display">Registering for: <strong id="selectedEventTitle"></strong></p>
+            <form id="registrationForm" class="registration-form">
+                <div class="form-group">
+                    <label for="fullName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" name="fullName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="yearOfStudy">Year of Study <span class="required">*</span></label>
+                    <select id="yearOfStudy" name="yearOfStudy" required>
+                        <option value="">Select your year</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                        <option value="5">5th Year</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="major">Major <span class="required">*</span></label>
+                    <select id="major" name="major" required disabled>
+                        <option value="">Please select year of study first</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline-primary cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-secondary submit-btn">Register for Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Success Message Modal -->
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Registration Successful!</h3>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <p>Thank you for registering! We have received your registration and will send you confirmation details via email shortly.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-primary close-success-btn">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <footer class="main-footer">
     <div class="container">
@@ -269,5 +391,38 @@
 </footer>
 
 <script src="public/main.js" defer></script>
+<script>
+    // Event tabs functionality - moved here to ensure it works
+    document.addEventListener('DOMContentLoaded', function() {
+        const eventTabs = document.querySelectorAll('.event-tabs .tab');
+
+        if (eventTabs.length > 0) {
+            eventTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    eventTabs.forEach(t => t.classList.remove('active'));
+
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+
+                    // Get the tab ID
+                    const tabId = this.getAttribute('data-tab');
+
+                    // Hide all event contents
+                    const tabContents = document.querySelectorAll('.event-content');
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+
+                    // Show the selected content
+                    const selectedContent = document.getElementById(`${tabId}-events`);
+                    if (selectedContent) {
+                        selectedContent.classList.add('active');
+                    }
+                });
+            });
+        }
+    });
+</script>
 </body>
 </html>

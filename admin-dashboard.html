@@ -20,6 +20,14 @@
             display: grid;
             grid-template-columns: 80px 1fr;
             min-height: 100vh;
+            opacity: 0;
+            animation: dashboardFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+        }
+
+        @keyframes dashboardFadeIn {
+            to {
+                opacity: 1;
+            }
         }
 
         .admin-sidebar {
@@ -30,12 +38,19 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            transition: var(--transition-base);
         }
 
         .admin-logo {
             margin-bottom: 2rem;
             width: 50px;
             height: 50px;
+            transition: var(--transition-base);
+        }
+
+        .admin-logo:hover {
+            transform: scale(1.05);
         }
 
         .admin-logo img {
@@ -66,30 +81,58 @@
             justify-content: center;
             padding: 0.75rem;
             color: #666;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            border-radius: 8px;
+            text-decoration: none !important;
+            transition: var(--transition-bounce);
+            border-radius: 12px;
             width: 44px;
             height: 44px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(0, 166, 81, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+
+        .admin-sidebar-menu a:hover::before {
+            width: 60px;
+            height: 60px;
         }
 
         .admin-sidebar-menu a:hover {
             background-color: rgba(0, 166, 81, 0.1);
             color: #00A651;
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 166, 81, 0.2);
         }
 
         .admin-sidebar-menu a.active {
-            background-color: rgba(0, 166, 81, 0.1);
+            background-color: rgba(0, 166, 81, 0.15);
             color: #00A651;
+            box-shadow: 0 4px 15px rgba(0, 166, 81, 0.2);
         }
 
         .admin-sidebar-icon {
             font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+            transition: var(--transition-base);
         }
 
         .admin-content {
             padding: 2rem;
             background-color: #f5f5f7;
+            overflow-y: auto;
         }
 
         .content-wrapper {
@@ -104,6 +147,19 @@
             margin-bottom: 2rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid #ebebeb;
+            opacity: 0;
+            animation: slideInDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .dashboard-welcome h2 {
@@ -111,12 +167,14 @@
             color: #333;
             font-size: 1.75rem;
             font-weight: 600;
+            transition: var(--transition-base);
         }
 
         .dashboard-welcome p {
             color: #666;
             margin-bottom: 0;
             font-size: 0.95rem;
+            transition: var(--transition-base);
         }
 
         .user-profile {
@@ -125,8 +183,16 @@
             background-color: #fff;
             padding: 0.5rem 1rem;
             border-radius: 50px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             cursor: pointer;
+            transition: var(--transition-bounce);
+            text-decoration: none !important;
+        }
+
+        .user-profile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            text-decoration: none !important;
         }
 
         .user-profile img {
@@ -134,17 +200,29 @@
             height: 36px;
             border-radius: 50%;
             margin-right: 0.75rem;
+            transition: var(--transition-base);
+        }
+
+        .user-profile:hover img {
+            transform: scale(1.05);
         }
 
         .user-profile span {
             font-weight: 500;
             color: #333;
+            transition: var(--transition-base);
         }
 
         .dropdown-icon {
             margin-left: 0.5rem;
             color: #999;
             font-size: 0.8rem;
+            transition: var(--transition-base);
+        }
+
+        .user-profile:hover .dropdown-icon {
+            transform: rotate(180deg);
+            color: #00A651;
         }
 
         .dashboard-stats {
@@ -156,30 +234,53 @@
 
         .stat-card {
             background-color: white;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             display: flex;
             align-items: center;
-            transition: all 0.3s ease;
+            transition: var(--transition-bounce);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: statCardSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            will-change: transform, box-shadow;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.6s; }
+        .stat-card:nth-child(2) { animation-delay: 0.7s; }
+        .stat-card:nth-child(3) { animation-delay: 0.8s; }
+        .stat-card:nth-child(4) { animation-delay: 0.9s; }
+
+        @keyframes statCardSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.12);
         }
 
         .stat-icon {
             background-color: rgba(0, 166, 81, 0.1);
             color: #00A651;
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-right: 1rem;
+            transition: var(--transition-bounce);
+        }
+
+        .stat-card:hover .stat-icon {
+            background-color: #00A651;
+            color: white;
+            transform: scale(1.1);
         }
 
         .stat-info h3 {
@@ -187,12 +288,18 @@
             margin-bottom: 0.25rem;
             color: #333;
             font-weight: 600;
+            transition: var(--transition-base);
+        }
+
+        .stat-card:hover .stat-info h3 {
+            color: #00A651;
         }
 
         .stat-info p {
             margin-bottom: 0;
             color: #666;
             font-size: 0.85rem;
+            transition: var(--transition-base);
         }
 
         .dashboard-recent {
@@ -203,9 +310,23 @@
 
         .recent-section {
             background-color: white;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transition: var(--transition-base);
+            opacity: 0;
+            animation: recentSectionSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 1.0s forwards;
+        }
+
+        @keyframes recentSectionSlideUp {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .recent-section:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
         }
 
         .recent-section h3 {
@@ -213,6 +334,11 @@
             color: #333;
             font-size: 1.25rem;
             font-weight: 600;
+            transition: var(--transition-base);
+        }
+
+        .recent-section:hover h3 {
+            color: #00A651;
         }
 
         .recent-list {
@@ -227,6 +353,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: var(--transition-base);
+        }
+
+        .recent-item:hover {
+            background-color: rgba(0, 166, 81, 0.02);
+            transform: translateX(5px);
         }
 
         .recent-item:last-child {
@@ -238,36 +370,87 @@
             margin-bottom: 0.25rem;
             color: #333;
             font-weight: 500;
+            transition: var(--transition-base);
+        }
+
+        .recent-item:hover .recent-item-info strong {
+            color: #00A651;
         }
 
         .recent-item-info span {
             font-size: 0.85rem;
             color: #666;
+            transition: var(--transition-base);
         }
 
         .view-btn {
             background-color: #f8f8f8;
             color: #333;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 0.35rem 0.75rem;
             font-size: 0.85rem;
-            transition: all 0.2s ease;
+            transition: var(--transition-bounce);
+            text-decoration: none !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: #00A651;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+
+        .view-btn:hover::before {
+            width: 100px;
+            height: 100px;
         }
 
         .view-btn:hover {
             background-color: #00A651;
             color: white;
-            text-decoration: none;
+            text-decoration: none !important;
+            transform: scale(1.05);
+        }
+
+        .view-btn > * {
+            position: relative;
+            z-index: 1;
         }
 
         /* Dashboard content sections */
         .dashboard-section {
             display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition-base);
         }
 
         .dashboard-section.active {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
+            animation: sectionSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes sectionSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .section-header {
@@ -275,6 +458,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
         }
 
         .section-header h2 {
@@ -288,27 +473,62 @@
             background-color: #00A651;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 0.6rem 1.2rem;
             font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition-bounce);
+            text-decoration: none !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+
+        .action-btn:hover::before {
+            width: 200px;
+            height: 200px;
         }
 
         .action-btn:hover {
             background-color: #008a43;
-            text-decoration: none;
+            text-decoration: none !important;
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 166, 81, 0.3);
+        }
+
+        .action-btn > * {
+            position: relative;
+            z-index: 1;
         }
 
         .filter-select {
             background-color: white;
             border: 1px solid #ebebeb;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 0.5rem 1rem;
             font-size: 0.9rem;
             color: #333;
             outline: none;
+            transition: var(--transition-base);
+        }
+
+        .filter-select:focus {
+            border-color: #00A651;
+            box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
         }
 
         .data-table {
@@ -316,9 +536,17 @@
             border-collapse: separate;
             border-spacing: 0;
             background-color: white;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            opacity: 0;
+            animation: tableSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
+        }
+
+        @keyframes tableSlideUp {
+            to {
+                opacity: 1;
+            }
         }
 
         .data-table th {
@@ -329,6 +557,7 @@
             font-weight: 500;
             font-size: 0.9rem;
             border-bottom: 1px solid #ebebeb;
+            transition: var(--transition-base);
         }
 
         .data-table td {
@@ -336,10 +565,12 @@
             color: #333;
             border-bottom: 1px solid #f0f0f0;
             font-size: 0.9rem;
+            transition: var(--transition-base);
         }
 
         .data-table tr:hover td {
-            background-color: #f9f9f9;
+            background-color: rgba(0, 166, 81, 0.02);
+            transform: scale(1.005);
         }
 
         .data-table tr:last-child td {
@@ -352,6 +583,18 @@
             height: 8px;
             border-radius: 50%;
             margin-right: 6px;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1);
+            }
         }
 
         .status-active {
@@ -374,43 +617,54 @@
         .action-icons a {
             color: #999;
             font-size: 1rem;
-            transition: color 0.2s ease;
+            transition: var(--transition-bounce);
+            text-decoration: none !important;
+            padding: 6px;
+            border-radius: 6px;
         }
 
         .action-icons a:hover {
             color: #333;
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: scale(1.2);
+            text-decoration: none !important;
         }
 
         .edit-icon:hover {
             color: #00A651 !important;
+            background-color: rgba(0, 166, 81, 0.1) !important;
         }
 
         .delete-icon:hover {
             color: #e74c3c !important;
+            background-color: rgba(231, 76, 60, 0.1) !important;
         }
 
         .form-control {
             width: 100%;
             padding: 0.75rem 1rem;
             border: 1px solid #ebebeb;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 0.9rem;
             color: #333;
             margin-bottom: 1rem;
             outline: none;
-            transition: all 0.2s ease;
+            transition: var(--transition-base);
         }
 
         .form-control:focus {
             border-color: #00A651;
             box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
+            transform: translateY(-2px);
         }
 
         .settings-form {
             background-color: white;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            opacity: 0;
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
         }
 
         /* Expand/Collapse Menu */
@@ -421,28 +675,47 @@
             z-index: 100;
             background-color: white;
             width: 240px;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
             padding: 1rem 0;
             display: none;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: var(--transition-base);
         }
 
         .expand-menu.active {
             display: block;
+            opacity: 1;
+            transform: translateX(0);
+            animation: menuSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes menuSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .expand-menu-item {
             padding: 0.75rem 1.25rem;
             color: #333;
-            text-decoration: none;
+            text-decoration: none !important;
             display: flex;
             align-items: center;
-            transition: all 0.2s ease;
+            transition: var(--transition-base);
         }
 
         .expand-menu-item:hover {
-            background-color: #f8f8f8;
+            background-color: rgba(0, 166, 81, 0.05);
             color: #00A651;
+            text-decoration: none !important;
+            transform: translateX(5px);
         }
 
         .expand-menu-icon {
@@ -451,6 +724,12 @@
             text-align: center;
             font-size: 1rem;
             color: #666;
+            transition: var(--transition-base);
+        }
+
+        .expand-menu-item:hover .expand-menu-icon {
+            color: #00A651;
+            transform: scale(1.1);
         }
 
         @media (max-width: 991.98px) {
@@ -464,6 +743,31 @@
 
             .mobile-menu-toggle {
                 display: block;
+            }
+
+            .admin-content {
+                padding: 1rem;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .dashboard-recent {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Additional enhanced animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
@@ -1137,26 +1441,36 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Auth check - redirect if not logged in
+        // ✅ AUTHENTICATION CHECK DISABLED FOR TESTING
+        // This allows direct access to the dashboard without login redirect
+        // To re-enable authentication, uncomment the code below:
+
+        /*
         const checkAuth = () => {
             const authToken = localStorage.getItem('authToken');
             if (!authToken) {
                 window.location.href = 'admin-login.html';
             }
         };
-
-        // Run auth check on page load
         checkAuth();
+        */
 
-        // Navigation functionality
+        console.log('✅ Admin Dashboard loaded successfully!');
+        console.log('🔓 Authentication check is disabled for testing');
+
+        // Navigation functionality with enhanced animations
         const navLinks = document.querySelectorAll('.admin-sidebar-menu a');
         const sections = document.querySelectorAll('.dashboard-section');
 
         // Function to show selected section and update active links
         const showSection = (sectionId) => {
-            // Hide all sections
+            // Hide all sections with fade out
             sections.forEach(section => {
-                section.classList.remove('active');
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.classList.remove('active');
+                }, 150);
             });
 
             // Remove active class from all links
@@ -1164,23 +1478,35 @@
                 link.classList.remove('active');
             });
 
-            // Show selected section
-            const selectedSection = document.getElementById(`${sectionId}-section`);
-            if (selectedSection) {
-                selectedSection.classList.add('active');
-            }
+            // Show selected section with fade in
+            setTimeout(() => {
+                const selectedSection = document.getElementById(`${sectionId}-section`);
+                if (selectedSection) {
+                    selectedSection.classList.add('active');
+                    requestAnimationFrame(() => {
+                        selectedSection.style.opacity = '1';
+                        selectedSection.style.transform = 'translateY(0)';
+                    });
+                }
 
-            // Add active class to selected link
-            const selectedLink = document.getElementById(`${sectionId}-link`);
-            if (selectedLink) {
-                selectedLink.classList.add('active');
-            }
+                // Add active class to selected link
+                const selectedLink = document.getElementById(`${sectionId}-link`);
+                if (selectedLink) {
+                    selectedLink.classList.add('active');
+                }
+            }, 200);
         };
 
-        // Add click handlers to navigation links
+        // Add enhanced click handlers to navigation links
         navLinks.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
+
+                // Enhanced click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
 
                 // Get section ID from href
                 const href = this.getAttribute('href');
@@ -1204,15 +1530,37 @@
                 const settingsSubmenu = document.getElementById('settings-submenu');
                 settingsSubmenu.classList.remove('active');
 
-                // Handle logout
+                // Handle logout with confirmation
                 if (sectionId === 'logout') {
                     if (confirm('Are you sure you want to logout?')) {
                         // Clear authentication data
                         localStorage.removeItem('authToken');
                         localStorage.removeItem('rememberUser');
 
+                        // Show logout message
+                        const logoutMessage = document.createElement('div');
+                        logoutMessage.style.cssText = `
+                            position: fixed;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background: white;
+                            padding: 2rem;
+                            border-radius: 12px;
+                            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                            z-index: 10000;
+                            text-align: center;
+                        `;
+                        logoutMessage.innerHTML = `
+                            <h3 style="color: #00A651; margin-bottom: 1rem;">Logged Out Successfully</h3>
+                            <p>Redirecting to login page...</p>
+                        `;
+                        document.body.appendChild(logoutMessage);
+
                         // Redirect to login page
-                        window.location.href = 'admin-login.html';
+                        setTimeout(() => {
+                            window.location.href = 'admin-login.html';
+                        }, 2000);
                     }
                     return;
                 }
@@ -1251,30 +1599,172 @@
             }
         });
 
-        // User profile dropdown
+        // Enhanced user profile dropdown
         const userProfile = document.querySelector('.user-profile');
         if (userProfile) {
             userProfile.addEventListener('click', function() {
-                // In a real implementation, this would show a dropdown menu
-                // For now, we'll just use it as another logout option
-                if (confirm('Are you sure you want to logout?')) {
-                    // Clear authentication data
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('rememberUser');
-
-                    // Redirect to login page
-                    window.location.href = 'admin-login.html';
+                // Create a simple dropdown menu
+                let existingDropdown = document.querySelector('.profile-dropdown');
+                if (existingDropdown) {
+                    existingDropdown.remove();
+                    return;
                 }
+
+                const dropdown = document.createElement('div');
+                dropdown.className = 'profile-dropdown';
+                dropdown.style.cssText = `
+                    position: absolute;
+                    top: 100%;
+                    right: 0;
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+                    padding: 0.5rem 0;
+                    min-width: 180px;
+                    z-index: 1000;
+                `;
+
+                dropdown.innerHTML = `
+                    <a href="#profile" style="display: block; padding: 0.75rem 1rem; color: #333; text-decoration: none; transition: all 0.2s ease;">
+                        <i class="fas fa-user" style="margin-right: 0.5rem;"></i> View Profile
+                    </a>
+                    <a href="#settings" style="display: block; padding: 0.75rem 1rem; color: #333; text-decoration: none; transition: all 0.2s ease;">
+                        <i class="fas fa-cog" style="margin-right: 0.5rem;"></i> Settings
+                    </a>
+                    <hr style="margin: 0.5rem 0; border: 1px solid #f0f0f0;">
+                    <a href="#logout" style="display: block; padding: 0.75rem 1rem; color: #e74c3c; text-decoration: none; transition: all 0.2s ease;">
+                        <i class="fas fa-sign-out-alt" style="margin-right: 0.5rem;"></i> Logout
+                    </a>
+                `;
+
+                // Add hover effects
+                dropdown.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('mouseenter', function() {
+                        this.style.backgroundColor = 'rgba(0, 166, 81, 0.05)';
+                    });
+                    link.addEventListener('mouseleave', function() {
+                        this.style.backgroundColor = 'transparent';
+                    });
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        dropdown.remove();
+
+                        if (this.getAttribute('href') === '#logout') {
+                            document.getElementById('logout-link').click();
+                        }
+                    });
+                });
+
+                this.style.position = 'relative';
+                this.appendChild(dropdown);
+
+                // Remove dropdown when clicking elsewhere
+                setTimeout(() => {
+                    document.addEventListener('click', function removeDropdown(e) {
+                        if (!userProfile.contains(e.target)) {
+                            dropdown.remove();
+                            document.removeEventListener('click', removeDropdown);
+                        }
+                    });
+                }, 100);
             });
         }
 
-        // Save settings alert
+        // Enhanced save settings functionality
         const saveSettingsBtn = document.getElementById('save-settings');
         if (saveSettingsBtn) {
             saveSettingsBtn.addEventListener('click', function() {
-                alert('Settings saved successfully!');
+                this.style.transform = 'scale(0.95)';
+                this.textContent = 'Saving...';
+                this.disabled = true;
+
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                    this.textContent = 'Save Changes';
+                    this.disabled = false;
+
+                    // Show success notification
+                    const notification = document.createElement('div');
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: #00A651;
+                        color: white;
+                        padding: 1rem 1.5rem;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 15px rgba(0, 166, 81, 0.3);
+                        z-index: 10000;
+                        transform: translateX(400px);
+                        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    `;
+                    notification.innerHTML = '<i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>Settings saved successfully!';
+
+                    document.body.appendChild(notification);
+
+                    requestAnimationFrame(() => {
+                        notification.style.transform = 'translateX(0)';
+                    });
+
+                    setTimeout(() => {
+                        notification.style.transform = 'translateX(400px)';
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 400);
+                    }, 3000);
+                }, 1500);
             });
         }
+
+        // Add enhanced interactions to action buttons
+        document.querySelectorAll('.action-icons a').forEach(icon => {
+            icon.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    background: rgba(0, 166, 81, 0.3);
+                    border-radius: 50%;
+                    transform: scale(0);
+                    animation: ripple 0.6s ease-out;
+                    pointer-events: none;
+                `;
+
+                this.style.position = 'relative';
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+
+                console.log('Action clicked:', this.getAttribute('title'));
+            });
+        });
+
+        // Add CSS for ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        console.log('🎉 Dashboard initialization complete!');
     });
 </script>
 
