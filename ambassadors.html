@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="EMSI Marrakech Student Ambassadors Program - Join our community of leaders shaping the future of EMSI">
+    <title>Student Ambassadors - EMSI Marrakech Career Center</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Modern scroll indicator -->
+<div class="scroll-indicator">
+    <div class="scroll-progress" id="scroll-progress"></div>
+</div>
+
+<!-- Header with Logo -->
+<header class="main-header">
+    <div class="container">
+        <a href="index.html" class="logo-link">
+            <img src="/images/emsi-logo.png" alt="EMSI Logo" class="logo-img">
+        </a>
+    </div>
+</header>
+
+<!-- Pill-Shaped Navigation Bar -->
+<nav class="pill-navbar green fixed-bottom hide-on-scroll">
+    <ul class="pill-navbar-nav">
+        <li>
+            <a href="index.html" class="pill-navbar-item" aria-label="Home - Return to homepage">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Home</span>
+            </a>
+        </li>
+        <li>
+            <a href="about.html" class="pill-navbar-item" aria-label="About - Contact us and learn more about our services">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">About</span>
+            </a>
+        </li>
+        <li>
+            <a href="jobs.html" class="pill-navbar-item" aria-label="Jobs - Browse available job opportunities">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Jobs</span>
+            </a>
+        </li>
+        <li>
+            <a href="events.html" class="pill-navbar-item" aria-label="Events - View upcoming career events and workshops">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Events</span>
+            </a>
+        </li>
+        <li>
+            <a href="ambassadors.html" class="pill-navbar-item active" aria-label="Ambassadors - Student ambassadors program" aria-current="page">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="5" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Ambassadors</span>
+            </a>
+        </li>
+        <li>
+            <a href="admin-login.html" class="pill-navbar-item" aria-label="Admin - Access administrator login portal">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Admin</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<main id="main-content">
+    <!-- Hero Banner Section -->
+    <section class="ambassadors-hero">
+        <div class="hero-overlay"></div>
+        <img src="/images/Ambassadors/Group-photo.jpeg" alt="EMSI Student Ambassadors Team" class="hero-banner-image">
+        <div class="hero-content">
+            <h1 class="hero-title fade-in">Student Ambassadors Program</h1>
+            <p class="hero-subtitle fade-in">Be the Voice of EMSI Marrakech</p>
+        </div>
+    </section>
+
+    <!-- About the Program Section -->
+    <section class="ambassadors-about section-padding">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">About the Program</h2>
+                <div class="section-divider"></div>
+            </div>
+            <div class="about-content fade-in">
+                <p class="lead-text">
+                    The EMSI Student Ambassadors Program is a prestigious leadership initiative that empowers exceptional students to represent our institution, foster community engagement, and shape the future of campus life.
+                </p>
+                <div class="about-grid">
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3>Our Mission</h3>
+                        <p>To cultivate leadership skills, enhance student engagement, and create a vibrant campus community through peer-to-peer support and innovative initiatives.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3>Our Vision</h3>
+                        <p>To build a network of student leaders who inspire positive change, promote academic excellence, and strengthen the bond between students, faculty, and the broader community.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activities Section -->
+    <section class="ambassadors-activities section-padding bg-light">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">What We Do</h2>
+                <div class="section-divider"></div>
+            </div>
+            <div class="activities-grid fade-in">
+                <div class="activity-card">
+                    <div class="activity-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Campus Tours</h3>
+                    <p>Lead engaging campus tours for prospective students and their families, showcasing EMSI's facilities and culture.</p>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Event Organization</h3>
+                    <p>Plan and execute student events, workshops, and cultural activities that enrich campus life.</p>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Peer Mentoring</h3>
+                    <p>Guide new students through their transition to university life, offering academic and social support.</p>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3>Social Media</h3>
+                    <p>Create engaging content to showcase student life and promote EMSI's achievements on digital platforms.</p>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Community Outreach</h3>
+                    <p>Represent EMSI at external events, conferences, and community service initiatives.</p>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Student Voice</h3>
+                    <p>Act as a liaison between students and administration, advocating for student needs and interests.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Perks Section -->
+    <section class="ambassadors-perks section-padding">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">Program Benefits</h2>
+                <div class="section-divider"></div>
+            </div>
+            <div class="perks-container fade-in">
+                <div class="perk-item clickable-perk" data-modal="leadership-modal">
+                    <div class="perk-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="perk-content">
+                        <h3>Leadership Development <i class="fas fa-info-circle"></i></h3>
+                        <p>Exclusive workshops and training sessions to enhance your leadership, communication, and organizational skills.</p>
+                    </div>
+                </div>
+                <div class="perk-item">
+                    <div class="perk-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <div class="perk-content">
+                        <h3>Official Recognition</h3>
+                        <p>Certificate of participation and official ambassador status recognized by EMSI administration.</p>
+                    </div>
+                </div>
+                <div class="perk-item">
+                    <div class="perk-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div class="perk-content">
+                        <h3>Networking Opportunities</h3>
+                        <p>Connect with industry leaders, alumni, and professionals through exclusive networking events.</p>
+                    </div>
+                </div>
+                <div class="perk-item">
+                    <div class="perk-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="perk-content">
+                        <h3>Exclusive Merch</h3>
+                        <p>Official ambassador apparel and branded materials to represent EMSI with pride.</p>
+                    </div>
+                </div>
+                <div class="perk-item">
+                    <div class="perk-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="perk-content">
+                        <h3>Priority Access</h3>
+                        <p>Early registration for events, workshops, and career opportunities through the Career Center.</p>
+                    </div>
+                </div>
+                <div class="perk-item">
+                    <div class="perk-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="perk-content">
+                        <h3>Letter of Recommendation</h3>
+                        <p>Personalized letters from program coordinators for future academic or professional endeavors.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Current Ambassadors Section -->
+    <section class="current-ambassadors section-padding bg-light">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">Meet Our 2024 Ambassadors</h2>
+                <div class="section-divider"></div>
+            </div>
+            <div class="ambassadors-grid fade-in">
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-1.jpg" alt="Sarah Benali - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Sarah Benali</h3>
+                        <p class="ambassador-role">Lead Ambassador</p>
+                        <p class="ambassador-major">Computer Science, 3rd Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-2.jpg" alt="Mohamed Alaoui - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Mohamed Alaoui</h3>
+                        <p class="ambassador-role">Events Coordinator</p>
+                        <p class="ambassador-major">Business Administration, 4th Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-3.jpg" alt="Fatima Zahra El Idrissi - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Fatima Zahra El Idrissi</h3>
+                        <p class="ambassador-role">Social Media Manager</p>
+                        <p class="ambassador-major">Marketing, 3rd Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-4.jpg" alt="Youssef Tazi - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Youssef Tazi</h3>
+                        <p class="ambassador-role">Community Outreach</p>
+                        <p class="ambassador-major">Civil Engineering, 5th Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-5.jpg" alt="Amina Berrada - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Amina Berrada</h3>
+                        <p class="ambassador-role">Peer Mentor Lead</p>
+                        <p class="ambassador-major">Finance, 4th Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-1.jpg" alt="Karim Mansouri - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Karim Mansouri</h3>
+                        <p class="ambassador-role">Campus Tour Guide</p>
+                        <p class="ambassador-major">Architecture, 3rd Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-2.jpg" alt="Lina Benkirane - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Lina Benkirane</h3>
+                        <p class="ambassador-role">Digital Content Creator</p>
+                        <p class="ambassador-major">Design & Multimedia, 2nd Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-3.jpg" alt="Anas Slimani - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Anas Slimani</h3>
+                        <p class="ambassador-role">Tech Support</p>
+                        <p class="ambassador-major">IT & Networks, 4th Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-4.jpg" alt="Salma Fassi - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Salma Fassi</h3>
+                        <p class="ambassador-role">Event Coordinator</p>
+                        <p class="ambassador-major">Event Management, 3rd Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-5.jpg" alt="Omar Benali - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Omar Benali</h3>
+                        <p class="ambassador-role">Sports Coordinator</p>
+                        <p class="ambassador-major">Sports Management, 5th Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-1.jpg" alt="Zineb Ghazali - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Zineb Ghazali</h3>
+                        <p class="ambassador-role">Academic Support</p>
+                        <p class="ambassador-major">Mathematics, 4th Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-2.jpg" alt="Reda Hakimi - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Reda Hakimi</h3>
+                        <p class="ambassador-role">International Relations</p>
+                        <p class="ambassador-major">International Business, 3rd Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-3.jpg" alt="Khadija Amrani - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Khadija Amrani</h3>
+                        <p class="ambassador-role">Cultural Affairs</p>
+                        <p class="ambassador-major">Literature & Arts, 2nd Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-4.jpg" alt="Ismail Bouchra - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Ismail Bouchra</h3>
+                        <p class="ambassador-role">Research Assistant</p>
+                        <p class="ambassador-major">Engineering, 5th Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ambassador-card">
+                    <div class="ambassador-image">
+                        <img src="/images/avatar-5.jpg" alt="Aicha Rifai - Student Ambassador">
+                    </div>
+                    <div class="ambassador-info">
+                        <h3>Aicha Rifai</h3>
+                        <p class="ambassador-role">Wellness Coordinator</p>
+                        <p class="ambassador-major">Psychology, 4th Year</p>
+                        <div class="ambassador-social">
+                            <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="ambassadors-cta section-padding">
+        <div class="container">
+            <div class="cta-content fade-in">
+                <h2>Ready to Become an Ambassador?</h2>
+                <p>Applications for the 2025 cohort will open in February. Follow us to stay updated!</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary-large" data-modal="notification-modal">
+                        <i class="fas fa-bell"></i>
+                        Get Notified
+                    </a>
+                    <a href="about.html" class="btn btn-secondary-large">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Notification Modal -->
+<div id="notification-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-bell"></i> Get Notified</h2>
+            <button class="modal-close" aria-label="Close modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="notification-form-container">
+                <p class="modal-description">
+                    Be the first to know when applications for the 2025 Student Ambassadors cohort open! 
+                    We'll send you updates about the program, application deadlines, and exclusive information sessions.
+                </p>
+                
+                <form id="notification-form" class="notification-form" novalidate>
+                    <div class="form-group">
+                        <label for="notify-name" class="form-label">Full Name *</label>
+                        <input type="text" id="notify-name" name="name" class="form-input" required aria-describedby="name-error">
+                        <div id="name-error" class="error-message" role="alert"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notify-email" class="form-label">Email Address *</label>
+                        <input type="email" id="notify-email" name="email" class="form-input" required aria-describedby="email-error">
+                        <div id="email-error" class="error-message" role="alert"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notify-major" class="form-label">Field of Study</label>
+                        <select id="notify-major" name="major" class="form-select">
+                            <option value="">Select your field of study</option>
+                            <option value="computer-science">Computer Science</option>
+                            <option value="business-administration">Business Administration</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="finance">Finance</option>
+                            <option value="architecture">Architecture</option>
+                            <option value="design-multimedia">Design & Multimedia</option>
+                            <option value="it-networks">IT & Networks</option>
+                            <option value="event-management">Event Management</option>
+                            <option value="sports-management">Sports Management</option>
+                            <option value="mathematics">Mathematics</option>
+                            <option value="international-business">International Business</option>
+                            <option value="literature-arts">Literature & Arts</option>
+                            <option value="psychology">Psychology</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notify-year" class="form-label">Current Year of Study</label>
+                        <select id="notify-year" name="year" class="form-select">
+                            <option value="">Select your year</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                            <option value="5">5th Year</option>
+                            <option value="graduate">Graduate</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="consent-emails" name="consent" required class="form-checkbox">
+                            <label for="consent-emails" class="checkbox-label">
+                                I consent to receiving email notifications about the Student Ambassadors program and related opportunities from EMSI Career Center. *
+                            </label>
+                        </div>
+                        <div id="consent-error" class="error-message" role="alert"></div>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="marketing-consent" name="marketing" class="form-checkbox">
+                            <label for="marketing-consent" class="checkbox-label">
+                                I would also like to receive updates about other career opportunities, events, and programs from EMSI Career Center.
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary-large" id="submit-notification">
+                            <i class="fas fa-bell"></i>
+                            Subscribe to Notifications
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancel-notification">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="notification-success" class="success-message" style="display: none;">
+                    <div class="success-content">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Thank you for subscribing!</h3>
+                        <p>We'll notify you as soon as applications for the 2025 Student Ambassadors cohort open. Keep an eye on your inbox!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leadership Development Modal -->
+<div id="leadership-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-trophy"></i> Leadership Development Program</h2>
+            <button class="modal-close" aria-label="Close modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="program-details">
+                <div class="program-section">
+                    <h3><i class="fas fa-calendar-alt"></i> Program Timeline</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker">1</div>
+                            <div class="timeline-content">
+                                <h4>Orientation Week</h4>
+                                <p>Introduction to leadership principles and team building exercises</p>
+                                <span class="timeline-duration">Week 1-2</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker">2</div>
+                            <div class="timeline-content">
+                                <h4>Communication Skills</h4>
+                                <p>Public speaking, presentation skills, and effective communication techniques</p>
+                                <span class="timeline-duration">Week 3-5</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker">3</div>
+                            <div class="timeline-content">
+                                <h4>Project Management</h4>
+                                <p>Event planning, resource management, and organizational skills</p>
+                                <span class="timeline-duration">Week 6-8</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker">4</div>
+                            <div class="timeline-content">
+                                <h4>Mentorship & Practice</h4>
+                                <p>Shadow experienced ambassadors and lead practice sessions</p>
+                                <span class="timeline-duration">Week 9-12</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="program-section">
+                    <h3><i class="fas fa-graduation-cap"></i> Program Content</h3>
+                    <div class="content-grid">
+                        <div class="content-card">
+                            <i class="fas fa-users"></i>
+                            <h4>Team Leadership</h4>
+                            <ul>
+                                <li>Leading diverse teams</li>
+                                <li>Conflict resolution</li>
+                                <li>Motivation techniques</li>
+                            </ul>
+                        </div>
+                        <div class="content-card">
+                            <i class="fas fa-microphone"></i>
+                            <h4>Public Speaking</h4>
+                            <ul>
+                                <li>Presentation techniques</li>
+                                <li>Stage presence</li>
+                                <li>Q&A handling</li>
+                            </ul>
+                        </div>
+                        <div class="content-card">
+                            <i class="fas fa-chart-line"></i>
+                            <h4>Strategic Planning</h4>
+                            <ul>
+                                <li>Goal setting</li>
+                                <li>Resource allocation</li>
+                                <li>Performance tracking</li>
+                            </ul>
+                        </div>
+                        <div class="content-card">
+                            <i class="fas fa-handshake"></i>
+                            <h4>Networking</h4>
+                            <ul>
+                                <li>Professional relationships</li>
+                                <li>Industry connections</li>
+                                <li>Personal branding</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About EMSI Career Center</h3>
+                <p>Empowering students and alumni with career opportunities, professional development, and industry connections.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="jobs.html">Jobs</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="ambassadors.html">Ambassadors</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-envelope"></i> career.center@emsi.ma</p>
+                <p><i class="fas fa-phone"></i> +212 5 24 32 90 90</p>
+                <p><i class="fas fa-map-marker-alt"></i> EMSI Marrakech, Morocco</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 EMSI Marrakech Career Center. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="/main.js"></script>
+</body>
+</html>
