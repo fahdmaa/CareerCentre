@@ -258,10 +258,16 @@ app.use('/api/*', (req, res) => {
     res.status(404).json({ message: 'API endpoint not found' });
 });
 
-// Catch-all route for 404 pages
-app.get('*', (req, res) => {
-    console.log(`404 - Page not found: ${req.path}`);
-    res.status(404).sendFile(path.join(__dirname, 'index.html'));
+// Serve HTML files from root directory
+app.use(express.static(__dirname, {
+    extensions: ['html'],
+    index: false  // We handle index routing ourselves
+}));
+
+// Catch-all for 404s
+app.use((req, res) => {
+    console.log(`404 - Not found: ${req.path}`);
+    res.status(404).send('Page not found');
 });
 
 // Global error handler
