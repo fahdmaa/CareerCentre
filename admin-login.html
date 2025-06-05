@@ -8,89 +8,61 @@
     <link rel="stylesheet" href="public/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Modern glassmorphism login page styles */
-        body.modern-login-bg {
-            background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 50%, #A5D6A7 100%);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            padding-bottom: 100px; /* Space for bottom navbar */
+        /* Admin login page using consistent design language */
+        body {
+            background: linear-gradient(135deg, #F8FFFE 0%, #F5F7FA 100%);
+            padding-bottom: 100px;
+            font-family: var(--font-primary);
         }
 
-        .modern-login-bg .main-header {
-            background-color: transparent;
-            box-shadow: none;
+        .admin-login-section {
+            min-height: calc(100vh - 120px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+
+        /* Consistent background pattern like other pages */
+        .admin-login-section::after {
+            content: '';
             position: absolute;
             top: 0;
-            left: 0;
+            right: 0;
             width: 100%;
-            z-index: 10;
-            padding: 1rem 0;
+            height: 100%;
+            background-image:
+                radial-gradient(rgba(0, 166, 81, 0.05) 2px, transparent 2px),
+                radial-gradient(rgba(0, 74, 153, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px, 15px 15px;
+            background-position: 0 0, 15px 15px;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        .modern-login-bg .main-header .logo-img {
-            height: 35px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-        }
-
-        .modern-login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-grow: 1;
-            padding: 2rem 1rem;
+        .login-container {
+            max-width: 480px;
             width: 100%;
-            min-height: 100vh;
-        }
-
-        .modern-login-card {
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            border: 1px solid rgba(255, 255, 255, 0.3);
             position: relative;
+            z-index: 2;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: cardSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: var(--transition-base);
         }
 
-        @keyframes cardSlideIn {
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .modern-login-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Removed back arrow styles */
-
-        .modern-login-header {
-            padding: 40px 32px 24px;
-            text-align: center;
-            animation: headerFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
-        }
-
-        @keyframes headerFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -98,427 +70,296 @@
             }
         }
 
-        .modern-login-icon {
-            width: 56px;
-            height: 56px;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 16px;
+        .login-header {
+            padding: 3rem 3rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--emsi-primary-blue), var(--emsi-accent-green));
+            border-radius: 20px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            margin: 0 auto 24px;
-            font-size: 1.5rem;
-            color: #444;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: iconPulse 2s ease-in-out infinite;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 74, 153, 0.3);
         }
 
-        @keyframes iconPulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
-
-        .modern-login-icon:hover {
-            background: rgba(255, 255, 255, 0.6);
-            transform: scale(1.1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .modern-login-header h1 {
-            color: #1a1a1a;
-            margin-bottom: 8px;
-            font-size: 28px;
-            font-weight: 600;
+        .login-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--emsi-primary-blue);
+            margin-bottom: 0.5rem;
             line-height: 1.2;
         }
 
-        .modern-login-header p {
-            color: #666;
-            margin-bottom: 0;
-            font-size: 15px;
-            line-height: 1.4;
-            max-width: 320px;
-            margin-left: auto;
-            margin-right: auto;
+        .login-header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
-        .modern-login-form {
-            padding: 0 32px 32px;
+        .login-form {
+            padding: 2rem 3rem 3rem;
         }
 
-        .modern-form-group {
-            margin-bottom: 16px;
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color-dark);
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
             position: relative;
         }
 
-        .modern-form-group label {
+        .input-icon {
             position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
-        }
-
-        .modern-input-wrapper {
-            position: relative;
-        }
-
-        .modern-input-icon {
-            position: absolute;
-            left: 16px;
+            left: 1.2rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #888;
-            font-size: 16px;
+            color: #9ca3af;
+            font-size: 1rem;
             z-index: 2;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            width: 16px;
+            text-align: center;
         }
 
-        .modern-login-form input {
+        .form-control {
             width: 100%;
-            padding: 16px 16px 16px 48px;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.875rem 1rem 0.875rem 3.2rem;
+            border: 2px solid #e5e7eb;
             border-radius: 12px;
-            color: #1a1a1a;
-            font-size: 16px;
-            font-family: inherit;
+            font-size: 1rem;
+            background: white;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-sizing: border-box;
         }
 
-        .modern-login-form input::placeholder {
-            color: #888;
-            opacity: 1;
-            transition: all 0.3s ease;
-        }
-
-        .modern-login-form input:hover {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-1px);
-        }
-
-        .modern-login-form input:focus {
+        .form-control:focus {
             outline: none;
-            background: rgba(255, 255, 255, 0.95);
-            border-color: var(--emsi-primary-blue, #004A99);
+            border-color: var(--emsi-primary-blue);
             box-shadow: 0 0 0 3px rgba(0, 74, 153, 0.1);
             transform: translateY(-2px);
         }
 
-        .modern-login-form input:focus::placeholder {
-            opacity: 0;
-            transform: translateX(10px);
-        }
-
-        .modern-login-form input:focus + .modern-input-icon {
-            color: var(--emsi-primary-blue, #004A99);
+        .form-control:focus + .input-icon {
+            color: var(--emsi-primary-blue);
             transform: translateY(-50%) scale(1.1);
         }
 
-        .modern-toggle-password {
+        .password-toggle {
             position: absolute;
-            right: 16px;
+            right: 1.2rem;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #888;
+            color: #9ca3af;
             cursor: pointer;
-            padding: 4px;
-            font-size: 16px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 4px;
-        }
-
-        .modern-toggle-password:hover {
-            color: var(--emsi-primary-blue, #004A99);
-            background: rgba(0, 74, 153, 0.1);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .modern-forgot-password {
-            display: block;
-            text-align: right;
-            font-size: 14px;
-            color: #666;
-            text-decoration: none;
-            margin-top: 8px;
-            margin-bottom: 24px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 4px;
-            padding: 4px;
-        }
-
-        .modern-forgot-password:hover {
-            color: var(--emsi-primary-blue, #004A99);
-            text-decoration: none;
-            background: rgba(0, 74, 153, 0.05);
-            transform: translateX(-2px);
-        }
-
-        .modern-btn-login {
-            width: 100%;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            background: #1a1a1a;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .modern-btn-login::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
+            font-size: 1rem;
+            padding: 0.5rem;
+            border-radius: 6px;
             transition: all 0.3s ease;
-        }
-
-        .modern-btn-login:hover {
-            background: #333;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .modern-btn-login:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .modern-btn-login:active {
-            transform: translateY(0);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .modern-btn-login:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .social-divider {
-            text-align: center;
-            font-size: 14px;
-            color: #888;
-            margin: 24px 0;
-            position: relative;
-        }
-
-        .social-divider::before,
-        .social-divider::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 40%;
-            height: 1px;
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .social-divider::before {
-            left: 0;
-        }
-
-        .social-divider::after {
-            right: 0;
-        }
-
-        .social-login-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 16px;
-            animation: socialFadeIn 0.8s ease-out 0.6s both;
-        }
-
-        @keyframes socialFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .social-btn {
-            width: 48px;
-            height: 48px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.7);
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-decoration: none;
-            color: #666;
-            font-size: 20px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .password-toggle:hover {
+            color: var(--emsi-primary-blue);
+            background: rgba(0, 74, 153, 0.1);
+        }
+
+        /* Specific styling for password input to accommodate both icon and toggle button */
+        .password-input {
+            padding-right: 3.8rem !important;
+        }
+
+        /* Enhanced focus state for input with icon */
+        .form-control:focus + .input-icon {
+            color: var(--emsi-primary-blue);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .btn-admin-login {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--emsi-primary-blue), #2563eb);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 74, 153, 0.25);
+            margin-top: 1rem;
         }
 
-        .social-btn::before {
+        .btn-admin-login::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: all 0.3s ease;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
         }
 
-        .social-btn:hover {
-            background: rgba(255, 255, 255, 0.9);
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            border-color: rgba(0, 0, 0, 0.2);
+        .btn-admin-login:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0, 74, 153, 0.35);
         }
 
-        .social-btn:hover::before {
-            width: 100px;
-            height: 100px;
+        .btn-admin-login:hover::before {
+            left: 100%;
         }
 
-        .social-btn:active {
-            transform: translateY(-1px) scale(1.02);
+        .btn-admin-login:active {
+            transform: translateY(-1px) scale(1.01);
         }
 
-        .social-btn.google:hover {
-            color: #DB4437;
-            border-color: #DB4437;
+        .btn-admin-login:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
-        .social-btn.facebook:hover {
-            color: #4267B2;
-            border-color: #4267B2;
-        }
-
-        .social-btn.apple:hover {
-            color: #000;
-            border-color: #000;
-        }
-
-        /* Login message styling */
-        .login-message {
-            padding: 12px 16px;
-            margin-bottom: 16px;
+        .alert {
+            padding: 0.875rem 1rem;
             border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
             font-weight: 500;
-            font-size: 14px;
             display: none;
         }
 
-        .login-message.success {
+        .alert.success {
             display: block;
             background: rgba(0, 166, 81, 0.1);
-            color: var(--emsi-accent-green, #00A651);
+            color: var(--emsi-accent-green);
             border: 1px solid rgba(0, 166, 81, 0.3);
         }
 
-        .login-message.error {
+        .alert.error {
             display: block;
             background: rgba(220, 53, 69, 0.1);
             color: #dc3545;
             border: 1px solid rgba(220, 53, 69, 0.3);
         }
 
-        /* Hide original elements */
-        .admin-login-container {
-            display: none !important;
-        }
-
-        /* Footer styling */
-        .modern-login-bg .main-footer {
-            background: transparent;
-            color: #666;
-            margin-top: auto;
-            margin-bottom: 80px; /* Space for bottom navbar */
-            padding: 1rem 0;
+        .forgot-password {
             text-align: center;
+            margin-top: 1.5rem;
         }
 
-        .modern-login-bg .main-footer p {
-            color: #666;
-            font-size: 13px;
+        .forgot-password a {
+            color: var(--emsi-primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 6px;
         }
 
-        .modern-login-bg .footer-content,
-        .modern-login-bg .footer-bottom {
-            display: none;
+        .forgot-password a:hover {
+            color: var(--emsi-accent-green);
+            background: rgba(0, 166, 81, 0.05);
+            text-decoration: none;
         }
 
-        .footer-simple {
-            display: block;
-            text-align: center;
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .admin-login-section {
+                padding: 2rem 1rem;
+            }
+
+            .login-header {
+                padding: 2rem 2rem 1.5rem;
+            }
+
+            .login-form {
+                padding: 1.5rem 2rem 2rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .login-header p {
+                font-size: 1rem;
+            }
         }
 
-        /* Mobile responsiveness */
-        @media (max-width: 480px) {
-            .modern-login-container {
-                padding: 1rem;
-            }
+        /* Skip link accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--emsi-primary-blue);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 10000;
+            transition: top 0.3s ease;
+        }
 
-            .modern-login-card {
-                border-radius: 20px;
-                max-width: 100%;
-            }
+        .skip-link:focus {
+            top: 6px;
+        }
 
-            .modern-login-header {
-                padding: 32px 24px 20px;
-            }
+        /* Loading state */
+        .loading .btn-admin-login {
+            pointer-events: none;
+        }
 
-            .modern-login-form {
-                padding: 0 24px 24px;
-            }
+        .loading .btn-admin-login::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s ease infinite;
+        }
 
-            .modern-login-header h1 {
-                font-size: 24px;
-            }
-
-            .modern-login-header p {
-                font-size: 14px;
-            }
-
-            .social-login-buttons {
-                gap: 12px;
-            }
-
-            .social-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 18px;
-            }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="modern-login-bg">
+<body>
 
+<!-- Skip to main content for screen readers -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- Header with consistent styling -->
 <header class="main-header">
     <div class="container">
         <a href="index.html" class="logo-link">
@@ -527,8 +368,8 @@
     </div>
 </header>
 
-<!-- Pill-Shaped Navigation Bar -->
-<nav class="pill-navbar white-gradient fixed-bottom hide-on-scroll">
+<!-- Consistent Navigation -->
+<nav class="pill-navbar green fixed-bottom hide-on-scroll">
     <ul class="pill-navbar-nav">
         <li>
             <a href="index.html" class="pill-navbar-item">
@@ -578,6 +419,19 @@
             </a>
         </li>
         <li>
+            <a href="ambassadors.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="5" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Ambassadors</span>
+            </a>
+        </li>
+        <li>
             <a href="admin-login.html" class="pill-navbar-item active">
                 <span class="pill-navbar-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -591,64 +445,108 @@
     </ul>
 </nav>
 
-<main class="main-content" style="flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 0;">
-    <div class="modern-login-container">
-        <div class="modern-login-card">
-            <div class="modern-login-header">
-                <div class="modern-login-icon">
-                    <i class="fas fa-arrow-right"></i>
+<!-- Main Content -->
+<main id="main-content" class="admin-login-section">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">
+                    <i class="fas fa-user-shield" aria-hidden="true"></i>
                 </div>
-                <h1>Sign in with email</h1>
-                <p>Access your EMSI Career Center admin panel to manage jobs, events, and student opportunities.</p>
+                <h1>Admin Login</h1>
+                <p>Access your EMSI Career Center admin panel to manage jobs, events, and student opportunities</p>
             </div>
 
-            <form id="adminLoginForm" class="modern-login-form" action="/api/auth/login" method="POST">
-                <div id="loginMessage" class="login-message"></div>
+            <form id="adminLoginForm" class="login-form" action="/api/auth/login" method="POST">
+                <div id="loginMessage" class="alert"></div>
 
-                <div class="modern-form-group">
-                    <label for="username">Email</label>
-                    <div class="modern-input-wrapper">
-                        <span class="modern-input-icon"><i class="fas fa-envelope"></i></span>
-                        <input type="email" id="username" name="username" placeholder="Email" required>
+                <div class="form-group">
+                    <label for="username">Email Address <span style="color: #dc3545;">*</span></label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="email" 
+                            id="username" 
+                            name="username" 
+                            class="form-control" 
+                            placeholder="Enter your email address"
+                            required 
+                            aria-describedby="username-help"
+                            autocomplete="email"
+                        >
+                        <i class="fas fa-envelope input-icon" aria-hidden="true"></i>
                     </div>
                 </div>
 
-                <div class="modern-form-group">
-                    <label for="password">Password</label>
-                    <div class="modern-input-wrapper">
-                        <span class="modern-input-icon"><i class="fas fa-lock"></i></span>
-                        <input type="password" id="password" name="password" placeholder="Password" required>
-                        <button type="button" class="modern-toggle-password" aria-label="Toggle password visibility">
-                            <i class="fas fa-eye"></i>
+                <div class="form-group">
+                    <label for="password">Password <span style="color: #dc3545;">*</span></label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-control password-input" 
+                            placeholder="Enter your password"
+                            required 
+                            aria-describedby="password-help"
+                            autocomplete="current-password"
+                        >
+                        <i class="fas fa-lock input-icon" aria-hidden="true"></i>
+                        <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
 
-                <a href="#forgot-password" class="modern-forgot-password">Forgot password?</a>
+                <button type="submit" class="btn-admin-login" aria-label="Sign in to admin dashboard">
+                    Sign In
+                </button>
 
-                <button type="submit" class="modern-btn-login">Get Started</button>
-
-                <div class="social-divider">Or sign in with</div>
-
-                <div class="social-login-buttons">
-                    <a href="#google-login" class="social-btn google" aria-label="Sign in with Google">
-                        <i class="fab fa-google"></i>
-                    </a>
-                    <a href="#facebook-login" class="social-btn facebook" aria-label="Sign in with Facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#apple-login" class="social-btn apple" aria-label="Sign in with Apple">
-                        <i class="fab fa-apple"></i>
-                    </a>
+                <div class="forgot-password">
+                    <a href="#forgot-password" aria-label="Reset your password">Forgot your password?</a>
                 </div>
             </form>
         </div>
     </div>
 </main>
 
+<!-- Consistent Footer -->
 <footer class="main-footer">
     <div class="container">
-        <div class="footer-simple">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h4>EMSI Career Center</h4>
+                <div class="footer-contact">
+                    <p><strong>EMSI Gueliz:</strong><br>98 Angle Bv Hassan II et rue Yougoslavie<br>Marrakech, Morocco</p>
+                    <p><strong>EMSI Centre:</strong><br>5 Lot Bouizgaren, route de safi<br>Marrakech, Morocco</p>
+                    <p>Email: <a href="mailto:centrecarriere.marrakech@emsi.ma">centrecarriere.marrakech@emsi.ma</a></p>
+                    <p>Phone: <a href="tel:+212524423673">+212 524 423 673</a> | <a href="tel:+212661484697">+212 661 484 697</a></p>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h4>Resources</h4>
+                <div class="footer-links">
+                    <ul>
+                        <li><a href="#">CV Templates</a></li>
+                        <li><a href="#">Interview Tips</a></li>
+                        <li><a href="#">Career Guide</a></li>
+                        <li><a href="#">Company Directory</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h4>Connect With Us</h4>
+                <div class="footer-social">
+                    <p>Follow us on social media to stay updated with the latest opportunities and events.</p>
+                    <div class="social-icons">
+                        <a href="https://www.linkedin.com/company/career-center-emsi/posts/?feedView=all" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.instagram.com/careercenter.emsi.marrakech/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
             <p>© <script>document.write(new Date().getFullYear())</script> EMSI Marrakech Career Center. All Rights Reserved.</p>
         </div>
     </div>
@@ -656,170 +554,103 @@
 
 <script src="public/main.js" defer></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Password visibility toggle
-        const togglePassword = document.querySelector('.modern-toggle-password');
-        const passwordInput = document.querySelector('#password');
+document.addEventListener('DOMContentLoaded', function() {
+    // Password visibility toggle
+    const passwordToggle = document.querySelector('.password-toggle');
+    const passwordInput = document.querySelector('#password');
 
-        if (togglePassword && passwordInput) {
-            togglePassword.addEventListener('click', function() {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                this.querySelector('i').classList.toggle('fa-eye');
-                this.querySelector('i').classList.toggle('fa-eye-slash');
-            });
-        }
+    if (passwordToggle && passwordInput) {
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+    }
 
-        // Enhanced form submission
-        const adminLoginForm = document.getElementById('adminLoginForm');
-        const loginMessage = document.getElementById('loginMessage');
+    // Enhanced form submission with API integration
+    const adminLoginForm = document.getElementById('adminLoginForm');
+    const loginMessage = document.getElementById('loginMessage');
 
-        if (adminLoginForm) {
-            adminLoginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
+    if (adminLoginForm) {
+        adminLoginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-                const username = document.getElementById('username').value.trim();
-                const password = passwordInput.value;
+            const username = document.getElementById('username').value.trim();
+            const password = passwordInput.value;
+            const submitButton = adminLoginForm.querySelector('.btn-admin-login');
+            const originalButtonText = submitButton.textContent;
 
-                const submitButton = adminLoginForm.querySelector('.modern-btn-login');
-                const originalButtonText = submitButton.textContent;
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
-                submitButton.disabled = true;
+            // Show loading state
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+            submitButton.disabled = true;
+            document.body.classList.add('loading');
 
-                // Simulated authentication (replace with real API call)
-                setTimeout(function() {
-                    if (username === 'admin@emsi.ma' && password === 'admin123') {
-                        localStorage.setItem('authToken', 'sample-auth-token');
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
 
-                        loginMessage.className = 'login-message success';
-                        loginMessage.textContent = 'Login successful! Redirecting to dashboard...';
+                const data = await response.json();
 
-                        setTimeout(() => {
-                            window.open('admin-dashboard.html', '_self');
-                        }, 1000);
-                    } else {
-                        loginMessage.className = 'login-message error';
-                        loginMessage.textContent = 'Invalid email or password. Please try again.';
-
-                        submitButton.innerHTML = originalButtonText;
-                        submitButton.disabled = false;
+                if (response.ok) {
+                    // Store token and user info
+                    localStorage.setItem('authToken', data.token);
+                    if (data.user) {
+                        localStorage.setItem('adminUser', JSON.stringify(data.user));
                     }
-                }, 1500);
-            });
-        }
 
-        // Social login handlers (placeholder)
-        const socialButtons = document.querySelectorAll('.social-btn');
-        socialButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const provider = this.classList.contains('google') ? 'Google' :
-                    this.classList.contains('facebook') ? 'Facebook' : 'Apple';
+                    loginMessage.className = 'alert success';
+                    loginMessage.textContent = 'Login successful! Redirecting to dashboard...';
 
-                loginMessage.className = 'login-message error';
-                loginMessage.textContent = `${provider} login is not yet implemented.`;
-            });
-        });
-
-        // Input focus effects with improved animations
-        const inputs = document.querySelectorAll('.modern-login-form input');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.classList.add('focused');
-                // Add a subtle scale animation to the icon
-                const icon = this.parentElement.querySelector('.modern-input-icon');
-                if (icon) {
-                    icon.style.transform = 'translateY(-50%) scale(1.1)';
-                }
-            });
-
-            input.addEventListener('blur', function() {
-                this.parentElement.classList.remove('focused');
-                // Reset icon scale
-                const icon = this.parentElement.querySelector('.modern-input-icon');
-                if (icon) {
-                    icon.style.transform = 'translateY(-50%) scale(1)';
-                }
-            });
-
-            // Add input value detection for better UX
-            input.addEventListener('input', function() {
-                if (this.value.length > 0) {
-                    this.parentElement.classList.add('has-value');
+                    setTimeout(() => {
+                        window.location.href = 'admin-dashboard.html';
+                    }, 1000);
                 } else {
-                    this.parentElement.classList.remove('has-value');
+                    throw new Error(data.message || 'Login failed');
                 }
-            });
-        });
+            } catch (error) {
+                console.error('Login error:', error);
+                loginMessage.className = 'alert error';
+                loginMessage.textContent = error.message || 'Login failed. Please check your credentials and try again.';
 
-        // Enhanced button interactions
-        const loginButton = document.querySelector('.modern-btn-login');
-        if (loginButton) {
-            loginButton.addEventListener('mousedown', function() {
-                this.style.transform = 'translateY(-1px) scale(0.98)';
-            });
-
-            loginButton.addEventListener('mouseup', function() {
-                this.style.transform = 'translateY(-2px) scale(1)';
-            });
-
-            loginButton.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
-        }
-
-        // Add ripple effect to social buttons
-        const socialButtons = document.querySelectorAll('.social-btn');
-        socialButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-
-                // Create ripple effect
-                const ripple = document.createElement('span');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-
-                ripple.style.cssText = `
-                    position: absolute;
-                    width: ${size}px;
-                    height: ${size}px;
-                    left: ${x}px;
-                    top: ${y}px;
-                    background: rgba(255, 255, 255, 0.5);
-                    border-radius: 50%;
-                    transform: scale(0);
-                    animation: ripple 0.6s ease-out;
-                    pointer-events: none;
-                `;
-
-                this.appendChild(ripple);
-
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-
-                const provider = this.classList.contains('google') ? 'Google' :
-                    this.classList.contains('facebook') ? 'Facebook' : 'Apple';
-
-                loginMessage.className = 'login-message error';
-                loginMessage.textContent = `${provider} login is not yet implemented.`;
-            });
-        });
-
-        // Add CSS for ripple animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(2);
-                    opacity: 0;
-                }
+                submitButton.innerHTML = originalButtonText;
+                submitButton.disabled = false;
+                document.body.classList.remove('loading');
             }
-        `;
-        document.head.appendChild(style);
+        });
+    }
+
+    // Input focus enhancements
+    const inputs = document.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+
+        input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
     });
+
+    // Enhanced accessibility
+    const requiredInputs = document.querySelectorAll('input[required]');
+    requiredInputs.forEach(input => {
+        input.addEventListener('invalid', function() {
+            this.setCustomValidity('This field is required');
+        });
+
+        input.addEventListener('input', function() {
+            this.setCustomValidity('');
+        });
+    });
+});
 </script>
 </body>
 </html>

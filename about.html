@@ -307,9 +307,54 @@
             display: flex;
             align-items: flex-start;
         }
+
+        /* Skip link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #000;
+            color: #fff;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 10000;
+            transition: top 0.3s ease;
+        }
+
+        .skip-link:focus {
+            top: 6px;
+        }
+
+        /* Accessibility helpers */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .required {
+            color: #d32f2f;
+        }
     </style>
 </head>
 <body>
+
+<!-- Skip to main content for screen readers -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <!-- Header with Logo -->
 <header class="main-header">
@@ -372,6 +417,19 @@
             </a>
         </li>
         <li>
+            <a href="ambassadors.html" class="pill-navbar-item">
+                <span class="pill-navbar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="5" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </span>
+                <span class="pill-navbar-label">Ambassadors</span>
+            </a>
+        </li>
+        <li>
             <a href="admin-login.html" class="pill-navbar-item">
                 <span class="pill-navbar-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -386,6 +444,7 @@
 </nav>
 
 <!-- Contact Header Section -->
+<main id="main-content">
 <section class="contact-header">
     <div class="decorative-circle circle-1"></div>
     <div class="decorative-circle circle-2"></div>
@@ -395,19 +454,19 @@
 
     <!-- Profile Avatars -->
     <div class="profile-avatar avatar-1">
-        <img src="public/images/avatar-1.jpg" alt="Team Member">
+        <img src="public/images/avatar-1.jpg" alt="Career Center team member - Student advisor">
     </div>
     <div class="profile-avatar avatar-2">
-        <img src="public/images/avatar-2.jpg" alt="Team Member">
+        <img src="public/images/avatar-2.jpg" alt="Career Center team member - Career counselor">
     </div>
     <div class="profile-avatar avatar-3">
-        <img src="public/images/avatar-3.jpg" alt="Team Member">
+        <img src="public/images/avatar-3.jpg" alt="Career Center team member - Industry liaison">
     </div>
     <div class="profile-avatar avatar-4">
-        <img src="public/images/avatar-4.jpg" alt="Team Member">
+        <img src="public/images/avatar-4.jpg" alt="Career Center team member - Professional development specialist">
     </div>
     <div class="profile-avatar avatar-5">
-        <img src="public/images/avatar-5.jpg" alt="Team Member">
+        <img src="public/images/avatar-5.jpg" alt="Career Center team member - Alumni relations coordinator">
     </div>
 
     <h1>Contact</h1>
@@ -479,34 +538,48 @@
         <!-- Contact Form -->
         <div class="contact-form-container">
             <h2 class="contact-section-title">Send us a message</h2>
-            <form id="contactForm" action="#" method="POST">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="firstName">First name</label>
-                        <input type="text" id="firstName" name="firstName" class="form-control" placeholder="Enter your first name" required>
+            <form id="contactForm" action="#" method="POST" aria-label="Contact form">
+                <fieldset>
+                    <legend class="visually-hidden">Personal Information</legend>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First name <span class="required" aria-label="required">*</span></label>
+                            <input type="text" id="firstName" name="firstName" class="form-control" placeholder="Enter your first name" required aria-describedby="firstName-error" aria-invalid="false" autocomplete="given-name">
+                            <div id="firstName-error" class="error-message" role="alert" aria-live="polite"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last name <span class="required" aria-label="required">*</span></label>
+                            <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Enter your last name" required aria-describedby="lastName-error" aria-invalid="false" autocomplete="family-name">
+                            <div id="lastName-error" class="error-message" role="alert" aria-live="polite"></div>
+                        </div>
                     </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend class="visually-hidden">Contact Information</legend>
                     <div class="form-group">
-                        <label for="lastName">Last name</label>
-                        <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Enter your last name" required>
+                        <label for="email">Email <span class="required" aria-label="required">*</span></label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email address" required aria-describedby="email-error" aria-invalid="false" autocomplete="email">
+                        <div id="email-error" class="error-message" role="alert" aria-live="polite"></div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email address" required>
-                </div>
+                    <div class="form-group">
+                        <label for="phone">Phone number</label>
+                        <input type="tel" id="phone" name="phone" class="form-control" placeholder="Enter your phone number" aria-describedby="phone-error" autocomplete="tel">
+                        <div id="phone-error" class="error-message" role="alert" aria-live="polite"></div>
+                    </div>
+                </fieldset>
 
-                <div class="form-group">
-                    <label for="phone">Phone number</label>
-                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="Enter your phone number">
-                </div>
+                <fieldset>
+                    <legend class="visually-hidden">Message</legend>
+                    <div class="form-group">
+                        <label for="message">Message <span class="required" aria-label="required">*</span></label>
+                        <textarea id="message" name="message" class="form-control textarea-control" placeholder="Type your message here..." required aria-describedby="message-error" aria-invalid="false"></textarea>
+                        <div id="message-error" class="error-message" role="alert" aria-live="polite"></div>
+                    </div>
+                </fieldset>
 
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" class="form-control textarea-control" placeholder="Type your message here..." required></textarea>
-                </div>
-
-                <button type="submit" class="submit-btn">Send</button>
+                <button type="submit" class="submit-btn" aria-label="Send contact message">Send</button>
             </form>
         </div>
     </div>
@@ -518,6 +591,7 @@
         </div>
     </div>
 </section>
+</main>
 
 <footer class="main-footer">
     <div class="container">

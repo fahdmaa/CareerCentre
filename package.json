@@ -1,12 +1,23 @@
 {
   "name": "emsi-career-center",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["career", "center", "emsi", "marrakech", "jobs", "events"],
+  "author": "EMSI Career Center",
   "license": "ISC",
-  "description": ""
+  "description": "EMSI Marrakech Career Center - Connecting students and alumni with career opportunities",
+  "dependencies": {
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "bcrypt": "^5.1.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
 }
