@@ -1,19 +1,41 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node"
+  "functions": {
+    "server.js": {
+      "runtime": "@vercel/node@2.15.9"
     }
-  ],
-  "routes": [
+  },
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
+      "source": "/api/(.*)",
+      "destination": "/server.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "/server.js"
+      "source": "/",
+      "destination": "/server.js"
+    },
+    {
+      "source": "/about",
+      "destination": "/server.js"
+    },
+    {
+      "source": "/jobs", 
+      "destination": "/server.js"
+    },
+    {
+      "source": "/events",
+      "destination": "/server.js"
+    },
+    {
+      "source": "/ambassadors",
+      "destination": "/server.js"
+    },
+    {
+      "source": "/admin-login",
+      "destination": "/server.js"
+    },
+    {
+      "source": "/admin-dashboard",
+      "destination": "/server.js"
     }
   ]
 }

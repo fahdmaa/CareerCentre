@@ -32,8 +32,12 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 
-// Serve static HTML files
+// Serve static HTML files with explicit routes
 app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/index.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
@@ -41,7 +45,15 @@ app.get('/about', (req, res) => {
     res.sendFile(path.join(__dirname, 'about.html'));
 });
 
+app.get('/about.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'about.html'));
+});
+
 app.get('/jobs', (req, res) => {
+    res.sendFile(path.join(__dirname, 'jobs.html'));
+});
+
+app.get('/jobs.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'jobs.html'));
 });
 
@@ -49,15 +61,43 @@ app.get('/events', (req, res) => {
     res.sendFile(path.join(__dirname, 'events.html'));
 });
 
+app.get('/events.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'events.html'));
+});
+
 app.get('/ambassadors', (req, res) => {
-    res.sendFile(path.join(__dirname, 'ambassadors.html'));
+    console.log('Ambassadors route hit - serving ambassadors.html');
+    const filePath = path.join(__dirname, 'ambassadors.html');
+    console.log('File path:', filePath);
+    console.log('File exists:', fs.existsSync(filePath));
+    
+    if (!fs.existsSync(filePath)) {
+        console.error('ambassadors.html not found!');
+        return res.status(404).send('Ambassadors page not found');
+    }
+    
+    res.sendFile(filePath);
+});
+
+app.get('/ambassadors.html', (req, res) => {
+    console.log('Ambassadors.html route hit');
+    const filePath = path.join(__dirname, 'ambassadors.html');
+    res.sendFile(filePath);
 });
 
 app.get('/admin-login', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin-login.html'));
 });
 
+app.get('/admin-login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-login.html'));
+});
+
 app.get('/admin-dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin-dashboard.html'));
+});
+
+app.get('/admin-dashboard.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin-dashboard.html'));
 });
 
@@ -218,28 +258,10 @@ app.use('/api/*', (req, res) => {
     res.status(404).json({ message: 'API endpoint not found' });
 });
 
-// Catch-all route for serving static HTML files
+// Catch-all route for 404 pages
 app.get('*', (req, res) => {
-    // Handle root path
-    if (req.path === '/') {
-        return res.sendFile(path.join(__dirname, 'index.html'));
-    }
-    
-    // Remove leading slash and handle .html extension
-    let filePath = req.path.slice(1);
-    if (!filePath.endsWith('.html') && !filePath.includes('.')) {
-        filePath += '.html';
-    }
-    
-    const fullPath = path.join(__dirname, filePath);
-    
-    // Check if file exists
-    if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
-        res.sendFile(fullPath);
-    } else {
-        // 404 - serve index.html as fallback
-        res.sendFile(path.join(__dirname, 'index.html'));
-    }
+    console.log(`404 - Page not found: ${req.path}`);
+    res.status(404).sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Global error handler
