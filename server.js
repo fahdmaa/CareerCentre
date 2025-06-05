@@ -220,16 +220,25 @@ app.use('/api/*', (req, res) => {
 
 // Catch-all route for serving static HTML files
 app.get('*', (req, res) => {
-    const filePath = req.path.endsWith('.html') ? req.path : req.path + '.html';
-    const fullPath = path.join(__dirname, filePath.slice(1));
+    // Handle root path
+    if (req.path === '/') {
+        return res.sendFile(path.join(__dirname, 'index.html'));
+    }
     
-    // Check if file exists, otherwise serve index.html
-    if (fs.existsSync(fullPath)) {
+    // Remove leading slash and handle .html extension
+    let filePath = req.path.slice(1);
+    if (!filePath.endsWith('.html') && !filePath.includes('.')) {
+        filePath += '.html';
+    }
+    
+    const fullPath = path.join(__dirname, filePath);
+    
+    // Check if file exists
+    if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
         res.sendFile(fullPath);
-    } else if (fs.existsSync(path.join(__dirname, 'index.html'))) {
-        res.sendFile(path.join(__dirname, 'index.html'));
     } else {
-        res.status(404).send('Page not found');
+        // 404 - serve index.html as fallback
+        res.sendFile(path.join(__dirname, 'index.html'));
     }
 });
 
