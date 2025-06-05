@@ -1,41 +1,47 @@
 {
-  "functions": {
-    "server.js": {
-      "runtime": "@vercel/node@2.15.9"
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
     }
-  },
-  "rewrites": [
+  ],
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "/server.js"
+      "src": "/api/(.*)",
+      "dest": "/server.js"
     },
     {
-      "source": "/",
-      "destination": "/server.js"
+      "src": "/",
+      "dest": "/server.js"
     },
     {
-      "source": "/about",
-      "destination": "/server.js"
+      "src": "/about(.html)?",
+      "dest": "/server.js"
     },
     {
-      "source": "/jobs", 
-      "destination": "/server.js"
+      "src": "/jobs(.html)?",
+      "dest": "/server.js"
     },
     {
-      "source": "/events",
-      "destination": "/server.js"
+      "src": "/events(.html)?",
+      "dest": "/server.js"
     },
     {
-      "source": "/ambassadors",
-      "destination": "/server.js"
+      "src": "/ambassadors(.html)?",
+      "dest": "/server.js"
     },
     {
-      "source": "/admin-login",
-      "destination": "/server.js"
+      "src": "/admin-login(.html)?",
+      "dest": "/server.js"
     },
     {
-      "source": "/admin-dashboard",
-      "destination": "/server.js"
+      "src": "/admin-dashboard(.html)?",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/server.js"
     }
   ]
 }
