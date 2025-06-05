@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+
+# Development files
+.env.local
+.env.development
+*.log
+
+# IDE
+.vscode
+.idea
+
+# Git
+.git
+.gitignore
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+Thumbs.db
