@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const app = express();
@@ -46,6 +47,10 @@ app.get('/jobs', (req, res) => {
 
 app.get('/events', (req, res) => {
     res.sendFile(path.join(__dirname, 'events.html'));
+});
+
+app.get('/ambassadors', (req, res) => {
+    res.sendFile(path.join(__dirname, 'ambassadors.html'));
 });
 
 app.get('/admin-login', (req, res) => {
@@ -211,6 +216,21 @@ app.get('/api/health', (req, res) => {
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {
     res.status(404).json({ message: 'API endpoint not found' });
+});
+
+// Catch-all route for serving static HTML files
+app.get('*', (req, res) => {
+    const filePath = req.path.endsWith('.html') ? req.path : req.path + '.html';
+    const fullPath = path.join(__dirname, filePath.slice(1));
+    
+    // Check if file exists, otherwise serve index.html
+    if (fs.existsSync(fullPath)) {
+        res.sendFile(fullPath);
+    } else if (fs.existsSync(path.join(__dirname, 'index.html'))) {
+        res.sendFile(path.join(__dirname, 'index.html'));
+    } else {
+        res.status(404).send('Page not found');
+    }
 });
 
 // Global error handler
