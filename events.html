@@ -30,6 +30,29 @@
             animation-duration: 0s !important;
             transition-delay: 0s !important;
         }
+
+        /* Fix button stuttering - prevent JS animations from affecting buttons */
+        button, .btn, a[class*="btn"], input[type="button"], input[type="submit"] {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: all 0.2s ease !important;
+        }
+
+        button:hover, .btn:hover, a[class*="btn"]:hover {
+            opacity: 1 !important;
+            transform: translateY(-1px) !important;
+        }
+
+        button:active, .btn:active, a[class*="btn"]:active {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        /* Disable problematic JS-driven styles */
+        [style*="opacity: 0.7"], [style*="scale(0.95)"] {
+            opacity: 1 !important;
+            transform: none !important;
+        }
         
         /* Disable specific problematic animations */
         @keyframes fadeIn { from { opacity: 1; } to { opacity: 1; } }
@@ -497,27 +520,46 @@
             el.style.animationDuration = '0s';
         });
 
-        // Fix button interactions
-        const buttons = document.querySelectorAll('.btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('mouseenter', function() {
-                this.style.opacity = '1';
-                this.style.transform = 'translateY(-2px)';
+        // Fix button interactions - prevent JS from changing button styles
+        const allButtons = document.querySelectorAll('button, .btn, a[class*="btn"], input[type="button"], input[type="submit"]');
+        allButtons.forEach(btn => {
+            // Remove any existing event listeners that might cause stuttering
+            btn.style.opacity = '1';
+            btn.style.transform = 'none';
+            btn.style.transition = 'all 0.2s ease';
+            
+            // Override with smooth CSS-only interactions
+            btn.addEventListener('mouseenter', function(e) {
+                e.stopPropagation();
+                this.style.setProperty('opacity', '1', 'important');
+                this.style.setProperty('transform', 'translateY(-1px)', 'important');
             });
             
-            btn.addEventListener('mouseleave', function() {
-                this.style.opacity = '1';
-                this.style.transform = 'translateY(0)';
+            btn.addEventListener('mouseleave', function(e) {
+                e.stopPropagation();
+                this.style.setProperty('opacity', '1', 'important');
+                this.style.setProperty('transform', 'translateY(0)', 'important');
             });
             
-            btn.addEventListener('click', function() {
-                this.style.opacity = '1';
-                this.style.transform = 'scale(0.98)';
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.style.setProperty('opacity', '1', 'important');
+                this.style.setProperty('transform', 'translateY(0) scale(0.98)', 'important');
                 setTimeout(() => {
-                    this.style.transform = 'translateY(0)';
-                }, 100);
+                    this.style.setProperty('transform', 'translateY(0)', 'important');
+                }, 150);
             });
         });
+
+        // Prevent main.js button animations from interfering
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('button, .btn, a[class*="btn"], input[type="button"], input[type="submit"]')) {
+                setTimeout(() => {
+                    e.target.style.setProperty('opacity', '1', 'important');
+                    e.target.style.setProperty('transform', 'translateY(0)', 'important');
+                }, 10);
+            }
+        }, true);
 
         // Event tabs functionality - moved here to ensure it works
         const eventTabs = document.querySelectorAll('.event-tabs .tab');
