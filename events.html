@@ -9,20 +9,61 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Override animation opacity to ensure content is visible */
-        .page-section, .section-content-full, .event-list li, .featured-event {
+        .page-section, .section-content-full, .event-list li, .featured-event, 
+        .page-section h1, .page-section h2, .event-tabs, .btn {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
+        /* Prevent any animations from hiding content initially */
+        .animate-on-scroll, .animate-slide-up-on-scroll, .animate-fade-in-on-scroll,
+        .hero-title, .hero-description, .hero-buttons, .page-title,
+        .container h1, .container h2, .container h3 {
+            opacity: 1 !important;
+            transform: none !important;
+            animation: none !important;
+        }
+
+        /* Override any problematic keyframe animations */
+        *, *::before, *::after {
+            animation-delay: 0s !important;
+            animation-duration: 0s !important;
+            transition-delay: 0s !important;
+        }
+        
+        /* Disable specific problematic animations */
+        @keyframes fadeIn { from { opacity: 1; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 1; transform: none; } to { opacity: 1; transform: none; } }
+        @keyframes heroTitleSlideUp { from { opacity: 1; transform: none; } to { opacity: 1; transform: none; } }
+        @keyframes heroTextSlideUp { from { opacity: 1; transform: none; } to { opacity: 1; transform: none; } }
+
+        /* Ensure visibility for all interactive elements */
+        button, a, input, select, textarea {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        /* Fix button hover effects */
+        .btn:hover {
+            transform: translateY(-2px) !important;
             opacity: 1 !important;
         }
 
-        /* Add working animations */
+        .register-btn:hover {
+            transform: translateY(-2px) scale(1.02) !important;
+            opacity: 1 !important;
+        }
+
+        /* Add subtle animations that work properly */
         @keyframes fadeIn {
-            from { opacity: 0; }
+            from { opacity: 1; }
             to { opacity: 1; }
         }
 
         @keyframes slideUp {
             from {
-                opacity: 0;
-                transform: translateY(30px);
+                opacity: 1;
+                transform: translateY(0);
             }
             to {
                 opacity: 1;
@@ -39,31 +80,8 @@
             animation-fill-mode: both;
         }
 
-        .event-list li:nth-child(1) { animation-delay: 0.1s; }
-        .event-list li:nth-child(2) { animation-delay: 0.2s; }
-        .event-list li:nth-child(3) { animation-delay: 0.3s; }
-        .event-list li:nth-child(4) { animation-delay: 0.4s; }
-
         .featured-event {
             animation: fadeIn 0.8s ease-out;
-        }
-
-        /* Skip link for accessibility */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 6px;
-            background: #000;
-            color: #fff;
-            padding: 8px;
-            text-decoration: none;
-            border-radius: 4px;
-            z-index: 10000;
-            transition: top 0.3s ease;
-        }
-
-        .skip-link:focus {
-            top: 6px;
         }
 
         /* Accessibility helpers */
@@ -103,9 +121,6 @@
     </style>
 </head>
 <body>
-
-<!-- Skip to main content for screen readers -->
-<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <!-- Header with Logo -->
 <header class="main-header">
@@ -466,8 +481,45 @@
 
 <script src="/main.js" defer></script>
 <script>
-    // Event tabs functionality - moved here to ensure it works
+    // Override problematic animations and ensure content visibility
     document.addEventListener('DOMContentLoaded', function() {
+        // Disable IntersectionObserver animations for this page
+        window.emsiDisableAnimations = true;
+        
+        // Force all elements to be visible immediately
+        const elementsToShow = document.querySelectorAll('.page-section, .section-content-full, .event-list li, .featured-event, h1, h2, .btn, .event-tabs, .container, .main-content');
+        elementsToShow.forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+            el.style.visibility = 'visible';
+            el.style.animation = 'none';
+            el.style.animationDelay = '0s';
+            el.style.animationDuration = '0s';
+        });
+
+        // Fix button interactions
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.opacity = '1';
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.opacity = '1';
+                this.style.transform = 'translateY(0)';
+            });
+            
+            btn.addEventListener('click', function() {
+                this.style.opacity = '1';
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(0)';
+                }, 100);
+            });
+        });
+
+        // Event tabs functionality - moved here to ensure it works
         const eventTabs = document.querySelectorAll('.event-tabs .tab');
 
         if (eventTabs.length > 0) {

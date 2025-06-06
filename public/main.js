@@ -117,6 +117,17 @@ if (window.emsiCareerCenterInitialized) {
 
         // --- Optimized Intersection Observer for Scroll Animations --- //
         function initializeScrollAnimations() {
+            // Check if animations are disabled for this page
+            if (window.emsiDisableAnimations) {
+                const animateOnScrollElements = document.querySelectorAll("[class*='animate-on-scroll'], .animate-on-scroll");
+                animateOnScrollElements.forEach(element => {
+                    element.classList.add("visible");
+                    element.style.opacity = "1";
+                    element.style.transform = "none";
+                });
+                return;
+            }
+            
             // Check for reduced motion preference
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                 // Make all elements visible immediately if user prefers reduced motion
