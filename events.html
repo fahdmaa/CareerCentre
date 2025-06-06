@@ -85,11 +85,13 @@
             font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
+            color: white;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .events-hero p {
             font-size: 1.3rem;
+            color: white;
             opacity: 0.95;
             max-width: 600px;
             margin: 0 auto;
@@ -236,21 +238,25 @@
         }
 
         .event-card-header {
-            padding: 25px;
+            padding: 25px 80px 25px 25px;
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             position: relative;
+            min-height: 120px;
         }
 
         .event-type-badge {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            top: 15px;
+            right: 15px;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
+            z-index: 10;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
         .event-type-badge.workshop {
