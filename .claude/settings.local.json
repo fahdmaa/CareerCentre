@@ -16,7 +16,11 @@
       "Bash(/usr/local/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -c 'src=\"\"public/images/' *.html)",
       "Bash(chmod:*)",
       "Bash(./fix-paths.sh)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(git rm:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }
