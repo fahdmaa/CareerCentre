@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Contact EMSI Marrakech Career Center - Get in touch with our team">
-    <title>Contact Us - EMSI Marrakech Career Center</title>
+    <meta name="description" content="About EMSI Marrakech Career Center - Learn about our mission, services, and how we support student careers">
+    <title>About Us - EMSI Marrakech Career Center</title>
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -331,6 +331,37 @@
         .required {
             color: #d32f2f;
         }
+
+        /* Service items hover effects */
+        .service-item:hover {
+            border-color: var(--emsi-primary-blue) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 74, 153, 0.15) !important;
+        }
+
+        /* Stats responsive grid */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .contact-header h1 {
+                font-size: 2.5rem !important;
+            }
+            
+            .service-item {
+                text-align: center;
+            }
+            
+            .service-item > div {
+                flex-direction: column !important;
+                text-align: center !important;
+            }
+            
+            .service-item .icon-wrapper {
+                margin: 0 0 1rem 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -368,7 +399,7 @@
                         <line x1="12" y1="8" x2="12.01" y2="8"></line>
                     </svg>
                 </span>
-                <span class="pill-navbar-label">Contact</span>
+                <span class="pill-navbar-label">About</span>
             </a>
         </li>
         <li>
@@ -448,8 +479,8 @@
         <img src="/images/avatar-5.jpg" alt="Career Center team member - Alumni relations coordinator">
     </div>
 
-    <h1>Contact</h1>
-    <p>Let's start something great together. Get in touch with one of the team today!</p>
+    <h1>About Our Career Center</h1>
+    <p>Empowering EMSI students to achieve their professional goals through comprehensive career services and industry connections</p>
 
     <div class="wavy-transition">
         <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -458,21 +489,22 @@
     </div>
 </section>
 
-<!-- Contact Content -->
+<!-- About Content -->
 <section class="contact-content">
+    <!-- Mission & Vision Section -->
     <div class="contact-container">
-        <!-- Contact Information -->
         <div class="contact-info">
-            <h2 class="contact-section-title">Get in touch</h2>
-
+            <h2 class="contact-section-title">Our Mission</h2>
+            <p style="font-size: 1.1rem; line-height: 1.7; color: #555; margin-bottom: 2rem;">The EMSI Marrakech Career Center is dedicated to empowering students and alumni to achieve their professional aspirations. We bridge the gap between academic excellence and industry demands through personalized career guidance, skill development programs, and strategic industry partnerships.</p>
+            
             <div class="contact-method">
                 <div class="contact-method-content">
                     <div class="icon-wrapper">
-                        <i class="fas fa-phone"></i>
+                        <i class="fas fa-target"></i>
                     </div>
                     <div>
-                        <h3>Phone</h3>
-                        <p>+212 524 423 673<br>+212 661 484 697</p>
+                        <h3>Our Vision</h3>
+                        <p>To be the leading career development center in Morocco, recognized for producing industry-ready graduates who drive innovation and excellence in their fields.</p>
                     </div>
                 </div>
             </div>
@@ -480,11 +512,98 @@
             <div class="contact-method">
                 <div class="contact-method-content">
                     <div class="icon-wrapper">
-                        <i class="fas fa-envelope"></i>
+                        <i class="fas fa-handshake"></i>
                     </div>
                     <div>
-                        <h3>Email</h3>
-                        <a href="mailto:centrecarriere.marrakech@emsi.ma" class="contact-email">centrecarriere.marrakech@emsi.ma</a>
+                        <h3>Industry Partnerships</h3>
+                        <p>We collaborate with leading companies across various sectors to provide students with real-world exposure and employment opportunities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Section -->
+        <div class="contact-form-container">
+            <h2 class="contact-section-title">Our Services</h2>
+            
+            <div class="services-grid" style="display: grid; gap: 1.5rem;">
+                <div class="service-item" style="padding: 1.5rem; border: 2px solid #f0f0f0; border-radius: 12px; transition: all 0.3s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <div class="icon-wrapper" style="margin-right: 1rem;">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h3 style="margin: 0; color: var(--emsi-primary-blue);">Career Counseling</h3>
+                    </div>
+                    <p style="margin: 0; color: #666;">Personalized one-on-one sessions to help students discover their career paths and develop professional strategies.</p>
+                </div>
+
+                <div class="service-item" style="padding: 1.5rem; border: 2px solid #f0f0f0; border-radius: 12px; transition: all 0.3s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <div class="icon-wrapper" style="margin-right: 1rem;">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3 style="margin: 0; color: var(--emsi-primary-blue);">Resume & Portfolio Development</h3>
+                    </div>
+                    <p style="margin: 0; color: #666;">Professional guidance on creating compelling resumes, cover letters, and portfolios that stand out to employers.</p>
+                </div>
+
+                <div class="service-item" style="padding: 1.5rem; border: 2px solid #f0f0f0; border-radius: 12px; transition: all 0.3s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <div class="icon-wrapper" style="margin-right: 1rem;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 style="margin: 0; color: var(--emsi-primary-blue);">Interview Preparation</h3>
+                    </div>
+                    <p style="margin: 0; color: #666;">Mock interviews, behavioral training, and industry-specific preparation to boost confidence and success rates.</p>
+                    
+                </div>
+
+                <div class="service-item" style="padding: 1.5rem; border: 2px solid #f0f0f0; border-radius: 12px; transition: all 0.3s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <div class="icon-wrapper" style="margin-right: 1rem;">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3 style="margin: 0; color: var(--emsi-primary-blue);">Job Placement</h3>
+                    </div>
+                    <p style="margin: 0; color: #666;">Direct connections with hiring companies and exclusive access to internships and full-time positions.</p>
+                </div>
+
+                <div class="service-item" style="padding: 1.5rem; border: 2px solid #f0f0f0; border-radius: 12px; transition: all 0.3s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <div class="icon-wrapper" style="margin-right: 1rem;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 style="margin: 0; color: var(--emsi-primary-blue);">Skills Development</h3>
+                    </div>
+                    <p style="margin: 0; color: #666;">Workshops and training programs on soft skills, technical skills, and professional development.</p>
+                </div>
+
+                <div class="service-item" style="padding: 1.5rem; border: 2px solid #f0f0f0; border-radius: 12px; transition: all 0.3s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                        <div class="icon-wrapper" style="margin-right: 1rem;">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                        <h3 style="margin: 0; color: var(--emsi-primary-blue);">Networking Events</h3>
+                    </div>
+                    <p style="margin: 0; color: #666;">Regular career fairs, industry meetups, and alumni networking sessions to expand professional connections.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact & Location Section -->
+    <div class="contact-container" style="margin-top: 4rem;">
+        <div class="contact-info">
+            <h2 class="contact-section-title">Visit Us</h2>
+
+            <div class="contact-method">
+                <div class="contact-method-content">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <h3>EMSI Marrakech - Gueliz Campus</h3>
+                        <p>98 Angle Bv Hassan II et rue Yougoslavie<br>Marrakech, Morocco</p>
                     </div>
                 </div>
             </div>
@@ -495,8 +614,21 @@
                         <i class="fas fa-map-marker-alt"></i>
                     </div>
                     <div>
-                        <h3>EMSI Marrakech - Gueliza</h3>
-                        <p>98 Angle Bv Hassan II et rue Yougoslavie,<br>Marrakech, Morocco</p>
+                        <h3>EMSI Marrakech - Centre Campus</h3>
+                        <p>5 Lot Bouizgaren, route de safi<br>Marrakech, Morocco</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-method">
+                <div class="contact-method-content">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div>
+                        <h3>Contact Information</h3>
+                        <p>Phone: +212 524 423 673 | +212 661 484 697<br>
+                        Email: <a href="mailto:centrecarriere.marrakech@emsi.ma" class="contact-email">centrecarriere.marrakech@emsi.ma</a></p>
                     </div>
                 </div>
             </div>
@@ -514,59 +646,44 @@
             </div>
         </div>
 
-        <!-- Contact Form -->
+        <!-- Stats Section -->
         <div class="contact-form-container">
-            <h2 class="contact-section-title">Send us a message</h2>
-            <form id="contactForm" action="#" method="POST" aria-label="Contact form">
-                <fieldset>
-                    <legend class="visually-hidden">Personal Information</legend>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="firstName">First name <span class="required" aria-label="required">*</span></label>
-                            <input type="text" id="firstName" name="firstName" class="form-control" placeholder="Enter your first name" required aria-describedby="firstName-error" aria-invalid="false" autocomplete="given-name">
-                            <div id="firstName-error" class="error-message" role="alert" aria-live="polite"></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastName">Last name <span class="required" aria-label="required">*</span></label>
-                            <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Enter your last name" required aria-describedby="lastName-error" aria-invalid="false" autocomplete="family-name">
-                            <div id="lastName-error" class="error-message" role="alert" aria-live="polite"></div>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <legend class="visually-hidden">Contact Information</legend>
-                    <div class="form-group">
-                        <label for="email">Email <span class="required" aria-label="required">*</span></label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email address" required aria-describedby="email-error" aria-invalid="false" autocomplete="email">
-                        <div id="email-error" class="error-message" role="alert" aria-live="polite"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="phone">Phone number</label>
-                        <input type="tel" id="phone" name="phone" class="form-control" placeholder="Enter your phone number" aria-describedby="phone-error" autocomplete="tel">
-                        <div id="phone-error" class="error-message" role="alert" aria-live="polite"></div>
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <legend class="visually-hidden">Message</legend>
-                    <div class="form-group">
-                        <label for="message">Message <span class="required" aria-label="required">*</span></label>
-                        <textarea id="message" name="message" class="form-control textarea-control" placeholder="Type your message here..." required aria-describedby="message-error" aria-invalid="false"></textarea>
-                        <div id="message-error" class="error-message" role="alert" aria-live="polite"></div>
-                    </div>
-                </fieldset>
-
-                <button type="submit" class="submit-btn" aria-label="Send contact message">Send</button>
-            </form>
+            <h2 class="contact-section-title">Our Impact</h2>
+            
+            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 2rem;">
+                <div class="stat-item" style="text-align: center; padding: 2rem 1rem; background: linear-gradient(135deg, var(--emsi-primary-blue), var(--emsi-accent-green)); color: white; border-radius: 16px;">
+                    <h3 style="font-size: 2.5rem; margin: 0 0 0.5rem 0; font-weight: 700;">85%</h3>
+                    <p style="margin: 0; font-size: 1.1rem;">Graduate Employment Rate</p>
+                </div>
+                
+                <div class="stat-item" style="text-align: center; padding: 2rem 1rem; background: linear-gradient(135deg, var(--emsi-accent-green), var(--emsi-primary-blue)); color: white; border-radius: 16px;">
+                    <h3 style="font-size: 2.5rem; margin: 0 0 0.5rem 0; font-weight: 700;">50+</h3>
+                    <p style="margin: 0; font-size: 1.1rem;">Partner Companies</p>
+                </div>
+                
+                <div class="stat-item" style="text-align: center; padding: 2rem 1rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-radius: 16px;">
+                    <h3 style="font-size: 2.5rem; margin: 0 0 0.5rem 0; font-weight: 700;">2000+</h3>
+                    <p style="margin: 0; font-size: 1.1rem;">Students Served</p>
+                </div>
+                
+                <div class="stat-item" style="text-align: center; padding: 2rem 1rem; background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; border-radius: 16px;">
+                    <h3 style="font-size: 2.5rem; margin: 0 0 0.5rem 0; font-weight: 700;">24/7</h3>
+                    <p style="margin: 0; font-size: 1.1rem;">Online Support</p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; padding: 2rem; background: #f8fafc; border-radius: 12px;">
+                <h3 style="color: var(--emsi-primary-blue); margin-bottom: 1rem;">Ready to Start Your Career Journey?</h3>
+                <p style="margin-bottom: 1.5rem; color: #666;">Get in touch with our career counselors to schedule your first consultation.</p>
+                <a href="mailto:centrecarriere.marrakech@emsi.ma" class="submit-btn" style="display: inline-block; text-decoration: none;">Contact Us Today</a>
+            </div>
         </div>
     </div>
 
     <!-- Map Section -->
     <div class="contact-container">
         <div class="map-container">
-            <iframe src="https://www.google.com/maps/place/Ecole+Marocaine+Des+Sciences+de+l%27Ing%C3%A9nieur/data=!4m7!3m6!1s0xdafef9ce2003acb:0xbf12ed0e32f9fa0c!8m2!3d31.6312137!4d-8.0127733!16s%2Fg%2F11hv_1m0bq!19sChIJyzoA4pzvrw0RDPr5Mg7tEr8?authuser=0&hl=fr&rclk=1" allowfullscreen="" loading="lazy"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3395.4947982743!2d-8.015561684770524!3d31.631213781337394!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xdafef9ce2003acb%3A0xbf12ed0e32f9fa0c!2sEcole%20Marocaine%20Des%20Sciences%20de%20l&#39;Ing%C3%A9nieur!5e0!3m2!1sen!2sma!4v1643022847298!5m2!1sen!2sma" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
     </div>
 </section>
