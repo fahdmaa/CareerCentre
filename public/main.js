@@ -115,48 +115,72 @@ if (window.emsiCareerCenterInitialized) {
             });
         }
 
-        // --- Intersection Observer for Scroll Animations --- //
+        // --- Optimized Intersection Observer for Scroll Animations --- //
         function initializeScrollAnimations() {
-            const animateOnScrollElements = document.querySelectorAll("[class*='animate-on-scroll'], .animate-on-scroll");
+            // Check for reduced motion preference
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                // Make all elements visible immediately if user prefers reduced motion
+                const animateOnScrollElements = document.querySelectorAll("[class*='animate-on-scroll'], .animate-on-scroll");
+                animateOnScrollElements.forEach(element => {
+                    element.classList.add("visible");
+                    element.style.opacity = "1";
+                    element.style.transform = "none";
+                });
+                return;
+            }
 
+            const animateOnScrollElements = document.querySelectorAll("[class*='animate-on-scroll'], .animate-on-scroll");
             if (animateOnScrollElements.length === 0) return;
+
+            // Use more efficient intersection observer with batched updates
+            let pendingAnimations = [];
+            let animationFrameId = null;
+
+            const processPendingAnimations = () => {
+                pendingAnimations.forEach(element => {
+                    // Use CSS classes instead of inline styles for better performance
+                    if (element.classList.contains("animate-on-scroll")) {
+                        element.classList.add("visible");
+                    }
+                    if (element.classList.contains("animate-slide-up-on-scroll")) {
+                        element.classList.add("animate-slide-up-visible");
+                    }
+                    if (element.classList.contains("animate-fade-in-on-scroll")) {
+                        element.classList.add("animate-fade-in-visible");
+                    }
+                    if (element.classList.contains("animate-slide-right-on-scroll")) {
+                        element.classList.add("animate-slide-right-visible");
+                    }
+
+                    // Optimized staggered children animations
+                    if (element.classList.contains("stagger-children")) {
+                        const children = Array.from(element.children);
+                        children.forEach((child, index) => {
+                            child.style.animationDelay = `${index * 80}ms`;
+                            child.classList.add('stagger-animate');
+                        });
+                    }
+                });
+
+                pendingAnimations = [];
+                animationFrameId = null;
+            };
 
             const scrollObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        const element = entry.target;
-
-                        if (element.classList.contains("animate-on-scroll")) {
-                            element.classList.add("visible");
+                        pendingAnimations.push(entry.target);
+                        observer.unobserve(entry.target);
+                        
+                        // Batch animation updates in a single frame
+                        if (!animationFrameId) {
+                            animationFrameId = requestAnimationFrame(processPendingAnimations);
                         }
-                        if (element.classList.contains("animate-slide-up-on-scroll")) {
-                            element.classList.add("animate-slide-up-visible");
-                        }
-                        if (element.classList.contains("animate-fade-in-on-scroll")) {
-                            element.classList.add("animate-fade-in-visible");
-                        }
-                        if (element.classList.contains("animate-slide-right-on-scroll")) {
-                            element.classList.add("animate-slide-right-visible");
-                        }
-
-                        // Handle staggered children animations
-                        if (element.classList.contains("stagger-children")) {
-                            const children = element.children;
-                            Array.from(children).forEach((child, index) => {
-                                setTimeout(() => {
-                                    child.style.opacity = "1";
-                                    child.style.transform = "translateY(0) translateX(0)";
-                                    child.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
-                                }, 80 * index);
-                            });
-                        }
-
-                        observer.unobserve(element);
                     }
                 });
             }, {
-                threshold: 0.15,
-                rootMargin: '0px 0px -30px 0px'
+                threshold: 0.1, // Reduced threshold for earlier trigger
+                rootMargin: '50px 0px -50px 0px' // Optimized margins
             });
 
             animateOnScrollElements.forEach(element => {
@@ -1041,40 +1065,74 @@ if (window.emsiCareerCenterInitialized) {
 
         // --- Performance Enhancements --- //
         function addGPUAcceleration() {
+            // Check for reduced motion preference
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+            
             const animatedElements = document.querySelectorAll('.animate-on-scroll, .btn, .pill-navbar-item, .job-card, .event-list li');
             animatedElements.forEach(element => {
                 element.classList.add('gpu-accelerated');
+                // Set will-change for better performance
+                element.style.willChange = 'transform, opacity';
             });
         }
 
-        // --- Mouse Movement Parallax --- //
+        // Cleanup will-change after animations complete
+        function cleanupWillChange() {
+            const elements = document.querySelectorAll('.gpu-accelerated');
+            elements.forEach(element => {
+                // Reset will-change after a delay to free up GPU resources
+                setTimeout(() => {
+                    element.style.willChange = 'auto';
+                }, 1000);
+            });
+        }
+
+        // --- Optimized Mouse Movement Parallax --- //
         function initializeMouseParallax() {
+            // Skip if user prefers reduced motion
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+
             const floatingElements = document.querySelectorAll("[class*='animate-float']");
             if (floatingElements.length === 0) return;
 
             let mouseX = 0;
             let mouseY = 0;
             let parallaxMouseTicking = false;
+            let lastUpdate = 0;
+            const throttleDelay = 16; // ~60fps
 
-            document.addEventListener('mousemove', (e) => {
+            // Debounced mousemove for better performance
+            const handleMouseMove = (e) => {
+                const now = performance.now();
+                if (now - lastUpdate < throttleDelay) return;
+                
                 mouseX = e.clientX;
                 mouseY = e.clientY;
+                lastUpdate = now;
 
                 if (!parallaxMouseTicking) {
                     requestAnimationFrame(updateMouseParallax);
                     parallaxMouseTicking = true;
                 }
-            });
+            };
+
+            document.addEventListener('mousemove', handleMouseMove, { passive: true });
 
             function updateMouseParallax() {
                 const centerX = window.innerWidth / 2;
                 const centerY = window.innerHeight / 2;
 
-                const moveX = (mouseX - centerX) * 0.01;
-                const moveY = (mouseY - centerY) * 0.01;
+                // Reduced movement intensity for smoother performance
+                const moveX = (mouseX - centerX) * 0.005;
+                const moveY = (mouseY - centerY) * 0.005;
 
+                // Use transform3d for better GPU performance
                 floatingElements.forEach(element => {
-                    element.style.transform = `translate(${moveX}px, ${moveY}px) rotate(${moveX * 0.5}deg)`;
+                    element.style.transform = `translate3d(${moveX}px, ${moveY}px, 0) rotate(${moveX * 0.3}deg)`;
                 });
 
                 parallaxMouseTicking = false;
@@ -1103,8 +1161,10 @@ if (window.emsiCareerCenterInitialized) {
 
         // --- Initialize All Features --- //
         function initializeAllFeatures() {
-            // Core features
+            // Performance optimizations first
             addGPUAcceleration();
+            
+            // Core features
             initializePillNavigation();
             initializeHideOnScroll();
             initializeScrollAnimations();
@@ -1128,7 +1188,10 @@ if (window.emsiCareerCenterInitialized) {
             initializeModalFunctionality();
             initializeNotificationForm();
 
-            console.log("All EMSI Career Center features initialized successfully.");
+            // Cleanup will-change after initialization
+            setTimeout(cleanupWillChange, 2000);
+
+            console.log("All EMSI Career Center features initialized successfully with performance optimizations.");
         }
 
         // --- Modal Functionality --- //

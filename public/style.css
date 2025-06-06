@@ -2085,13 +2085,49 @@ html {
 }
 
 /* Enhanced transition system */
-*, *::before, *::after {
+/* PERFORMANCE OPTIMIZATION: Removed universal transitions that were causing lag
+   Now applying transitions only to specific elements that need them */
+
+/* Performance optimized specific transitions */
+.btn, .pill-navbar-item, .job-card, .event-card, .stat-card {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Apply will-change only when needed */
+.btn:hover, .pill-navbar-item:hover, .job-card:hover, .event-card:hover, .stat-card:hover {
+    will-change: transform;
+}
+
+/* Remove will-change after hover */
+.btn, .pill-navbar-item, .job-card, .event-card, .stat-card {
+    will-change: auto;
+}
+
+/* CSS containment for better performance */
+.animate-on-scroll, .job-card, .event-card, .testimonial-slide, .stat-card {
+    contain: layout style;
+}
+
+/* GPU acceleration for animations */
+.gpu-accelerated, .animate-on-scroll, .floating-element {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+}
+
+/* Optimized stagger animation */
+.stagger-animate {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: staggerFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes staggerFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Advanced scroll animations */
@@ -2240,10 +2276,17 @@ html {
         scroll-behavior: auto !important;
     }
 
-    .animate-on-scroll {
-        opacity: 1;
-        transform: none;
+    .animate-on-scroll, .animate-slide-up-on-scroll, .animate-fade-in-on-scroll, .animate-slide-right-on-scroll {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
     }
+
+    .floating-element, .parallax {
+        transform: none !important;
+        animation: none !important;
+    }
+}
 
     .animate-float,
     .animate-pulse {

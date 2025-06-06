@@ -20,6 +20,43 @@ app.use((req, res, next) => {
 // Middleware
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+
+// Logging middleware for debugging
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path}`);
+    next();
+});
+
+// Serve static files from public directory for assets
+app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
+app.use('/videos', express.static(path.join(__dirname, 'public', 'videos')));
+
+// Special handling for CSS and JS files
+app.get('/style.css', (req, res) => {
+    const filePath = path.join(__dirname, 'public', 'style.css');
+    console.log('Serving style.css from:', filePath);
+    res.type('text/css');
+    res.sendFile(filePath, (err) => {
+        if (err) {
+            console.error('Error serving style.css:', err);
+            res.status(404).send('style.css not found');
+        }
+    });
+});
+
+app.get('/main.js', (req, res) => {
+    const filePath = path.join(__dirname, 'public', 'main.js');
+    console.log('Serving main.js from:', filePath);
+    res.type('application/javascript');
+    res.sendFile(filePath, (err) => {
+        if (err) {
+            console.error('Error serving main.js:', err);
+            res.status(404).send('main.js not found');
+        }
+    });
+});
+
+// General static file serving from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 // CORS configuration for development
@@ -31,6 +68,14 @@ if (process.env.NODE_ENV !== 'production') {
         next();
     });
 }
+
+// Debug: Log all static file requests
+app.use((req, res, next) => {
+    if (req.path.endsWith('.css') || req.path.endsWith('.js') || req.path.includes('/images/') || req.path.includes('/videos/')) {
+        console.log(`Static file request: ${req.path}`);
+    }
+    next();
+});
 
 // Serve static HTML files with explicit routes
 app.get('/', (req, res) => {
