@@ -56,7 +56,7 @@
 
         /* Modern Events Page Styles */
         .events-hero {
-            background: linear-gradient(135deg, #004A99 0%, #00A651 100%);
+            background: linear-gradient(135deg, #00A651 0%, #00A651 100%);
             padding: 80px 0 60px;
             color: white;
             text-align: center;
@@ -134,8 +134,8 @@
 
         .filter-select:focus, .filter-input:focus {
             outline: none;
-            border-color: #004A99;
-            box-shadow: 0 0 0 3px rgba(0, 74, 153, 0.1);
+            border-color: #00A651;
+            box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
         }
 
         .filter-tags {
@@ -161,9 +161,9 @@
         }
 
         .filter-tag.active {
-            background: #004A99;
+            background: #00A651;
             color: white;
-            border-color: #004A99;
+            border-color: #00A651;
         }
 
         .results-info {
@@ -359,7 +359,7 @@
         .btn-event-primary {
             flex: 1;
             padding: 12px 20px;
-            background: linear-gradient(135deg, #004A99 0%, #0066cc 100%);
+            background: linear-gradient(135deg, #00A651 0%, #00A651 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -376,7 +376,7 @@
 
         .btn-event-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 74, 153, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 166, 81, 0.3);
         }
 
         .btn-event-secondary {
@@ -394,8 +394,8 @@
         }
 
         .btn-event-secondary:hover {
-            border-color: #004A99;
-            color: #004A99;
+            border-color: #00A651;
+            color: #00A651;
         }
 
         /* List View Styles */
@@ -568,7 +568,7 @@
 
 <!-- Header with Logo -->
 <header class="main-header">
-    <div class="container">
+    <div class="container" style="display: flex; justify-content: center;">
         <a href="index.html" class="logo-link">
             <img src="/images/emsi-logo.png" alt="EMSI Logo" class="logo-img">
         </a>
@@ -709,210 +709,10 @@
 
             <!-- Events Grid -->
             <div class="events-grid active" id="events-grid">
-                <!-- Event Card 1 -->
-                <div class="event-card" data-type="workshop" data-location="online" data-date="upcoming">
-                    <div class="event-card-header">
-                        <span class="event-type-badge workshop">Workshop</span>
-                        <div class="event-date">
-                            <i class="fas fa-calendar-alt"></i>
-                            June 10, 2025 • 2:00 PM - 4:00 PM
-                        </div>
-                        <h3 class="event-title">Advanced CV & Cover Letter Strategies</h3>
-                        <div class="event-location">
-                            <i class="fas fa-map-marker-alt"></i>
-                            Online (Zoom)
-                        </div>
-                    </div>
-                    <div class="event-card-body">
-                        <p class="event-description">Take your application materials to the next level. This workshop covers advanced techniques for tailoring your CV and cover letter to specific roles and industries.</p>
-                        <div class="event-meta">
-                            <span class="event-capacity">50 spots available</span>
-                            <span class="event-status available">Available</span>
-                        </div>
-                        <div class="event-actions">
-                            <button class="btn-event-primary register-btn" data-event-title="Advanced CV & Cover Letter Strategies">
-                                <i class="fas fa-user-plus"></i> Register Now
-                            </button>
-                            <a href="#" class="btn-event-secondary">
-                                <i class="fas fa-info-circle"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Event Card 2 -->
-                <div class="event-card" data-type="presentation" data-location="campus" data-date="upcoming">
-                    <div class="event-card-header">
-                        <span class="event-type-badge presentation">Presentation</span>
-                        <div class="event-date">
-                            <i class="fas fa-calendar-alt"></i>
-                            June 15, 2025 • 10:00 AM - 12:00 PM
-                        </div>
-                        <h3 class="event-title">Tech Innovators Inc. Company Presentation</h3>
-                        <div class="event-location">
-                            <i class="fas fa-map-marker-alt"></i>
-                            EMSI Campus - Amphitheater B
-                        </div>
-                    </div>
-                    <div class="event-card-body">
-                        <p class="event-description">Discover career opportunities at Tech Innovators Inc., a leading firm in software development. Learn about their company culture, projects, and recruitment process.</p>
-                        <div class="event-meta">
-                            <span class="event-capacity">120 spots available</span>
-                            <span class="event-status available">Available</span>
-                        </div>
-                        <div class="event-actions">
-                            <button class="btn-event-primary register-btn" data-event-title="Tech Innovators Inc. Company Presentation">
-                                <i class="fas fa-user-plus"></i> Register Now
-                            </button>
-                            <a href="#" class="btn-event-secondary">
-                                <i class="fas fa-info-circle"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Event Card 3 -->
-                <div class="event-card" data-type="fair" data-location="campus" data-date="upcoming">
-                    <div class="event-card-header">
-                        <span class="event-type-badge fair">Career Fair</span>
-                        <div class="event-date">
-                            <i class="fas fa-calendar-alt"></i>
-                            July 5-6, 2025 • 9:00 AM - 5:00 PM
-                        </div>
-                        <h3 class="event-title">Annual EMSI Marrakech Career Fair</h3>
-                        <div class="event-location">
-                            <i class="fas fa-map-marker-alt"></i>
-                            EMSI Campus - Main Hall
-                        </div>
-                    </div>
-                    <div class="event-card-body">
-                        <p class="event-description">Connect with dozens of leading national and international companies looking to recruit EMSI talent. Explore job and internship opportunities.</p>
-                        <div class="event-meta">
-                            <span class="event-capacity">500+ spots available</span>
-                            <span class="event-status filling">Filling Fast</span>
-                        </div>
-                        <div class="event-actions">
-                            <button class="btn-event-primary register-btn" data-event-title="Annual EMSI Marrakech Career Fair">
-                                <i class="fas fa-user-plus"></i> Register Now
-                            </button>
-                            <a href="#" class="btn-event-secondary">
-                                <i class="fas fa-info-circle"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Event Card 4 -->
-                <div class="event-card" data-type="seminar" data-location="online" data-date="upcoming">
-                    <div class="event-card-header">
-                        <span class="event-type-badge seminar">Seminar</span>
-                        <div class="event-date">
-                            <i class="fas fa-calendar-alt"></i>
-                            July 12, 2025 • 3:00 PM - 4:30 PM
-                        </div>
-                        <h3 class="event-title">Mastering Professional Networking</h3>
-                        <div class="event-location">
-                            <i class="fas fa-map-marker-alt"></i>
-                            Online (Microsoft Teams)
-                        </div>
-                    </div>
-                    <div class="event-card-body">
-                        <p class="event-description">Learn effective strategies for building and leveraging your professional network, both online and offline. Communication skills and LinkedIn optimization included.</p>
-                        <div class="event-meta">
-                            <span class="event-capacity">75 spots available</span>
-                            <span class="event-status available">Available</span>
-                        </div>
-                        <div class="event-actions">
-                            <button class="btn-event-primary register-btn" data-event-title="Mastering Professional Networking">
-                                <i class="fas fa-user-plus"></i> Register Now
-                            </button>
-                            <a href="#" class="btn-event-secondary">
-                                <i class="fas fa-info-circle"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Past Event Cards -->
-                <div class="event-card" data-type="fair" data-location="external" data-date="past">
-                    <div class="event-card-header">
-                        <span class="event-type-badge fair">Career Fair</span>
-                        <div class="event-date">
-                            <i class="fas fa-calendar-alt"></i>
-                            January 6, 2025 • 9:00 AM - 6:00 PM
-                        </div>
-                        <h3 class="event-title">9th Forum des Entreprises</h3>
-                        <div class="event-location">
-                            <i class="fas fa-map-marker-alt"></i>
-                            Marrakech
-                        </div>
-                    </div>
-                    <div class="event-card-body">
-                        <p class="event-description">A day dedicated to exploring new professional opportunities for our students and graduates. Connect with national and international companies from various sectors.</p>
-                        <div class="event-meta">
-                            <span class="event-capacity">Event completed</span>
-                            <span class="event-status full">Completed</span>
-                        </div>
-                        <div class="event-actions">
-                            <a href="#" class="btn-event-primary">
-                                <i class="fas fa-images"></i> View Gallery
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="event-card" data-type="presentation" data-location="campus" data-date="past">
-                    <div class="event-card-header">
-                        <span class="event-type-badge presentation">Recruitment</span>
-                        <div class="event-date">
-                            <i class="fas fa-calendar-alt"></i>
-                            April 12, 2025 • 2:00 PM - 5:00 PM
-                        </div>
-                        <h3 class="event-title">Recruitment Session with Groupe Al Nour</h3>
-                        <div class="event-location">
-                            <i class="fas fa-map-marker-alt"></i>
-                            EMSI Marrakech Campus
-                        </div>
-                    </div>
-                    <div class="event-card-body">
-                        <p class="event-description">An opportunity for students to interact with professionals from Groupe Al Nour, a renowned player in the real estate industry.</p>
-                        <div class="event-meta">
-                            <span class="event-capacity">Event completed</span>
-                            <span class="event-status full">Completed</span>
-                        </div>
-                        <div class="event-actions">
-                            <a href="#" class="btn-event-primary">
-                                <i class="fas fa-images"></i> View Gallery
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="event-card" data-type="workshop" data-location="campus" data-date="past">
-                    <div class="event-card-header">
-                        <span class="event-type-badge workshop">Workshop</span>
-                        <div class="event-date">
-                            <i class="fas fa-calendar-alt"></i>
-                            March 22, 2025 • 10:00 AM - 12:00 PM
-                        </div>
-                        <h3 class="event-title">Interview Skills Masterclass</h3>
-                        <div class="event-location">
-                            <i class="fas fa-map-marker-alt"></i>
-                            EMSI Marrakech Campus
-                        </div>
-                    </div>
-                    <div class="event-card-body">
-                        <p class="event-description">A comprehensive workshop covering all aspects of the job interview process, from preparation to follow-up.</p>
-                        <div class="event-meta">
-                            <span class="event-capacity">Event completed</span>
-                            <span class="event-status full">Completed</span>
-                        </div>
-                        <div class="event-actions">
-                            <a href="#" class="btn-event-primary">
-                                <i class="fas fa-download"></i> View Materials
-                            </a>
-                        </div>
-                    </div>
+                <!-- Events will be loaded dynamically from database -->
+                <div style="text-align: center; padding: 40px; color: #666;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                    <p>Loading events...</p>
                 </div>
             </div>
 
@@ -1285,6 +1085,158 @@
 
         // Initial filter
         filterEvents();
+        
+        // Load events from database
+        async function loadEventsFromDatabase() {
+            try {
+                const response = await fetch('/api/public/events');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.data) {
+                        displayEvents(data.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+            }
+        }
+        
+        // Display events in the grid
+        function displayEvents(events) {
+            const eventsGrid = document.getElementById('events-grid');
+            eventsGrid.innerHTML = '';
+            
+            events.forEach(event => {
+                const eventDate = new Date(event.event_date);
+                const eventDateStr = eventDate.toLocaleDateString('en-US', { 
+                    month: 'long', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                });
+                const eventTime = event.event_time ? event.event_time.substring(0, 5) : '';
+                
+                // Determine event type for badge
+                let eventType = 'event';
+                let badgeClass = 'event';
+                if (event.title.toLowerCase().includes('workshop')) {
+                    eventType = 'Workshop';
+                    badgeClass = 'workshop';
+                } else if (event.title.toLowerCase().includes('fair')) {
+                    eventType = 'Career Fair';
+                    badgeClass = 'fair';
+                } else if (event.title.toLowerCase().includes('presentation')) {
+                    eventType = 'Presentation';
+                    badgeClass = 'presentation';
+                } else if (event.title.toLowerCase().includes('seminar')) {
+                    eventType = 'Seminar';
+                    badgeClass = 'seminar';
+                }
+                
+                // Determine location type
+                const locationType = event.location.toLowerCase().includes('online') ? 'online' : 'campus';
+                const dateStatus = eventDate >= new Date() ? 'upcoming' : 'past';
+                
+                // Calculate available spots
+                const totalCapacity = event.capacity || 100;
+                const registered = event.registered_count || 0;
+                const availableSpots = totalCapacity - registered;
+                let statusClass = 'available';
+                let statusText = 'Available';
+                
+                if (dateStatus === 'past') {
+                    statusClass = 'full';
+                    statusText = 'Completed';
+                } else if (availableSpots <= 0) {
+                    statusClass = 'full';
+                    statusText = 'Full';
+                } else if (availableSpots < 20) {
+                    statusClass = 'filling';
+                    statusText = 'Filling Fast';
+                }
+                
+                const eventCard = document.createElement('div');
+                eventCard.className = 'event-card';
+                eventCard.setAttribute('data-type', badgeClass);
+                eventCard.setAttribute('data-location', locationType);
+                eventCard.setAttribute('data-date', dateStatus);
+                eventCard.setAttribute('data-event-id', event.id);
+                
+                eventCard.innerHTML = `
+                    <div class="event-card-header">
+                        <span class="event-type-badge ${badgeClass}">${eventType}</span>
+                        <div class="event-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            ${eventDateStr} ${eventTime ? '• ' + eventTime : ''}
+                        </div>
+                        <h3 class="event-title">${event.title}</h3>
+                        <div class="event-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${event.location}
+                        </div>
+                    </div>
+                    <div class="event-card-body">
+                        <p class="event-description">${event.description || 'Join us for this exciting event!'}</p>
+                        <div class="event-meta">
+                            <span class="event-capacity">${dateStatus === 'past' ? 'Event completed' : availableSpots + ' spots available'}</span>
+                            <span class="event-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="event-actions">
+                            ${dateStatus === 'upcoming' ? `
+                                <button class="btn-event-primary register-btn" data-event-id="${event.id}" data-event-title="${event.title}">
+                                    <i class="fas fa-user-plus"></i> Register Now
+                                </button>
+                                <a href="#" class="btn-event-secondary">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                            ` : `
+                                <a href="#" class="btn-event-primary">
+                                    <i class="fas fa-images"></i> View Gallery
+                                </a>
+                            `}
+                        </div>
+                    </div>
+                `;
+                
+                eventsGrid.appendChild(eventCard);
+            });
+            
+            // Update results count
+            document.getElementById('results-count').textContent = `Showing ${events.length} events`;
+            
+            // Re-apply filters
+            filterEvents();
+            
+            // Re-initialize registration buttons for dynamic content
+            const registerButtons = document.querySelectorAll('.register-btn');
+            registerButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const eventTitle = button.getAttribute('data-event-title');
+                    const eventId = button.getAttribute('data-event-id');
+                    
+                    // Find and update the modal
+                    const selectedEventTitle = document.getElementById('selectedEventTitle');
+                    const registrationForm = document.getElementById('registrationForm');
+                    
+                    if (selectedEventTitle) {
+                        selectedEventTitle.textContent = eventTitle;
+                    }
+                    
+                    // Store event ID on the form for submission
+                    if (registrationForm && eventId) {
+                        registrationForm._eventId = eventId;
+                    }
+                    
+                    // Trigger the modal opening (if main.js is loaded)
+                    if (window.initializeRegistrationModal) {
+                        window.initializeRegistrationModal();
+                    }
+                });
+            });
+        }
+        
+        // Load events on page load
+        loadEventsFromDatabase();
     });
 </script>
 </body>

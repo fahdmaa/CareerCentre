@@ -13,7 +13,7 @@
             background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 30px rgba(238, 102, 102, 0.08);
             position: relative;
             padding: 1.2rem 0;
             z-index: 100;
@@ -22,7 +22,7 @@
 
         .main-header .container {
             display: flex;
-            justify-content: flex-start; /* Move logo to the left */
+            justify-content: center; /* Center the logo */
             align-items: center;
         }
 
@@ -249,7 +249,7 @@
             min-height: 750px;
             display: flex;
             justify-content: center;
-            align-items: flex-end;
+            align-items: center;
             z-index: 2;
             animation: fadeInRight 1s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
             padding-bottom: 2rem;
@@ -298,17 +298,8 @@
             object-fit: contain;
             display: block;
             filter: drop-shadow(0 15px 40px rgba(0, 0, 0, 0.15));
-            animation: heroFloat 4s ease-in-out infinite;
         }
 
-        @keyframes heroFloat {
-            0%, 100% {
-                transform: translateY(0) scale(1);
-            }
-            50% {
-                transform: translateY(-10px) scale(1.02);
-            }
-        }
 
         /* Ultra-modern stats section */
         .stats-bar {
@@ -343,6 +334,15 @@
         @keyframes patternMove {
             0% { background-position: 0 0, 0 0, 0 0, 0 0; }
             100% { background-position: 40px 40px, -40px -40px, 60px 60px, -60px -60px; }
+        }
+
+        .stats-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 4rem;
+            color: var(--emsi-primary-blue);
+            grid-column: 1 / -1;
         }
 
         .stats-container {
@@ -410,8 +410,7 @@
             width: 70px;
             height: 70px;
             margin: 0 auto 2rem;
-            background: linear-gradient(135deg, var(--emsi-primary-blue), var(--emsi-accent-green), var(--emsi-primary-blue));
-            background-size: 200% 200%;
+            background: var(--emsi-accent-green);
             border-radius: 18px;
             display: flex;
             align-items: center;
@@ -419,15 +418,10 @@
             font-size: 2rem;
             color: white;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: iconGradient 4s ease-in-out infinite;
             position: relative;
             overflow: hidden;
         }
 
-        @keyframes iconGradient {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
 
         .stat-icon::after {
             content: '';
@@ -437,17 +431,12 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: iconShimmer 2s ease-in-out infinite;
         }
 
-        @keyframes iconShimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
 
         .stat-item:hover .stat-icon {
             transform: scale(1.15) rotate(8deg);
-            box-shadow: 0 12px 30px rgba(0, 74, 153, 0.4);
+            box-shadow: 0 12px 30px rgba(0, 166, 81, 0.4);
         }
 
         .stat-number {
@@ -1008,7 +997,7 @@
 
     <div class="hero-image">
         <div class="circle-bg"></div>
-        <img src="/images/standing-guy.svg" alt="EMSI student in professional attire representing career success and opportunity" class="standing-guy">
+        <img src="/images/standing-guy.png" alt="EMSI student in professional attire representing career success and opportunity" class="standing-guy">
     </div>
 </section>
 
@@ -1028,11 +1017,12 @@
 <!-- Ultra-Modern Stats Bar -->
 <section class="stats-bar" id="stats-section">
     <div class="stats-container">
+        <h2 class="stats-title">Our Impact in Numbers</h2>
         <div class="stat-item" data-target="13000">
             <div class="stat-icon">
                 <i class="fas fa-graduation-cap"></i>
             </div>
-            <div class="stat-number" data-count="0">0</div>
+            <div class="stat-number" data-count="13000">+13k</div>
             <div class="stat-label">Alumni Network</div>
         </div>
         <div class="stat-item" data-target="250">

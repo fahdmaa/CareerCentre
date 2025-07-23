@@ -11,141 +11,115 @@ This is a career center web application for EMSI Marrakech, providing students a
 - **Frontend**: Static HTML pages with CSS styling and vanilla JavaScript
 - **Backend**: Express.js server with JWT authentication
 - **Deployment**: Configured for Vercel with static file serving
-- **Authentication**: Simple admin login system with bcrypt password hashing
+- **Node.js**: Requires version 14.0.0 or higher
 
 ### Key Files Structure
 - `index.html` - Main landing page with hero section and stats
 - `jobs.html` - Job listings with search and filter functionality  
 - `events.html` - Career events with registration modals
 - `about.html` - Information about the career center
+- `ambassadors.html` - Program ambassadors page
 - `admin-login.html` - Admin authentication page
 - `admin-dashboard.html` - Protected admin dashboard
 - `server.js` - Express backend with authentication routes
 - `public/main.js` - Frontend JavaScript functionality
-- `public/style.css` - Complete styling system
+- `public/style.css` - Complete styling system (104KB)
+- `public/style-optimized.css` - Optimized CSS variant (13KB)
 
 ## Development Commands
 
-### Initial Setup
 ```bash
+# Install dependencies
 npm install
-```
-Install all required dependencies (express, body-parser, bcrypt, jsonwebtoken).
 
-### Running the Application
-```bash
+# Run the application (all equivalent)
 npm start
-# or
 npm run dev
-# or 
 node server.js
-```
-The server runs on port 3000 by default (or PORT environment variable).
 
-### Health Check
-```bash
-curl http://localhost:3000/api/health
+# Server runs on port 3000 (or PORT env variable)
 ```
-Verify server is running and get uptime information.
+
+### API Endpoints
+
+```bash
+# Health check
+curl http://localhost:3000/api/health
+
+# Admin login (POST)
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
+
+# Admin dashboard (requires JWT token)
+curl http://localhost:3000/api/admin/dashboard \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
 
 ### Testing
-No test framework is currently configured. The package.json shows a placeholder test command.
+No test framework is currently configured. The package.json contains a placeholder test command.
 
 ## Key Features
 
-### Frontend Functionality
+### Frontend Architecture
 - **Navigation**: Pill-shaped bottom navigation bar with active states
-- **Job Search**: Advanced filtering by keyword, location, and job type
+- **Job Search**: Advanced filtering by keyword, location, and job type with debounced search
 - **Event Registration**: Modal-based registration system with form validation
-- **Responsive Design**: Mobile-first approach with modern CSS animations
-- **Performance**: Intersection Observer for animations, lazy loading for images
+- **Animation System**: Intersection Observer for scroll animations with GPU acceleration
+- **Performance**: RequestAnimationFrame, lazy loading, CSS containment
+- **State Management**: localStorage for job saving functionality
 
-### Backend Features
-- **Authentication**: JWT-based login system with rate limiting and security headers
-- **Protected Routes**: Enhanced middleware for securing admin endpoints with proper error handling
-- **User Management**: Simple in-memory user storage (production should use database)
-- **Security**: Rate limiting, input validation, CORS configuration, and graceful shutdown handling
-- **Health Monitoring**: Health check endpoint and performance monitoring
-- **Error Handling**: Global error handling and proper logging
+### Backend Architecture
+- **Authentication**: JWT-based login with bcrypt password hashing
+- **Security**: 
+  - Rate limiting (5 attempts per 15 minutes with lockout)
+  - Security headers (X-Content-Type-Options, X-Frame-Options, etc.)
+  - Input validation and sanitation
+  - CORS configuration for development
+- **Routes**: Clean URL routing with automatic .html extension handling
+- **Error Handling**: Global error handler with proper logging
+- **Monitoring**: Health check endpoint with uptime tracking
 
 ### Admin Credentials
 - Username: `admin`
-- Password: `admin123` (hashed in code)
+- Password: `admin123` (bcrypt hashed in code)
 
 ## Styling System
 
-The project uses a comprehensive CSS system with:
 - **Color Scheme**: EMSI brand colors (blue #004A99, green #00A651)
-- **Modern Design**: Glassmorphism effects, smooth animations, gradient backgrounds
-- **Responsive**: Mobile-first design with breakpoints at 992px and 576px
-- **Performance**: GPU-accelerated animations, optimized transitions, CSS containment for better rendering
-- **Accessibility**: WCAG 2.1 AA compliant with proper focus management and color contrast
-- **Optimization**: Reduced !important declarations, consolidated utility classes, optimized animations
+- **Design Pattern**: Glassmorphism effects, gradient backgrounds
+- **Responsive Breakpoints**: 576px (mobile), 992px (desktop)
+- **Accessibility**: WCAG 2.1 AA compliant with proper ARIA labels and focus management
+- **Performance**: GPU-accelerated animations, optimized transitions
 
-## JavaScript Architecture
+## JavaScript Architecture (`public/main.js`)
 
-### Core Functionality (`public/main.js`)
-- **Navigation Management**: Active state handling for pill navbar with collision prevention
-- **Search & Filtering**: Debounced search with real-time filtering and performance optimization
-- **Modal System**: Registration modals with proper accessibility and form validation
-- **Animation System**: Intersection Observer for scroll animations with GPU acceleration
-- **Performance Optimizations**: RequestAnimationFrame, lazy loading, and efficient event handling
-- **Code Quality**: Eliminated duplicate functions, consolidated functionality, and improved error handling
+### Core Components
+- **Navigation Manager**: Active state handling for pill navbar with collision prevention
+- **Search System**: Real-time filtering with performance optimization
+- **Modal Controller**: Registration modals with accessibility support
+- **Animation Engine**: Scroll-triggered animations with fallback support
+- **Form Validator**: Dynamic field validation with visual feedback
+- **Notification System**: User feedback for actions
 
-### Event Handling
-- Form validation with visual feedback and accessibility compliance
+### Event Handling Patterns
+- Debounced search input (300ms delay)
 - Dynamic major selection based on year of study
-- Job saving functionality with localStorage and state management
 - Responsive navbar with scroll hide/show behavior
-- Notification system for user feedback
-- Performance monitoring and error tracking
+- Form submission with validation states
+- LocalStorage for persistent job saves
 
 ## Development Notes
 
-- The application currently uses in-memory storage for users (enhanced with rate limiting and security)
-- For production deployment, implement proper database integration
-- JWT secret key should be moved to environment variables (currently has fallback)
-- Image optimization and CDN integration recommended for production
-- Error handling and logging have been implemented
-- All dependencies are properly configured in package.json
-- Accessibility features have been implemented to WCAG 2.1 AA standards
-
-## Recent Improvements Made
-
-### Security & Backend Enhancements
-- Added comprehensive security headers and CORS configuration
-- Implemented rate limiting for login attempts with lockout mechanism
-- Enhanced JWT token handling with proper error types
-- Added input validation and sanitation
-- Implemented graceful shutdown and health check endpoints
-- Added global error handling and improved logging
-
-### Frontend Performance & Quality
-- Eliminated duplicate code and functions throughout main.js
-- Improved animation performance with GPU acceleration
-- Consolidated event listeners to prevent memory leaks
-- Added proper error handling and null checks
-- Implemented notification system for better UX
-- Enhanced accessibility with proper ARIA labels and skip links
-
-### CSS & Design Optimizations
-- Reduced !important declarations by 31% through better specificity
-- Added CSS containment for improved rendering performance
-- Optimized animations to prevent layout thrashing
-- Consolidated utility classes for better maintainability
-- Enhanced responsive design patterns
-
-### Accessibility Improvements
-- Added proper form labels and fieldsets throughout all pages
-- Implemented skip navigation links for screen readers
-- Enhanced modal accessibility with proper ARIA attributes
-- Added comprehensive alt text for all images
-- Ensured proper heading hierarchy on all pages
-- Added error message management with live regions
+- **Database**: Currently uses in-memory storage for users - implement proper database for production
+- **Environment Variables**: JWT secret should use environment variables (currently has fallback)
+- **Image Optimization**: Consider CDN integration for production deployment
+- **Dependencies**: All configured in package.json (express, body-parser, bcrypt, jsonwebtoken)
 
 ## Deployment
 
-Configured for Vercel deployment with:
+Configured for Vercel deployment via `vercel.json`:
 - Static file serving for frontend assets
 - Serverless function support for Express.js backend
 - Automatic HTTPS and domain management
+- Clean URL routing configuration

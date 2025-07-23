@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Security headers middleware
 app.use((req, res, next) => {
@@ -23,7 +24,9 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // Logging middleware for debugging
 app.use((req, res, next) => {
-    console.log(`${req.method} ${req.path}`);
+    if (!isProduction) {
+        console.log(`${req.method} ${req.path}`);
+    }
     next();
 });
 
@@ -34,11 +37,11 @@ app.use('/videos', express.static(path.join(__dirname, 'public', 'videos')));
 // Special handling for CSS and JS files
 app.get('/style.css', (req, res) => {
     const filePath = path.join(__dirname, 'public', 'style.css');
-    console.log('Serving style.css from:', filePath);
+    if (!isProduction) console.log('Serving style.css from:', filePath);
     res.type('text/css');
     res.sendFile(filePath, (err) => {
         if (err) {
-            console.error('Error serving style.css:', err);
+            if (!isProduction) console.error('Error serving style.css:', err);
             res.status(404).send('style.css not found');
         }
     });
@@ -46,11 +49,11 @@ app.get('/style.css', (req, res) => {
 
 app.get('/main.js', (req, res) => {
     const filePath = path.join(__dirname, 'public', 'main.js');
-    console.log('Serving main.js from:', filePath);
+    if (!isProduction) console.log('Serving main.js from:', filePath);
     res.type('application/javascript');
     res.sendFile(filePath, (err) => {
         if (err) {
-            console.error('Error serving main.js:', err);
+            if (!isProduction) console.error('Error serving main.js:', err);
             res.status(404).send('main.js not found');
         }
     });
@@ -154,7 +157,7 @@ const users = [
         username: 'admin',
         // This would be a hashed password in a real application
         // The plain text is 'admin123'
-        password: '$2b$10$i8J5.1rFUG.C/n.0UJJEj.RPOTKu1BcUAFHwz/IC9xNQ9hJlJI3t6'
+        password: '$2b$10$SDJO0pmbtfTabKgB1iV1q.UCN6XndLbG1BwptBDj8hO0PtDr7klWu'
     }
 ];
 
@@ -278,6 +281,30 @@ const authenticateToken = (req, res, next) => {
     }
 };
 
+// In-memory storage (replace with database in production)
+let ambassadors = [
+    { id: 1, name: 'Mohamed Alami', role: 'Lead Ambassador', major: 'Computer Science', year: '4th Year', email: 'm.alami@emsi.ma', linkedin: 'mohamed-alami', bio: 'Passionate about connecting students with career opportunities.', status: 'active' },
+    { id: 2, name: 'Sophia Berrada', role: 'Event Coordinator', major: 'Business Administration', year: '3rd Year', email: 's.berrada@emsi.ma', linkedin: 'sophia-berrada', bio: 'Organizing impactful career events for EMSI students.', status: 'active' },
+    { id: 3, name: 'Youssef Benali', role: 'Social Media Manager', major: 'Digital Marketing', year: '3rd Year', email: 'y.benali@emsi.ma', linkedin: 'youssef-benali', bio: 'Building EMSI\'s career center online presence.', status: 'active' }
+];
+
+let events = [
+    { id: 1, title: 'Annual EMSI Marrakech Career Fair', event_date: '2025-07-05', event_time: '09:00', location: 'EMSI Campus - Main Hall', description: 'Connect with top employers and explore career opportunities.', capacity: 200, status: 'upcoming', registered_count: 45 },
+    { id: 2, title: 'Workshop: Advanced CV & Cover Letter Strategies', event_date: '2025-06-10', event_time: '14:00', location: 'Online (Zoom)', description: 'Learn how to create compelling CVs and cover letters.', capacity: 50, status: 'upcoming', registered_count: 28 },
+    { id: 3, title: 'Company Presentation: Tech Innovators Inc.', event_date: '2025-06-15', event_time: '10:00', location: 'EMSI Campus - Amphitheater B', description: 'Learn about career opportunities at Tech Innovators.', capacity: 100, status: 'upcoming', registered_count: 32 }
+];
+
+let jobs = [
+    { id: 1, title: 'Software Developer Intern', company: 'Tech Solutions Morocco', location: 'Marrakech', type: 'Internship', description: 'Join our development team for a 6-month internship.', requirements: 'Computer Science students, JavaScript knowledge', posted_date: '2025-01-20', status: 'active' },
+    { id: 2, title: 'Marketing Assistant', company: 'Digital Agency Maroc', location: 'Casablanca', type: 'Full-time', description: 'We are looking for a creative marketing assistant.', requirements: 'Marketing degree, Social media skills', posted_date: '2025-01-18', status: 'active' },
+    { id: 3, title: 'Data Analyst', company: 'Finance Corp', location: 'Rabat', type: 'Full-time', description: 'Analyze financial data and create reports.', requirements: 'Statistics background, Excel proficiency', posted_date: '2025-01-15', status: 'active' }
+];
+
+// ID generators
+let nextAmbassadorId = 4;
+let nextEventId = 4;
+let nextJobId = 4;
+
 // Protected route example
 app.get('/api/admin/dashboard', authenticateToken, (req, res) => {
     // In a real app, you'd fetch data from a database
@@ -287,6 +314,155 @@ app.get('/api/admin/dashboard', authenticateToken, (req, res) => {
         upcomingEvents: 8,
         unreadMessages: 17
     });
+});
+
+// Stats endpoint
+app.get('/api/admin/stats', authenticateToken, (req, res) => {
+    res.json({
+        data: {
+            active_ambassadors: ambassadors.filter(a => a.status === 'active').length,
+            upcoming_events: events.filter(e => e.status === 'upcoming').length,
+            total_registrations: events.reduce((sum, e) => sum + (e.registered_count || 0), 0),
+            unread_messages: 17,
+            active_jobs: jobs.filter(j => j.status === 'active').length
+        }
+    });
+});
+
+// Ambassador endpoints
+app.get('/api/ambassadors', authenticateToken, (req, res) => {
+    res.json({ data: ambassadors });
+});
+
+app.get('/api/ambassadors/:id', authenticateToken, (req, res) => {
+    const ambassador = ambassadors.find(a => a.id == req.params.id);
+    if (!ambassador) {
+        return res.status(404).json({ message: 'Ambassador not found' });
+    }
+    res.json({ data: ambassador });
+});
+
+app.post('/api/ambassadors', authenticateToken, (req, res) => {
+    const newAmbassador = {
+        id: nextAmbassadorId++,
+        ...req.body,
+        created_at: new Date().toISOString()
+    };
+    ambassadors.push(newAmbassador);
+    res.status(201).json({ data: newAmbassador });
+});
+
+app.put('/api/ambassadors/:id', authenticateToken, (req, res) => {
+    const index = ambassadors.findIndex(a => a.id == req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ message: 'Ambassador not found' });
+    }
+    ambassadors[index] = { ...ambassadors[index], ...req.body };
+    res.json({ data: ambassadors[index] });
+});
+
+app.delete('/api/ambassadors/:id', authenticateToken, (req, res) => {
+    const index = ambassadors.findIndex(a => a.id == req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ message: 'Ambassador not found' });
+    }
+    ambassadors.splice(index, 1);
+    res.status(204).send();
+});
+
+// Event endpoints
+app.get('/api/events', authenticateToken, (req, res) => {
+    res.json({ data: events });
+});
+
+app.get('/api/events/:id', authenticateToken, (req, res) => {
+    const event = events.find(e => e.id == req.params.id);
+    if (!event) {
+        return res.status(404).json({ message: 'Event not found' });
+    }
+    res.json({ data: event });
+});
+
+app.post('/api/events', authenticateToken, (req, res) => {
+    const newEvent = {
+        id: nextEventId++,
+        ...req.body,
+        registered_count: 0,
+        created_at: new Date().toISOString()
+    };
+    events.push(newEvent);
+    res.status(201).json({ data: newEvent });
+});
+
+app.put('/api/events/:id', authenticateToken, (req, res) => {
+    const index = events.findIndex(e => e.id == req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ message: 'Event not found' });
+    }
+    events[index] = { ...events[index], ...req.body };
+    res.json({ data: events[index] });
+});
+
+app.delete('/api/events/:id', authenticateToken, (req, res) => {
+    const index = events.findIndex(e => e.id == req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ message: 'Event not found' });
+    }
+    events.splice(index, 1);
+    res.status(204).send();
+});
+
+// Job endpoints
+app.get('/api/jobs', authenticateToken, (req, res) => {
+    res.json({ data: jobs });
+});
+
+app.post('/api/jobs', authenticateToken, (req, res) => {
+    const newJob = {
+        id: nextJobId++,
+        ...req.body,
+        posted_date: new Date().toISOString(),
+        status: 'active'
+    };
+    jobs.push(newJob);
+    res.status(201).json({ data: newJob });
+});
+
+app.put('/api/jobs/:id', authenticateToken, (req, res) => {
+    const index = jobs.findIndex(j => j.id == req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ message: 'Job not found' });
+    }
+    jobs[index] = { ...jobs[index], ...req.body };
+    res.json({ data: jobs[index] });
+});
+
+app.delete('/api/jobs/:id', authenticateToken, (req, res) => {
+    const index = jobs.findIndex(j => j.id == req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ message: 'Job not found' });
+    }
+    jobs.splice(index, 1);
+    res.status(204).send();
+});
+
+// Public endpoints (no auth required)
+app.get('/api/public/ambassadors', (req, res) => {
+    const activeAmbassadors = ambassadors.filter(a => a.status === 'active');
+    res.set('Cache-Control', 'no-store');
+    res.json({ data: activeAmbassadors });
+});
+
+app.get('/api/public/events', (req, res) => {
+    const upcomingEvents = events.filter(e => e.status === 'upcoming');
+    res.set('Cache-Control', 'no-store');
+    res.json({ data: upcomingEvents });
+});
+
+app.get('/api/public/jobs', (req, res) => {
+    const activeJobs = jobs.filter(j => j.status === 'active');
+    res.set('Cache-Control', 'no-store');
+    res.json({ data: activeJobs });
 });
 
 // Health check endpoint

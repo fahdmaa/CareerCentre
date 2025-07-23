@@ -16,6 +16,13 @@
             font-family: var(--font-primary);
         }
 
+        /* Center the logo in header */
+        .main-header .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .contact-header {
             background: linear-gradient(135deg, var(--emsi-primary-blue), var(--emsi-accent-green));
             color: white;
@@ -117,7 +124,29 @@
             align-items: center;
             justify-content: center;
             background-color: #f8f8f8;
+            animation: float 6s ease-in-out infinite;
+            transition: transform 0.3s ease;
         }
+        
+        .profile-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .avatar-1 { animation-delay: 0s; }
+        .avatar-2 { animation-delay: 0.5s; }
+        .avatar-3 { animation-delay: 1s; }
+        .avatar-4 { animation-delay: 1.5s; }
+        .avatar-5 { animation-delay: 2s; }
 
         .profile-avatar img {
             width: 100%;
@@ -297,10 +326,25 @@
             justify-content: center;
             width: 40px;
             height: 40px;
-            background-color: rgba(0, 74, 153, 0.1);
-            color: var(--emsi-primary-blue);
+            background-color: var(--emsi-accent-green);
+            color: white;
             border-radius: 50%;
             margin-right: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .vision-partnerships-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .vision-partnerships-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 166, 81, 0.2);
+        }
+        
+        .vision-partnerships-card:hover .icon-wrapper {
+            transform: rotate(360deg) scale(1.1);
         }
 
         .contact-method-content {
@@ -507,7 +551,7 @@
         <img src="/images/avatar-5.jpg" alt="Career Center team member - Alumni relations coordinator">
     </div>
 
-    <h1>About Our Career Center</h1>
+    <h1>About our career center</h1>
     <p>Empowering EMSI students to achieve their professional goals through comprehensive career services and industry connections</p>
 
     <div class="wavy-transition">
@@ -529,22 +573,22 @@
                 
                 <!-- Vision & Partnerships in a row -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
-                    <div style="text-align: left; padding: 1.5rem; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 16px;">
+                    <div class="vision-partnerships-card" style="text-align: left; padding: 1.5rem; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 16px;">
                         <div style="display: flex; align-items: center; margin-bottom: 1rem;">
                             <div class="icon-wrapper" style="margin-right: 1rem;">
-                                <i class="fas fa-target"></i>
+                                <i class="fas fa-eye"></i>
                             </div>
-                            <h3 style="margin: 0; color: var(--emsi-primary-blue);">Our Vision</h3>
+                            <h3 style="margin: 0; color: var(--emsi-accent-green);">Our Vision</h3>
                         </div>
                         <p style="margin: 0; color: #666;">To be the leading career development center in Morocco, recognized for producing industry-ready graduates who drive innovation and excellence in their fields.</p>
                     </div>
                     
-                    <div style="text-align: left; padding: 1.5rem; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 16px;">
+                    <div class="vision-partnerships-card" style="text-align: left; padding: 1.5rem; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 16px;">
                         <div style="display: flex; align-items: center; margin-bottom: 1rem;">
                             <div class="icon-wrapper" style="margin-right: 1rem;">
-                                <i class="fas fa-handshake"></i>
+                                <i class="fas fa-building"></i>
                             </div>
-                            <h3 style="margin: 0; color: var(--emsi-primary-blue);">Industry Partnerships</h3>
+                            <h3 style="margin: 0; color: var(--emsi-accent-green);">Industry Partnerships</h3>
                         </div>
                         <p style="margin: 0; color: #666;">We collaborate with leading companies across various sectors to provide students with real-world exposure and employment opportunities.</p>
                     </div>

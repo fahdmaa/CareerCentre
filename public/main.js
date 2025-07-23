@@ -630,8 +630,15 @@ if (window.emsiCareerCenterInitialized) {
                     button.addEventListener('click', (e) => {
                         e.preventDefault();
                         const eventTitle = button.getAttribute('data-event-title');
+                        const eventId = button.getAttribute('data-event-id');
+                        
                         if (selectedEventTitle) {
                             selectedEventTitle.textContent = eventTitle;
+                        }
+                        
+                        // Store event ID on the form for submission
+                        if (registrationForm && eventId) {
+                            registrationForm._eventId = eventId;
                         }
 
                         if (registrationModal) {
@@ -754,7 +761,7 @@ if (window.emsiCareerCenterInitialized) {
 
             // Form submission
             if (registrationForm) {
-                registrationForm.addEventListener('submit', function(e) {
+                registrationForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
 
                     const formData = new FormData(this);
@@ -768,6 +775,9 @@ if (window.emsiCareerCenterInitialized) {
                         registrationData.eventTitle = selectedEventTitle.textContent;
                     }
 
+                    // Get event ID from the clicked button
+                    const eventId = this._eventId;
+
                     console.log('Registration Data:', registrationData);
 
                     const submitButton = this.querySelector('.submit-btn');
@@ -776,7 +786,31 @@ if (window.emsiCareerCenterInitialized) {
                     submitButton.disabled = true;
                     submitButton.style.background = '#ccc';
 
-                    setTimeout(() => {
+                    try {
+                        // Submit to database if event ID is available
+                        if (eventId) {
+                            const response = await fetch('/api/public/register', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    event_id: parseInt(eventId),
+                                    student_name: registrationData.fullName,
+                                    student_email: registrationData.email,
+                                    student_phone: registrationData.phoneNumber,
+                                    major: registrationData.major,
+                                    year: registrationData.yearOfStudy
+                                })
+                            });
+
+                            const result = await response.json();
+                            
+                            if (!response.ok) {
+                                throw new Error(result.message || 'Registration failed');
+                            }
+                        }
+
                         closeModal(registrationModal);
 
                         if (successModal) {
@@ -797,10 +831,14 @@ if (window.emsiCareerCenterInitialized) {
                             }
                         }
 
+                    } catch (error) {
+                        console.error('Registration error:', error);
+                        alert(error.message || 'Registration failed. Please try again.');
+                    } finally {
                         submitButton.innerHTML = originalText;
                         submitButton.disabled = false;
                         submitButton.style.background = '';
-                    }, 1500);
+                    }
                 });
             }
         }
