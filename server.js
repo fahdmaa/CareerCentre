@@ -565,6 +565,15 @@ app.get('/api/public/ambassadors', (req, res) => {
     res.json({ data: activeAmbassadors });
 });
 
+app.get('/api/public/cohorts/active', (req, res) => {
+    const activeCohort = cohortConfig.cohorts.find(c => c.active);
+    if (!activeCohort) {
+        return res.status(404).json({ message: 'No active cohort found' });
+    }
+    res.set('Cache-Control', 'no-store');
+    res.json({ data: activeCohort });
+});
+
 app.get('/api/public/events', (req, res) => {
     const upcomingEvents = events.filter(e => e.status === 'upcoming');
     res.set('Cache-Control', 'no-store');

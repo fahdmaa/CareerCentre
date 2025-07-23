@@ -517,6 +517,98 @@
     </section>
 </main>
 
+<!-- Application Modal -->
+<div id="application-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-paper-plane"></i> Apply to Become an Ambassador</h2>
+            <button class="modal-close" aria-label="Close modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="application-form-container">
+                <p class="modal-description">
+                    Join our prestigious Student Ambassadors program and become a leader at EMSI Marrakech!
+                    Fill out the form below to submit your application.
+                </p>
+                
+                <form id="application-form" class="application-form" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="apply-name" class="form-label">Full Name *</label>
+                            <input type="text" id="apply-name" name="name" class="form-input" required aria-describedby="apply-name-error">
+                            <div id="apply-name-error" class="error-message" role="alert"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="apply-email" class="form-label">Email Address *</label>
+                            <input type="email" id="apply-email" name="email" class="form-input" placeholder="your.email@emsi.ma" required aria-describedby="apply-email-error">
+                            <div id="apply-email-error" class="error-message" role="alert"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="apply-major" class="form-label">Major *</label>
+                            <select id="apply-major" name="major" class="form-select" required aria-describedby="apply-major-error">
+                                <option value="">Select your major</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Business Administration">Business Administration</option>
+                                <option value="Digital Marketing">Digital Marketing</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div id="apply-major-error" class="error-message" role="alert"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="apply-year" class="form-label">Current Year *</label>
+                            <select id="apply-year" name="year" class="form-select" required aria-describedby="apply-year-error">
+                                <option value="">Select your year</option>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                                <option value="5th Year">5th Year</option>
+                            </select>
+                            <div id="apply-year-error" class="error-message" role="alert"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="apply-linkedin" class="form-label">LinkedIn Profile</label>
+                        <input type="text" id="apply-linkedin" name="linkedin" class="form-input" placeholder="linkedin.com/in/yourprofile">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="apply-motivation" class="form-label">Why do you want to become an ambassador? *</label>
+                        <textarea id="apply-motivation" name="motivation" class="form-textarea" rows="4" required aria-describedby="apply-motivation-error"></textarea>
+                        <div id="apply-motivation-error" class="error-message" role="alert"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="apply-experience" class="form-label">Previous leadership experience (if any)</label>
+                        <textarea id="apply-experience" name="experience" class="form-textarea" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-submit">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Application
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Application Submitted Successfully!</h3>
+                    <p>Thank you for applying to be an EMSI Student Ambassador. We'll review your application and get back to you soon.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Notification Modal -->
 <div id="notification-modal" class="modal-overlay">
     <div class="modal-content">
@@ -775,6 +867,119 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Load cohort information
+    async function loadCohortInfo() {
+        try {
+            const response = await fetch('/api/public/cohorts/active');
+            if (response.ok) {
+                const result = await response.json();
+                if (result.data) {
+                    updateCohortCTA(result.data);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading cohort info:', error);
+        }
+    }
+    
+    // Update the CTA section based on active cohort
+    function updateCohortCTA(cohort) {
+        const ctaSection = document.querySelector('.ambassadors-cta .cta-content');
+        if (!ctaSection) return;
+        
+        const now = new Date();
+        const applicationDeadline = new Date(cohort.applicationDeadline);
+        const startDate = new Date(cohort.startDate);
+        
+        let ctaHTML = '';
+        
+        if (now < applicationDeadline) {
+            // Applications are open
+            const daysLeft = Math.ceil((applicationDeadline - now) / (1000 * 60 * 60 * 24));
+            let perksHTML = '';
+            
+            if (cohort.perks && cohort.perks.length > 0) {
+                perksHTML = `
+                    <div style="margin: 2rem 0;">
+                        <h3 style="color: #00A651; margin-bottom: 1rem;">Ambassador Perks:</h3>
+                        <ul style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0.5rem;">
+                            ${cohort.perks.map(perk => `
+                                <li style="display: flex; align-items: center;">
+                                    <i class="fas fa-check-circle" style="color: #00A651; margin-right: 0.5rem;"></i>
+                                    ${perk}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            ctaHTML = `
+                <h2>Applications Are Open for ${cohort.year} Cohort!</h2>
+                <p>Join our prestigious ambassador program. Applications close on ${applicationDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (${daysLeft} days left).</p>
+                ${perksHTML}
+                <div class="cta-buttons">
+                    <a href="#apply" class="btn btn-primary-large" data-modal="application-modal">
+                        <i class="fas fa-paper-plane"></i>
+                        Apply Now
+                    </a>
+                    <a href="about.html" class="btn btn-secondary-large">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+            `;
+        } else if (now >= applicationDeadline && now < startDate) {
+            // Applications closed, program hasn't started
+            ctaHTML = `
+                <h2>Applications for ${cohort.year} Cohort Are Closed</h2>
+                <p>Thank you for your interest! The selection process is underway. The program will begin on ${startDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}.</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary-large" data-modal="notification-modal">
+                        <i class="fas fa-bell"></i>
+                        Get Notified for Next Cohort
+                    </a>
+                    <a href="about.html" class="btn btn-secondary-large">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+            `;
+        } else {
+            // Program is ongoing
+            const nextYear = parseInt(cohort.year) + 1;
+            ctaHTML = `
+                <h2>Ready to Become an Ambassador?</h2>
+                <p>Applications for the ${nextYear} cohort will open soon. Follow us to stay updated!</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary-large" data-modal="notification-modal">
+                        <i class="fas fa-bell"></i>
+                        Get Notified
+                    </a>
+                    <a href="about.html" class="btn btn-secondary-large">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+            `;
+        }
+        
+        ctaSection.innerHTML = ctaHTML;
+        
+        // Re-attach modal event listeners
+        const modalTriggers = ctaSection.querySelectorAll('[data-modal]');
+        modalTriggers.forEach(trigger => {
+            trigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                const modalId = this.getAttribute('data-modal');
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('active');
+                }
+            });
+        });
+    }
+    
     // Display ambassadors in the grid
     function displayAmbassadors(ambassadors) {
         const ambassadorsGrid = document.getElementById('ambassadors-grid') || document.querySelector('.ambassadors-grid');
@@ -817,6 +1022,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load ambassadors on page load
     loadAmbassadorsFromDatabase();
+    loadCohortInfo();
 });
 </script>
 </body>

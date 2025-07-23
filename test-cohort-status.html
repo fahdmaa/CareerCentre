@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Cohort Status on Ambassadors Page</title>
+</head>
+<body>
+    <h1>Cohort Status Implementation Test</h1>
+    
+    <h2>What was implemented:</h2>
+    <ol>
+        <li>✅ Added dynamic cohort status loading to ambassadors page</li>
+        <li>✅ Created public API endpoint: /api/public/cohorts/active</li>
+        <li>✅ Dynamic CTA section that changes based on cohort status:
+            <ul>
+                <li>Applications Open: Shows "Apply Now" button with perks list and deadline countdown</li>
+                <li>Applications Closed: Shows notification signup for next cohort</li>
+                <li>Program Ongoing: Shows notification signup for next year's cohort</li>
+            </ul>
+        </li>
+        <li>✅ Added application modal for when applications are open</li>
+        <li>✅ Perks display when applications are open</li>
+    </ol>
+    
+    <h2>Current Active Cohort Data:</h2>
+    <pre>
+    {
+        "year": "2024",
+        "active": true,
+        "startDate": "2024-09-01",
+        "endDate": "2025-06-30",
+        "maxAmbassadors": 20,
+        "applicationDeadline": "2024-08-15",
+        "perks": [
+            "Leadership training",
+            "Networking events",
+            "Certificate of achievement",
+            "Priority access to career events"
+        ],
+        "requiredTrainings": [
+            "Orientation",
+            "Leadership basics",
+            "EMSI values and culture"
+        ]
+    }
+    </pre>
+    
+    <h2>Expected Behavior:</h2>
+    <p>Since the application deadline (2024-08-15) is in the past and we're currently in the program period (2024-09-01 to 2025-06-30), the ambassadors page should show:</p>
+    <ul>
+        <li>"Ready to Become an Ambassador?"</li>
+        <li>"Applications for the 2025 cohort will open soon. Follow us to stay updated!"</li>
+        <li>"Get Notified" button</li>
+    </ul>
+    
+    <h2>To Test Different Scenarios:</h2>
+    <ol>
+        <li>In admin dashboard, go to "Manage Cohorts"</li>
+        <li>Edit the 2024 cohort and change the application deadline to a future date</li>
+        <li>Refresh the ambassadors page - it should show "Applications Are Open" with perks</li>
+        <li>Change the application deadline to past but start date to future</li>
+        <li>Refresh - it should show "Applications Closed" with program start date</li>
+    </ol>
+</body>
+</html>
