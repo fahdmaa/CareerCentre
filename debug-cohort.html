@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Cohort</title>
+</head>
+<body>
+    <h1>Debug Cohort Display</h1>
+    <button onclick="testCohort()">Test Cohort API and Display Logic</button>
+    <div id="api-response"></div>
+    <div id="cta-preview" style="margin-top: 20px; padding: 20px; border: 1px solid #ccc;">
+        <h2>CTA Preview:</h2>
+        <div id="cta-content"></div>
+    </div>
+    
+    <script>
+    async function testCohort() {
+        const apiDiv = document.getElementById('api-response');
+        const ctaDiv = document.getElementById('cta-content');
+        
+        try {
+            const response = await fetch('/api/public/cohorts/active');
+            const data = await response.json();
+            
+            apiDiv.innerHTML = '<h3>API Response:</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            
+            if (data && data.data) {
+                const cohort = data.data;
+                const now = new Date();
+                const deadline = new Date(cohort.applicationDeadline);
+                
+                apiDiv.innerHTML += '<h3>Date Comparison:</h3>';
+                apiDiv.innerHTML += '<p>Current Date: ' + now.toLocaleDateString() + '</p>';
+                apiDiv.innerHTML += '<p>Application Deadline: ' + deadline.toLocaleDateString() + '</p>';
+                apiDiv.innerHTML += '<p>Applications Open? ' + (now < deadline ? 'YES' : 'NO') + '</p>';
+                
+                if (now < deadline) {
+                    const daysLeft = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
+                    ctaDiv.innerHTML = `
+                        <h2>Applications Are Open for ${cohort.year} Cohort!</h2>
+                        <p>Join our prestigious ambassador program. Applications close on ${deadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (${daysLeft} days left).</p>
+                        <button>Apply Now</button>
+                    `;
+                } else {
+                    const nextYear = parseInt(cohort.year) + 1;
+                    ctaDiv.innerHTML = `
+                        <h2>Ready to Become an Ambassador?</h2>
+                        <p>Applications for the ${nextYear} cohort will open soon. Follow us to stay updated!</p>
+                        <button>Get Notified</button>
+                    `;
+                }
+            }
+        } catch (error) {
+            apiDiv.innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+        }
+    }
+    
+    // Auto-run on load
+    testCohort();
+    </script>
+</body>
+</html>
