@@ -869,13 +869,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load cohort information
     async function loadCohortInfo() {
+        console.log('Loading cohort info...');
         try {
             const response = await fetch('/api/public/cohorts/active');
+            console.log('Response status:', response.status);
             if (response.ok) {
                 const result = await response.json();
+                console.log('Cohort data:', result);
                 if (result.data) {
                     updateCohortCTA(result.data);
+                } else {
+                    console.error('No data in response');
                 }
+            } else {
+                console.error('Response not OK:', response.status);
             }
         } catch (error) {
             console.error('Error loading cohort info:', error);
@@ -884,12 +891,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update the CTA section based on active cohort
     function updateCohortCTA(cohort) {
+        console.log('Updating CTA with cohort:', cohort);
         const ctaSection = document.querySelector('.ambassadors-cta .cta-content');
-        if (!ctaSection) return;
+        if (!ctaSection) {
+            console.error('CTA section not found!');
+            return;
+        }
         
         const now = new Date();
         const applicationDeadline = new Date(cohort.applicationDeadline);
         const startDate = new Date(cohort.startDate);
+        
+        console.log('Date comparisons:');
+        console.log('Now:', now);
+        console.log('Application Deadline:', applicationDeadline);
+        console.log('Start Date:', startDate);
+        console.log('Now < applicationDeadline:', now < applicationDeadline);
+        console.log('Now >= applicationDeadline && now < startDate:', now >= applicationDeadline && now < startDate);
         
         let ctaHTML = '';
         
@@ -964,7 +982,9 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
         
+        console.log('Setting CTA HTML...');
         ctaSection.innerHTML = ctaHTML;
+        console.log('CTA HTML updated successfully');
         
         // Re-attach modal event listeners
         const modalTriggers = ctaSection.querySelectorAll('[data-modal]');
@@ -1022,7 +1042,84 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load ambassadors on page load
     loadAmbassadorsFromDatabase();
-    loadCohortInfo();
+    
+    // Load cohort info with a slight delay to ensure DOM is ready
+    setTimeout(() => {
+        console.log('Starting cohort load...');
+        loadCohortInfo();
+    }, 100);
+});
+</script>
+
+<!-- Separate script for cohort loading to ensure it runs after all other scripts -->
+<script>
+window.addEventListener('load', function() {
+    console.log('Window fully loaded, checking for cohort update...');
+    
+    // Give a small delay to ensure all other scripts have finished
+    setTimeout(async function() {
+        console.log('Attempting to load cohort info after page load...');
+        
+        try {
+            const response = await fetch('/api/public/cohorts/active');
+            if (response.ok) {
+                const result = await response.json();
+                if (result.data) {
+                    const cohort = result.data;
+                    const ctaSection = document.querySelector('.ambassadors-cta .cta-content');
+                    
+                    if (ctaSection) {
+                        const now = new Date();
+                        const applicationDeadline = new Date(cohort.applicationDeadline);
+                        const startDate = new Date(cohort.startDate);
+                        
+                        let ctaHTML = '';
+                        
+                        if (now < applicationDeadline) {
+                            // Applications are open
+                            const daysLeft = Math.ceil((applicationDeadline - now) / (1000 * 60 * 60 * 24));
+                            ctaHTML = `
+                                <h2>Applications Are Open for ${cohort.year} Cohort!</h2>
+                                <p>Join our prestigious ambassador program. Applications close on ${applicationDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (${daysLeft} days left).</p>
+                                <div class="cta-buttons">
+                                    <a href="#apply" class="btn btn-primary-large" data-modal="application-modal">
+                                        <i class="fas fa-paper-plane"></i>
+                                        Apply Now
+                                    </a>
+                                    <a href="about.html" class="btn btn-secondary-large">
+                                        <i class="fas fa-info-circle"></i>
+                                        Learn More
+                                    </a>
+                                </div>
+                            `;
+                        } else {
+                            // Applications closed or program ongoing
+                            const nextYear = parseInt(cohort.year) + 1;
+                            ctaHTML = `
+                                <h2>Ready to Become an Ambassador?</h2>
+                                <p>Applications for the ${nextYear} cohort will open soon. Follow us to stay updated!</p>
+                                <div class="cta-buttons">
+                                    <a href="#" class="btn btn-primary-large" data-modal="notification-modal">
+                                        <i class="fas fa-bell"></i>
+                                        Get Notified
+                                    </a>
+                                    <a href="about.html" class="btn btn-secondary-large">
+                                        <i class="fas fa-info-circle"></i>
+                                        Learn More
+                                    </a>
+                                </div>
+                            `;
+                        }
+                        
+                        ctaSection.innerHTML = ctaHTML;
+                        console.log('Cohort CTA updated successfully');
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error loading cohort:', error);
+        }
+    }, 500);
 });
 </script>
 </body>

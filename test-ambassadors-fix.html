@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Ambassador Fix</title>
+</head>
+<body>
+    <h1>Testing Cohort Update</h1>
+    
+    <div class="ambassadors-cta section-padding">
+        <div class="container">
+            <div class="cta-content fade-in">
+                <h2>Ready to Become an Ambassador?</h2>
+                <p>Applications for the 2025 cohort will open in February. Follow us to stay updated!</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    window.addEventListener('load', async function() {
+        console.log('Page loaded, fetching cohort info...');
+        
+        try {
+            const response = await fetch('/api/public/cohorts/active');
+            console.log('Response:', response);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch cohort');
+            }
+            
+            const data = await response.json();
+            console.log('Data:', data);
+            
+            if (data.data) {
+                const cohort = data.data;
+                const ctaContent = document.querySelector('.cta-content');
+                
+                if (ctaContent) {
+                    const now = new Date();
+                    const applicationDeadline = new Date(cohort.applicationDeadline);
+                    
+                    console.log('Now:', now);
+                    console.log('Deadline:', applicationDeadline);
+                    console.log('Applications open?', now < applicationDeadline);
+                    
+                    if (now < applicationDeadline) {
+                        ctaContent.innerHTML = `
+                            <h2>Applications Are Open for ${cohort.year} Cohort!</h2>
+                            <p>Apply now! Deadline: ${applicationDeadline.toLocaleDateString()}</p>
+                        `;
+                    } else {
+                        ctaContent.innerHTML = `
+                            <h2>Ready to Become an Ambassador?</h2>
+                            <p>Applications for the ${parseInt(cohort.year) + 1} cohort will open soon!</p>
+                        `;
+                    }
+                } else {
+                    console.error('CTA content not found');
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+    </script>
+</body>
+</html>
