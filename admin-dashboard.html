@@ -835,6 +835,11 @@
                 </a>
             </li>
             <li>
+                <a href="#cohorts" id="cohorts-link" title="Manage Cohorts">
+                    <span class="admin-sidebar-icon"><i class="fas fa-users"></i></span>
+                </a>
+            </li>
+            <li>
                 <a href="#registrations" id="registrations-link" title="Event Registrations">
                     <span class="admin-sidebar-icon"><i class="fas fa-clipboard-list"></i></span>
                 </a>
@@ -1179,6 +1184,30 @@
                 </table>
             </div>
 
+
+            <!-- Cohorts Section -->
+            <div id="cohorts-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Manage Cohorts</h2>
+                    <a href="#add-cohort" class="action-btn">Add New Cohort</a>
+                </div>
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Max Ambassadors</th>
+                        <th>Application Deadline</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="cohorts-table-body">
+                    <!-- Cohorts will be loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
 
             <!-- Event Registrations Section -->
             <div id="registrations-section" class="dashboard-section">
@@ -1817,6 +1846,7 @@
         // Ambassador and Event Management Functions
         let ambassadorsData = [];
         let eventsData = [];
+        let cohortsData = null;
         
         // Load data from API
         async function loadDashboardData() {
@@ -1830,6 +1860,11 @@
                 const events = await window.apiClient.getEvents();
                 eventsData = events.data || [];
                 refreshEventsTable();
+                
+                // Load cohorts
+                const cohorts = await window.apiClient.getCohorts();
+                cohortsData = cohorts.data || null;
+                refreshCohortsTable();
                 
                 // Load dashboard stats
                 const stats = await window.apiClient.getStats();
@@ -1913,6 +1948,7 @@
         function showAmbassadorModal(ambassador = null) {
             const modal = createModal('Ambassador', ambassador, {
                 fields: [
+                    {name: 'image', label: 'Profile Picture', type: 'file', accept: 'image/*', required: false},
                     {name: 'name', label: 'Full Name', type: 'text', required: true},
                     {name: 'role', label: 'Role', type: 'select', options: ['Lead Ambassador', 'Event Coordinator', 'Social Media Manager', 'Workshop Facilitator', 'Campus Tour Guide', 'Peer Mentor', 'Content Creator'], required: true},
                     {name: 'major', label: 'Major', type: 'text', required: true},
@@ -1920,13 +1956,16 @@
                     {name: 'email', label: 'Email', type: 'email', required: true},
                     {name: 'linkedin', label: 'LinkedIn Username', type: 'text', required: false},
                     {name: 'bio', label: 'Biography', type: 'textarea', required: true},
+                    {name: 'cohort', label: 'Cohort', type: 'text', placeholder: 'e.g., 2024', required: true},
+                    {name: 'perks', label: 'Perks (one per line)', type: 'textarea', required: false, isArray: true},
+                    {name: 'trainings', label: 'Trainings Completed (one per line)', type: 'textarea', required: false, isArray: true},
                     {name: 'status', label: 'Status', type: 'select', options: ['active', 'inactive', 'alumni'], required: true}
                 ],
-                onSave: (data) => {
+                onSave: (data, file) => {
                     if (ambassador) {
-                        updateAmbassador(ambassador.id, data);
+                        updateAmbassador(ambassador.id, data, file);
                     } else {
-                        createAmbassador(data);
+                        createAmbassador(data, file);
                     }
                 }
             });
@@ -2007,6 +2046,11 @@
                     value = item.event_time.substring(0, 5); // HH:MM format
                 }
                 
+                // Special handling for arrays
+                if (field.isArray && Array.isArray(value)) {
+                    value = value.join('\n');
+                }
+                
                 formHTML += `
                     <div style="margin-bottom: 1.5rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #555;">
@@ -2014,16 +2058,28 @@
                         </label>
                 `;
                 
+                // Handle current image display for file inputs
+                if (field.type === 'file' && item && item[field.name]) {
+                    formHTML += `
+                        <div style="margin-bottom: 0.5rem;">
+                            <img src="${item[field.name]}" style="max-width: 100px; max-height: 100px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                            <p style="font-size: 0.85rem; color: #666;">Current image</p>
+                        </div>
+                    `;
+                }
+                
                 if (field.type === 'textarea') {
-                    formHTML += `<textarea name="${field.name}" style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; min-height: 100px; resize: vertical;" ${field.required ? 'required' : ''}>${value}</textarea>`;
+                    formHTML += `<textarea name="${field.name}" data-array="${field.isArray || false}" style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; min-height: 100px; resize: vertical;" ${field.placeholder ? `placeholder="${field.placeholder}"` : ''} ${field.required ? 'required' : ''}>${value}</textarea>`;
                 } else if (field.type === 'select') {
                     formHTML += `<select name="${field.name}" style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;" ${field.required ? 'required' : ''}>`;
                     field.options.forEach(option => {
                         formHTML += `<option value="${option}" ${value === option ? 'selected' : ''}>${option}</option>`;
                     });
                     formHTML += `</select>`;
+                } else if (field.type === 'file') {
+                    formHTML += `<input type="${field.type}" name="${field.name}" accept="${field.accept || ''}" style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;" ${field.required ? 'required' : ''}>`;
                 } else {
-                    formHTML += `<input type="${field.type}" name="${field.name}" value="${value}" style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;" ${field.required ? 'required' : ''}>`;
+                    formHTML += `<input type="${field.type}" name="${field.name}" value="${value}" placeholder="${field.placeholder || ''}" style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;" ${field.required ? 'required' : ''}>`;
                 }
                 
                 formHTML += `</div>`;
@@ -2049,8 +2105,29 @@
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-                config.onSave(data);
+                const data = {};
+                let imageFile = null;
+                
+                // Process form data
+                for (let [key, value] of formData.entries()) {
+                    const field = form.querySelector(`[name="${key}"]`);
+                    
+                    // Handle file inputs
+                    if (field && field.type === 'file') {
+                        if (field.files.length > 0) {
+                            imageFile = field.files[0];
+                        }
+                    } else {
+                        // Handle array fields (convert newline-separated values to array)
+                        if (field && field.getAttribute('data-array') === 'true') {
+                            data[key] = value.split('\n').filter(v => v.trim()).map(v => v.trim());
+                        } else {
+                            data[key] = value;
+                        }
+                    }
+                }
+                
+                config.onSave(data, imageFile);
                 modal.remove();
             });
             
@@ -2067,9 +2144,9 @@
             return modal;
         }
         
-        async function createAmbassador(data) {
+        async function createAmbassador(data, imageFile) {
             try {
-                const response = await window.apiClient.createAmbassador(data);
+                const response = await window.apiClient.createAmbassador(data, imageFile);
                 if (response && response.data) {
                     // Reload data to get updated list
                     await loadDashboardData();
@@ -2081,9 +2158,9 @@
             }
         }
         
-        async function updateAmbassador(id, data) {
+        async function updateAmbassador(id, data, imageFile) {
             try {
-                const response = await window.apiClient.updateAmbassador(id, data);
+                const response = await window.apiClient.updateAmbassador(id, data, imageFile);
                 if (response && response.data) {
                     // Reload data to get updated list
                     await loadDashboardData();
@@ -2211,6 +2288,131 @@
                         </td>
                     </tr>
                 `}).join('');
+            }
+        }
+        
+        function refreshCohortsTable() {
+            const tbody = document.getElementById('cohorts-table-body');
+            if (!tbody || !cohortsData) return;
+            
+            tbody.innerHTML = '';
+            
+            if (cohortsData.cohorts) {
+                cohortsData.cohorts.forEach(cohort => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${cohort.year}</td>
+                        <td>
+                            <span class="status-indicator status-${cohort.active ? 'active' : 'inactive'}"></span> 
+                            ${cohort.active ? 'Active' : 'Inactive'}
+                        </td>
+                        <td>${new Date(cohort.startDate).toLocaleDateString()}</td>
+                        <td>${new Date(cohort.endDate).toLocaleDateString()}</td>
+                        <td>${cohort.maxAmbassadors}</td>
+                        <td>${new Date(cohort.applicationDeadline).toLocaleDateString()}</td>
+                        <td>
+                            <div class="action-icons">
+                                <a href="#view" title="View Details"><i class="fas fa-eye"></i></a>
+                                <a href="#edit" title="Edit" class="edit-icon cohort-edit" data-year="${cohort.year}"><i class="fas fa-edit"></i></a>
+                                ${!cohort.active ? `<a href="#activate" title="Activate" class="activate-icon cohort-activate" data-year="${cohort.year}"><i class="fas fa-toggle-on"></i></a>` : ''}
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+        
+        // Add cohort button handler
+        const addCohortBtn = document.querySelector('#cohorts-section .action-btn');
+        if (addCohortBtn) {
+            addCohortBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showCohortModal();
+            });
+        }
+        
+        // Handle cohort edit and activate
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.cohort-edit')) {
+                e.preventDefault();
+                const year = e.target.closest('.cohort-edit').getAttribute('data-year');
+                const cohort = cohortsData.cohorts.find(c => c.year === year);
+                if (cohort) showCohortModal(cohort);
+            }
+            
+            if (e.target.closest('.cohort-activate')) {
+                e.preventDefault();
+                const year = e.target.closest('.cohort-activate').getAttribute('data-year');
+                if (confirm(`Activate cohort ${year}? This will deactivate other cohorts.`)) {
+                    activateCohort(year);
+                }
+            }
+        });
+        
+        function showCohortModal(cohort = null) {
+            const modal = createModal('Cohort', cohort, {
+                fields: [
+                    {name: 'year', label: 'Year', type: 'text', placeholder: '2025', required: true},
+                    {name: 'startDate', label: 'Start Date', type: 'date', required: true},
+                    {name: 'endDate', label: 'End Date', type: 'date', required: true},
+                    {name: 'applicationDeadline', label: 'Application Deadline', type: 'date', required: true},
+                    {name: 'maxAmbassadors', label: 'Maximum Ambassadors', type: 'number', required: true},
+                    {name: 'perks', label: 'Perks (one per line)', type: 'textarea', isArray: true, required: false},
+                    {name: 'requiredTrainings', label: 'Required Trainings (one per line)', type: 'textarea', isArray: true, required: false},
+                    {name: 'active', label: 'Active', type: 'select', options: ['true', 'false'], required: true}
+                ],
+                onSave: (data) => {
+                    // Convert string 'true'/'false' to boolean
+                    data.active = data.active === 'true';
+                    data.maxAmbassadors = parseInt(data.maxAmbassadors);
+                    
+                    if (cohort) {
+                        updateCohort(cohort.year, data);
+                    } else {
+                        createCohort(data);
+                    }
+                }
+            });
+            document.body.appendChild(modal);
+        }
+        
+        async function createCohort(data) {
+            try {
+                const response = await window.apiClient.createCohort(data);
+                if (response && response.data) {
+                    await loadDashboardData();
+                    showNotification('Cohort created successfully!', 'success');
+                }
+            } catch (error) {
+                console.error('Error creating cohort:', error);
+                showNotification('Error creating cohort. Please try again.', 'error');
+            }
+        }
+        
+        async function updateCohort(year, data) {
+            try {
+                const response = await window.apiClient.updateCohort(year, data);
+                if (response && response.data) {
+                    await loadDashboardData();
+                    showNotification('Cohort updated successfully!', 'success');
+                }
+            } catch (error) {
+                console.error('Error updating cohort:', error);
+                showNotification('Error updating cohort. Please try again.', 'error');
+            }
+        }
+        
+        async function activateCohort(year) {
+            try {
+                const response = await window.apiClient.updateCohort(year, { active: true });
+                if (response && response.data) {
+                    await loadDashboardData();
+                    showNotification(`Cohort ${year} activated successfully!`, 'success');
+                }
+            } catch (error) {
+                console.error('Error activating cohort:', error);
+                showNotification('Error activating cohort. Please try again.', 'error');
             }
         }
         

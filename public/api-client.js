@@ -86,14 +86,54 @@ class ApiClient {
         return this.request(`/ambassadors/${id}`);
     }
 
-    async createAmbassador(data) {
+    async createAmbassador(data, imageFile = null) {
+        if (imageFile) {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+            
+            // Append other data
+            Object.keys(data).forEach(key => {
+                if (Array.isArray(data[key])) {
+                    formData.append(key, JSON.stringify(data[key]));
+                } else {
+                    formData.append(key, data[key]);
+                }
+            });
+            
+            return this.request('/ambassadors', {
+                method: 'POST',
+                body: formData,
+                headers: {} // Let browser set Content-Type for FormData
+            });
+        }
+        
         return this.request('/ambassadors', {
             method: 'POST',
             body: JSON.stringify(data)
         });
     }
 
-    async updateAmbassador(id, data) {
+    async updateAmbassador(id, data, imageFile = null) {
+        if (imageFile) {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+            
+            // Append other data
+            Object.keys(data).forEach(key => {
+                if (Array.isArray(data[key])) {
+                    formData.append(key, JSON.stringify(data[key]));
+                } else {
+                    formData.append(key, data[key]);
+                }
+            });
+            
+            return this.request(`/ambassadors/${id}`, {
+                method: 'PUT',
+                body: formData,
+                headers: {} // Let browser set Content-Type for FormData
+            });
+        }
+        
         return this.request(`/ambassadors/${id}`, {
             method: 'PUT',
             body: JSON.stringify(data)
@@ -195,6 +235,29 @@ class ApiClient {
 
     async getMessageStats() {
         return this.request('/messages/stats/overview');
+    }
+    
+    // Cohort endpoints
+    async getCohorts() {
+        return this.request('/cohorts');
+    }
+    
+    async getCohort(year) {
+        return this.request(`/cohorts/${year}`);
+    }
+    
+    async createCohort(data) {
+        return this.request('/cohorts', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+    
+    async updateCohort(year, data) {
+        return this.request(`/cohorts/${year}`, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
     }
 }
 

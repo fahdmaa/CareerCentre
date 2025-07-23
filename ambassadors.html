@@ -786,9 +786,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const ambassadorCard = document.createElement('div');
             ambassadorCard.className = 'ambassador-card';
             
-            // Generate a default image or use one from the existing set
-            const imageNumber = (index % 15) + 1;
-            const imagePath = `/images/Ambassadors/Ambassador (${imageNumber}).jpg`;
+            // Use uploaded image if available, otherwise use default
+            let imagePath;
+            if (ambassador.image) {
+                imagePath = ambassador.image;
+            } else {
+                const imageNumber = (index % 15) + 1;
+                imagePath = `/images/Ambassadors/Ambassador (${imageNumber}).jpg`;
+            }
             
             ambassadorCard.innerHTML = `
                 <div class="ambassador-image">
@@ -798,6 +803,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <h3>${ambassador.name}</h3>
                     <p class="ambassador-role">${ambassador.role}</p>
                     <p class="ambassador-major">${ambassador.major}, ${ambassador.year}</p>
+                    ${ambassador.cohort ? `<p class="ambassador-cohort" style="font-size: 0.85rem; color: #666; margin: 5px 0;">Cohort ${ambassador.cohort}</p>` : ''}
                     <div class="ambassador-social">
                         ${ambassador.linkedin ? `<a href="https://linkedin.com/in/${ambassador.linkedin}" target="_blank" rel="noopener" aria-label="LinkedIn profile"><i class="fab fa-linkedin"></i></a>` : ''}
                         ${ambassador.email ? `<a href="mailto:${ambassador.email}" aria-label="Email"><i class="fas fa-envelope"></i></a>` : ''}

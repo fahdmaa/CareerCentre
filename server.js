@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
@@ -33,6 +34,7 @@ app.use((req, res, next) => {
 // Serve static files from public directory for assets
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 app.use('/videos', express.static(path.join(__dirname, 'public', 'videos')));
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
 // Special handling for CSS and JS files
 app.get('/style.css', (req, res) => {
@@ -281,12 +283,103 @@ const authenticateToken = (req, res, next) => {
     }
 };
 
+// Multer configuration for file uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadPath = path.join(__dirname, 'public', 'uploads', 'ambassadors');
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'ambassador-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = /jpeg|jpg|png|gif|webp/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+        
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed'));
+        }
+    }
+});
+
 // In-memory storage (replace with database in production)
 let ambassadors = [
-    { id: 1, name: 'Mohamed Alami', role: 'Lead Ambassador', major: 'Computer Science', year: '4th Year', email: 'm.alami@emsi.ma', linkedin: 'mohamed-alami', bio: 'Passionate about connecting students with career opportunities.', status: 'active' },
-    { id: 2, name: 'Sophia Berrada', role: 'Event Coordinator', major: 'Business Administration', year: '3rd Year', email: 's.berrada@emsi.ma', linkedin: 'sophia-berrada', bio: 'Organizing impactful career events for EMSI students.', status: 'active' },
-    { id: 3, name: 'Youssef Benali', role: 'Social Media Manager', major: 'Digital Marketing', year: '3rd Year', email: 'y.benali@emsi.ma', linkedin: 'youssef-benali', bio: 'Building EMSI\'s career center online presence.', status: 'active' }
+    { 
+        id: 1, 
+        name: 'Mohamed Alami', 
+        role: 'Lead Ambassador', 
+        major: 'Computer Science', 
+        year: '4th Year', 
+        email: 'm.alami@emsi.ma', 
+        linkedin: 'mohamed-alami', 
+        bio: 'Passionate about connecting students with career opportunities.', 
+        status: 'active',
+        cohort: '2024',
+        image: null,
+        perks: ['Leadership training', 'Networking events', 'Certificate of achievement'],
+        trainings: ['Public speaking', 'Event management', 'Social media marketing']
+    },
+    { 
+        id: 2, 
+        name: 'Sophia Berrada', 
+        role: 'Event Coordinator', 
+        major: 'Business Administration', 
+        year: '3rd Year', 
+        email: 's.berrada@emsi.ma', 
+        linkedin: 'sophia-berrada', 
+        bio: 'Organizing impactful career events for EMSI students.', 
+        status: 'active',
+        cohort: '2024',
+        image: null,
+        perks: ['Event planning resources', 'Professional development', 'Recognition awards'],
+        trainings: ['Event coordination', 'Budget management', 'Team leadership']
+    },
+    { 
+        id: 3, 
+        name: 'Youssef Benali', 
+        role: 'Social Media Manager', 
+        major: 'Digital Marketing', 
+        year: '3rd Year', 
+        email: 'y.benali@emsi.ma', 
+        linkedin: 'youssef-benali', 
+        bio: 'Building EMSI\'s career center online presence.', 
+        status: 'active',
+        cohort: '2024',
+        image: null,
+        perks: ['Content creation tools', 'Social media training', 'Marketing certification'],
+        trainings: ['Content strategy', 'Analytics and insights', 'Brand management']
+    }
 ];
+
+// Cohort configuration
+let cohortConfig = {
+    currentCohort: '2024',
+    cohorts: [
+        {
+            year: '2024',
+            active: true,
+            startDate: '2024-09-01',
+            endDate: '2025-06-30',
+            maxAmbassadors: 20,
+            applicationDeadline: '2024-08-15',
+            perks: ['Leadership training', 'Networking events', 'Certificate of achievement', 'Priority access to career events'],
+            requiredTrainings: ['Orientation', 'Leadership basics', 'EMSI values and culture']
+        }
+    ]
+};
 
 let events = [
     { id: 1, title: 'Annual EMSI Marrakech Career Fair', event_date: '2025-07-05', event_time: '09:00', location: 'EMSI Campus - Main Hall', description: 'Connect with top employers and explore career opportunities.', capacity: 200, status: 'upcoming', registered_count: 45 },
@@ -342,22 +435,41 @@ app.get('/api/ambassadors/:id', authenticateToken, (req, res) => {
     res.json({ data: ambassador });
 });
 
-app.post('/api/ambassadors', authenticateToken, (req, res) => {
+app.post('/api/ambassadors', authenticateToken, upload.single('image'), (req, res) => {
     const newAmbassador = {
         id: nextAmbassadorId++,
         ...req.body,
+        image: req.file ? `/uploads/ambassadors/${req.file.filename}` : null,
+        perks: req.body.perks ? (typeof req.body.perks === 'string' ? JSON.parse(req.body.perks) : req.body.perks) : [],
+        trainings: req.body.trainings ? (typeof req.body.trainings === 'string' ? JSON.parse(req.body.trainings) : req.body.trainings) : [],
+        cohort: req.body.cohort || cohortConfig.currentCohort,
         created_at: new Date().toISOString()
     };
     ambassadors.push(newAmbassador);
     res.status(201).json({ data: newAmbassador });
 });
 
-app.put('/api/ambassadors/:id', authenticateToken, (req, res) => {
+app.put('/api/ambassadors/:id', authenticateToken, upload.single('image'), (req, res) => {
     const index = ambassadors.findIndex(a => a.id == req.params.id);
     if (index === -1) {
         return res.status(404).json({ message: 'Ambassador not found' });
     }
-    ambassadors[index] = { ...ambassadors[index], ...req.body };
+    
+    // Handle image update
+    let updateData = { ...req.body };
+    if (req.file) {
+        updateData.image = `/uploads/ambassadors/${req.file.filename}`;
+    }
+    
+    // Parse arrays if they come as strings
+    if (updateData.perks && typeof updateData.perks === 'string') {
+        updateData.perks = JSON.parse(updateData.perks);
+    }
+    if (updateData.trainings && typeof updateData.trainings === 'string') {
+        updateData.trainings = JSON.parse(updateData.trainings);
+    }
+    
+    ambassadors[index] = { ...ambassadors[index], ...updateData };
     res.json({ data: ambassadors[index] });
 });
 
@@ -463,6 +575,59 @@ app.get('/api/public/jobs', (req, res) => {
     const activeJobs = jobs.filter(j => j.status === 'active');
     res.set('Cache-Control', 'no-store');
     res.json({ data: activeJobs });
+});
+
+// Cohort management endpoints
+app.get('/api/cohorts', authenticateToken, (req, res) => {
+    res.json({ data: cohortConfig });
+});
+
+app.get('/api/cohorts/:year', authenticateToken, (req, res) => {
+    const cohort = cohortConfig.cohorts.find(c => c.year === req.params.year);
+    if (!cohort) {
+        return res.status(404).json({ message: 'Cohort not found' });
+    }
+    res.json({ data: cohort });
+});
+
+app.post('/api/cohorts', authenticateToken, (req, res) => {
+    const newCohort = {
+        year: req.body.year,
+        active: req.body.active || false,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
+        maxAmbassadors: req.body.maxAmbassadors || 20,
+        applicationDeadline: req.body.applicationDeadline,
+        perks: req.body.perks || [],
+        requiredTrainings: req.body.requiredTrainings || []
+    };
+    
+    cohortConfig.cohorts.push(newCohort);
+    if (newCohort.active) {
+        cohortConfig.currentCohort = newCohort.year;
+    }
+    
+    res.status(201).json({ data: newCohort });
+});
+
+app.put('/api/cohorts/:year', authenticateToken, (req, res) => {
+    const index = cohortConfig.cohorts.findIndex(c => c.year === req.params.year);
+    if (index === -1) {
+        return res.status(404).json({ message: 'Cohort not found' });
+    }
+    
+    cohortConfig.cohorts[index] = { ...cohortConfig.cohorts[index], ...req.body };
+    
+    // Update current cohort if this one is set to active
+    if (req.body.active) {
+        cohortConfig.currentCohort = req.params.year;
+        // Deactivate other cohorts
+        cohortConfig.cohorts.forEach((c, i) => {
+            if (i !== index) c.active = false;
+        });
+    }
+    
+    res.json({ data: cohortConfig.cohorts[index] });
 });
 
 // Health check endpoint
