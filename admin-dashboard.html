@@ -840,6 +840,11 @@
                 </a>
             </li>
             <li>
+                <a href="#applications" id="applications-link" title="Applications">
+                    <span class="admin-sidebar-icon"><i class="fas fa-file-alt"></i></span>
+                </a>
+            </li>
+            <li>
                 <a href="#registrations" id="registrations-link" title="Event Registrations">
                     <span class="admin-sidebar-icon"><i class="fas fa-clipboard-list"></i></span>
                 </a>
@@ -1205,6 +1210,39 @@
                     </thead>
                     <tbody id="cohorts-table-body">
                     <!-- Cohorts will be loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Applications Section -->
+            <div id="applications-section" class="dashboard-section">
+                <div class="section-header">
+                    <h2>Ambassador Applications</h2>
+                    <div>
+                        <select id="application-filter" class="filter-select">
+                            <option value="">All Applications</option>
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Major</th>
+                        <th>Year</th>
+                        <th>Cohort</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="applications-table-body">
+                    <!-- Applications will be loaded dynamically -->
                     </tbody>
                 </table>
             </div>
@@ -1847,6 +1885,7 @@
         let ambassadorsData = [];
         let eventsData = [];
         let cohortsData = null;
+        let applicationsData = [];
         
         // Load data from API
         async function loadDashboardData() {
@@ -1865,6 +1904,11 @@
                 const cohorts = await window.apiClient.getCohorts();
                 cohortsData = cohorts.data || null;
                 refreshCohortsTable();
+                
+                // Load applications
+                const applications = await window.apiClient.getApplications();
+                applicationsData = applications.data || [];
+                refreshApplicationsTable();
                 
                 // Load dashboard stats
                 const stats = await window.apiClient.getStats();
@@ -2314,7 +2358,10 @@
                             <div class="action-icons">
                                 <a href="#view" title="View Details"><i class="fas fa-eye"></i></a>
                                 <a href="#edit" title="Edit" class="edit-icon cohort-edit" data-year="${cohort.year}"><i class="fas fa-edit"></i></a>
-                                ${!cohort.active ? `<a href="#activate" title="Activate" class="activate-icon cohort-activate" data-year="${cohort.year}"><i class="fas fa-toggle-on"></i></a>` : ''}
+                                ${cohort.active ? 
+                                    `<a href="#deactivate" title="Deactivate" class="deactivate-icon cohort-deactivate" data-year="${cohort.year}" style="color: #dc3545;"><i class="fas fa-toggle-off"></i></a>` : 
+                                    `<a href="#activate" title="Activate" class="activate-icon cohort-activate" data-year="${cohort.year}" style="color: #28a745;"><i class="fas fa-toggle-on"></i></a>`
+                                }
                             </div>
                         </td>
                     `;
@@ -2355,6 +2402,45 @@
                 const year = e.target.closest('.cohort-activate').getAttribute('data-year');
                 if (confirm(`Activate cohort ${year}? This will deactivate other cohorts.`)) {
                     activateCohort(year);
+                }
+            }
+            
+            if (e.target.closest('.cohort-deactivate')) {
+                e.preventDefault();
+                const year = e.target.closest('.cohort-deactivate').getAttribute('data-year');
+                if (confirm(`Deactivate cohort ${year}? This will close applications for this cohort.`)) {
+                    deactivateCohort(year);
+                }
+            }
+        });
+        
+        // Handle application filter
+        document.getElementById('application-filter')?.addEventListener('change', refreshApplicationsTable);
+        
+        // Handle application actions
+        document.addEventListener('click', function(e) {
+            // View application
+            if (e.target.closest('#applications-section .action-icons a[href="#view"]')) {
+                e.preventDefault();
+                const id = e.target.closest('a').getAttribute('data-id');
+                viewApplication(id);
+            }
+            
+            // Accept application
+            if (e.target.closest('#applications-section .action-icons a[href="#accept"]')) {
+                e.preventDefault();
+                const id = e.target.closest('a').getAttribute('data-id');
+                if (confirm('Accept this application?')) {
+                    updateApplicationStatus(id, 'accepted');
+                }
+            }
+            
+            // Reject application
+            if (e.target.closest('#applications-section .action-icons a[href="#reject"]')) {
+                e.preventDefault();
+                const id = e.target.closest('a').getAttribute('data-id');
+                if (confirm('Reject this application?')) {
+                    updateApplicationStatus(id, 'rejected');
                 }
             }
         });
@@ -2535,6 +2621,154 @@
             }
         }
         
+        // Applications Management Functions
+        function refreshApplicationsTable() {
+            const tbody = document.getElementById('applications-table-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            // Filter applications
+            const filterValue = document.getElementById('application-filter')?.value || '';
+            let filteredApplications = applicationsData;
+            
+            if (filterValue) {
+                filteredApplications = applicationsData.filter(app => app.status === filterValue);
+            }
+            
+            if (filteredApplications.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No applications found</td></tr>';
+                return;
+            }
+            
+            filteredApplications.forEach(application => {
+                const row = document.createElement('tr');
+                const submittedDate = new Date(application.submittedAt).toLocaleDateString();
+                
+                row.innerHTML = `
+                    <td>${application.id}</td>
+                    <td>${application.name}</td>
+                    <td>${application.email}</td>
+                    <td>${application.major}</td>
+                    <td>${application.year}</td>
+                    <td>${application.cohort}</td>
+                    <td>
+                        <span class="status-indicator status-${application.status === 'accepted' ? 'active' : application.status === 'rejected' ? 'closed' : 'pending'}"></span>
+                        ${application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                    </td>
+                    <td>${submittedDate}</td>
+                    <td>
+                        <div class="action-icons">
+                            <a href="#view" title="View Details" data-id="${application.id}"><i class="fas fa-eye"></i></a>
+                            ${application.status === 'pending' ? `
+                                <a href="#accept" title="Accept" class="edit-icon" data-id="${application.id}"><i class="fas fa-check"></i></a>
+                                <a href="#reject" title="Reject" class="delete-icon" data-id="${application.id}"><i class="fas fa-times"></i></a>
+                            ` : ''}
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        async function viewApplication(id) {
+            const application = applicationsData.find(app => app.id == id);
+            if (!application) return;
+            
+            const modal = document.createElement('div');
+            modal.className = 'admin-modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 16px;
+                padding: 2rem;
+                max-width: 600px;
+                width: 90%;
+                max-height: 90vh;
+                overflow-y: auto;
+            `;
+            
+            modalContent.innerHTML = `
+                <h2 style="margin-bottom: 1.5rem;">Application Details</h2>
+                <div style="display: grid; gap: 1rem;">
+                    <div style="border-bottom: 1px solid #e0e0e0; padding-bottom: 1rem;">
+                        <strong>Applicant:</strong> ${application.name}<br>
+                        <strong>Email:</strong> ${application.email}<br>
+                        <strong>Major:</strong> ${application.major}<br>
+                        <strong>Year:</strong> ${application.year}<br>
+                        ${application.linkedin ? `<strong>LinkedIn:</strong> <a href="${application.linkedin}" target="_blank">${application.linkedin}</a><br>` : ''}
+                    </div>
+                    <div>
+                        <strong>Motivation:</strong><br>
+                        <p style="background: #f5f5f5; padding: 1rem; border-radius: 8px; margin-top: 0.5rem;">${application.motivation}</p>
+                    </div>
+                    ${application.experience ? `
+                    <div>
+                        <strong>Experience:</strong><br>
+                        <p style="background: #f5f5f5; padding: 1rem; border-radius: 8px; margin-top: 0.5rem;">${application.experience}</p>
+                    </div>
+                    ` : ''}
+                    <div>
+                        <strong>Status:</strong> 
+                        <span style="padding: 0.25rem 0.75rem; background: ${application.status === 'accepted' ? '#d4edda' : application.status === 'rejected' ? '#f8d7da' : '#fff3cd'}; color: ${application.status === 'accepted' ? '#155724' : application.status === 'rejected' ? '#721c24' : '#856404'}; border-radius: 20px;">
+                            ${application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                        </span>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                    ${application.status === 'pending' ? `
+                        <button onclick="updateApplicationStatus(${application.id}, 'accepted'); this.closest('.admin-modal').remove();" style="padding: 0.75rem 1.5rem; background: #00A651; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            <i class="fas fa-check"></i> Accept
+                        </button>
+                        <button onclick="updateApplicationStatus(${application.id}, 'rejected'); this.closest('.admin-modal').remove();" style="padding: 0.75rem 1.5rem; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            <i class="fas fa-times"></i> Reject
+                        </button>
+                    ` : ''}
+                    <button onclick="this.closest('.admin-modal').remove()" style="padding: 0.75rem 1.5rem; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">Close</button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        }
+        
+        async function updateApplicationStatus(id, status) {
+            try {
+                const response = await window.apiClient.updateApplication(id, { status });
+                if (response && response.data) {
+                    // Update local data
+                    const index = applicationsData.findIndex(app => app.id == id);
+                    if (index !== -1) {
+                        applicationsData[index] = response.data;
+                    }
+                    refreshApplicationsTable();
+                    await loadDashboardData(); // Refresh stats
+                    showNotification(`Application ${status}!`, 'success');
+                }
+            } catch (error) {
+                console.error('Error updating application:', error);
+                showNotification('Error updating application status', 'error');
+            }
+        }
+        
+        // Make functions globally accessible
+        window.viewApplication = viewApplication;
+        window.updateApplicationStatus = updateApplicationStatus;
+        
         async function activateCohort(year) {
             try {
                 const response = await window.apiClient.updateCohort(year, { active: true });
@@ -2545,6 +2779,19 @@
             } catch (error) {
                 console.error('Error activating cohort:', error);
                 showNotification('Error activating cohort. Please try again.', 'error');
+            }
+        }
+        
+        async function deactivateCohort(year) {
+            try {
+                const response = await window.apiClient.updateCohort(year, { active: false });
+                if (response && response.data) {
+                    await loadDashboardData();
+                    showNotification(`Cohort ${year} deactivated successfully!`, 'success');
+                }
+            } catch (error) {
+                console.error('Error deactivating cohort:', error);
+                showNotification('Error deactivating cohort. Please try again.', 'error');
             }
         }
         

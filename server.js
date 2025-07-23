@@ -397,6 +397,10 @@ let jobs = [
 let nextAmbassadorId = 4;
 let nextEventId = 4;
 let nextJobId = 4;
+let nextApplicationId = 1;
+
+// Ambassador applications storage
+let applications = [];
 
 // Protected route example
 app.get('/api/admin/dashboard', authenticateToken, (req, res) => {
@@ -409,18 +413,6 @@ app.get('/api/admin/dashboard', authenticateToken, (req, res) => {
     });
 });
 
-// Stats endpoint
-app.get('/api/admin/stats', authenticateToken, (req, res) => {
-    res.json({
-        data: {
-            active_ambassadors: ambassadors.filter(a => a.status === 'active').length,
-            upcoming_events: events.filter(e => e.status === 'upcoming').length,
-            total_registrations: events.reduce((sum, e) => sum + (e.registered_count || 0), 0),
-            unread_messages: 17,
-            active_jobs: jobs.filter(j => j.status === 'active').length
-        }
-    });
-});
 
 // Ambassador endpoints
 app.get('/api/ambassadors', authenticateToken, (req, res) => {
@@ -586,6 +578,62 @@ app.get('/api/public/jobs', (req, res) => {
     res.json({ data: activeJobs });
 });
 
+// Public endpoint for ambassador applications
+app.post('/api/public/applications', (req, res) => {
+    const { name, email, major, year, linkedin, motivation, experience } = req.body;
+    
+    // Validate required fields
+    if (!name || !email || !major || !year || !motivation) {
+        return res.status(400).json({ 
+            success: false,
+            message: 'Please fill in all required fields' 
+        });
+    }
+    
+    // Check if email already applied for this cohort
+    const activeCohort = cohortConfig.cohorts.find(c => c.active);
+    if (!activeCohort) {
+        return res.status(400).json({ 
+            success: false,
+            message: 'Applications are currently closed' 
+        });
+    }
+    
+    const existingApplication = applications.find(
+        app => app.email === email && app.cohort === activeCohort.year
+    );
+    
+    if (existingApplication) {
+        return res.status(400).json({ 
+            success: false,
+            message: 'You have already submitted an application for this cohort' 
+        });
+    }
+    
+    // Create new application
+    const newApplication = {
+        id: nextApplicationId++,
+        name,
+        email,
+        major,
+        year,
+        linkedin: linkedin || '',
+        motivation,
+        experience: experience || '',
+        cohort: activeCohort.year,
+        status: 'pending', // pending, accepted, rejected
+        submittedAt: new Date().toISOString()
+    };
+    
+    applications.push(newApplication);
+    
+    res.json({ 
+        success: true,
+        message: 'Application submitted successfully!',
+        applicationId: newApplication.id 
+    });
+});
+
 // Cohort management endpoints
 app.get('/api/cohorts', authenticateToken, (req, res) => {
     res.json({ data: cohortConfig });
@@ -637,6 +685,70 @@ app.put('/api/cohorts/:year', authenticateToken, (req, res) => {
     }
     
     res.json({ data: cohortConfig.cohorts[index] });
+});
+
+// Application management endpoints (admin)
+app.get('/api/applications', authenticateToken, (req, res) => {
+    const { cohort, status } = req.query;
+    let filteredApplications = [...applications];
+    
+    if (cohort) {
+        filteredApplications = filteredApplications.filter(app => app.cohort === cohort);
+    }
+    
+    if (status) {
+        filteredApplications = filteredApplications.filter(app => app.status === status);
+    }
+    
+    res.json({ data: filteredApplications });
+});
+
+app.get('/api/applications/:id', authenticateToken, (req, res) => {
+    const application = applications.find(app => app.id == req.params.id);
+    if (!application) {
+        return res.status(404).json({ message: 'Application not found' });
+    }
+    res.json({ data: application });
+});
+
+app.put('/api/applications/:id', authenticateToken, (req, res) => {
+    const index = applications.findIndex(app => app.id == req.params.id);
+    if (index === -1) {
+        return res.status(404).json({ message: 'Application not found' });
+    }
+    
+    const { status, notes } = req.body;
+    
+    if (status && ['pending', 'accepted', 'rejected'].includes(status)) {
+        applications[index].status = status;
+        applications[index].reviewedAt = new Date().toISOString();
+        applications[index].reviewedBy = req.user.username;
+    }
+    
+    if (notes !== undefined) {
+        applications[index].notes = notes;
+    }
+    
+    res.json({ data: applications[index] });
+});
+
+// Stats endpoint update to include applications
+app.get('/api/admin/stats', authenticateToken, (req, res) => {
+    const activeCohort = cohortConfig.cohorts.find(c => c.active);
+    const cohortApplications = activeCohort ? 
+        applications.filter(app => app.cohort === activeCohort.year) : [];
+    
+    res.json({
+        data: {
+            active_ambassadors: ambassadors.filter(a => a.status === 'active').length,
+            upcoming_events: events.filter(e => e.status === 'upcoming').length,
+            total_registrations: events.reduce((sum, e) => sum + (e.registered_count || 0), 0),
+            unread_messages: 17,
+            active_jobs: jobs.filter(j => j.status === 'active').length,
+            pending_applications: cohortApplications.filter(app => app.status === 'pending').length,
+            total_applications: cohortApplications.length
+        }
+    });
 });
 
 // Health check endpoint

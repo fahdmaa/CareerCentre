@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complete Cohort Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { border: 1px solid #ccc; padding: 15px; margin: 10px 0; }
+        .success { color: green; }
+        .error { color: red; }
+        pre { background: #f0f0f0; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Complete Cohort Test</h1>
+    
+    <div class="test-section">
+        <h2>1. API Test</h2>
+        <button onclick="testAPI()">Test API</button>
+        <div id="api-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Live CTA Section (Same as Ambassadors Page)</h2>
+        <section class="ambassadors-cta section-padding">
+            <div class="container">
+                <div class="cta-content fade-in">
+                    <h2>Ready to Become an Ambassador?</h2>
+                    <p>Applications for the 2025 cohort will open in February. Follow us to stay updated!</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Update Status</h2>
+        <div id="update-log"></div>
+    </div>
+    
+    <script>
+    const log = document.getElementById('update-log');
+    
+    function addLog(message, type = 'info') {
+        const entry = document.createElement('div');
+        entry.className = type;
+        entry.textContent = `[${new Date().toTimeString().substr(0,8)}] ${message}`;
+        log.appendChild(entry);
+    }
+    
+    async function testAPI() {
+        const resultDiv = document.getElementById('api-result');
+        try {
+            const response = await fetch('/api/public/cohorts/active');
+            const data = await response.json();
+            resultDiv.innerHTML = `
+                <p class="success">API Response OK</p>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        } catch (error) {
+            resultDiv.innerHTML = `<p class="error">API Error: ${error.message}</p>`;
+        }
+    }
+    
+    // Same update logic as ambassadors page
+    function updateCTA() {
+        addLog('Starting CTA update...');
+        
+        fetch('/api/public/cohorts/active')
+            .then(response => {
+                addLog(`API response: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                addLog('Data received: ' + JSON.stringify(data));
+                
+                const ctaSection = document.querySelector('.ambassadors-cta .cta-content');
+                if (!ctaSection) {
+                    addLog('ERROR: CTA section not found!', 'error');
+                    return;
+                }
+                
+                addLog('CTA section found', 'success');
+                
+                if (!data || !data.data) {
+                    addLog('No active cohort, showing default', 'error');
+                    ctaSection.innerHTML = '<h2>No Active Cohort</h2><p>Check admin dashboard</p>';
+                    return;
+                }
+                
+                const cohort = data.data;
+                const now = new Date();
+                const deadline = new Date(cohort.applicationDeadline);
+                
+                addLog(`Now: ${now.toISOString()}`);
+                addLog(`Deadline: ${deadline.toISOString()}`);
+                addLog(`Applications open: ${now < deadline}`, now < deadline ? 'success' : 'error');
+                
+                if (now < deadline) {
+                    ctaSection.innerHTML = `
+                        <h2 style="color: green;">✓ Applications Are Open for ${cohort.year} Cohort!</h2>
+                        <p>Deadline: ${deadline.toLocaleDateString()}</p>
+                    `;
+                    addLog('Updated to OPEN status', 'success');
+                } else {
+                    ctaSection.innerHTML = `
+                        <h2 style="color: red;">✗ Applications Closed</h2>
+                        <p>Next cohort: ${parseInt(cohort.year) + 1}</p>
+                    `;
+                    addLog('Updated to CLOSED status', 'success');
+                }
+            })
+            .catch(error => {
+                addLog('ERROR: ' + error.message, 'error');
+            });
+    }
+    
+    // Run on load
+    updateCTA();
+    
+    // Run again after delays
+    setTimeout(() => {
+        addLog('Running update again (2s delay)...');
+        updateCTA();
+    }, 2000);
+    
+    setTimeout(() => {
+        addLog('Running update again (5s delay)...');
+        updateCTA();
+    }, 5000);
+    </script>
+</body>
+</html>

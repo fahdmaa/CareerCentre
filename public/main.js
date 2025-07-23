@@ -845,7 +845,7 @@ if (window.emsiCareerCenterInitialized) {
 
         // --- Form Validation --- //
         function initializeFormValidation() {
-            const forms = document.querySelectorAll('form:not(#jobSearchForm):not(#registrationForm)');
+            const forms = document.querySelectorAll('form:not(#jobSearchForm):not(#registrationForm):not(#application-form):not(#notification-form)');
 
             forms.forEach(form => {
                 form.addEventListener('submit', (e) => {

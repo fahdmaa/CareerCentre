@@ -499,22 +499,93 @@
     <!-- Call to Action Section -->
     <section class="ambassadors-cta section-padding">
         <div class="container">
-            <div class="cta-content fade-in">
-                <h2>Ready to Become an Ambassador?</h2>
-                <p>Applications for the 2025 cohort will open in February. Follow us to stay updated!</p>
-                <div class="cta-buttons">
-                    <a href="#" class="btn btn-primary-large" data-modal="notification-modal">
-                        <i class="fas fa-bell"></i>
-                        Get Notified
-                    </a>
-                    <a href="about.html" class="btn btn-secondary-large">
-                        <i class="fas fa-info-circle"></i>
-                        Learn More
-                    </a>
-                </div>
+            <div class="cta-content fade-in" id="cohort-cta">
+                <h2>Loading...</h2>
+                <p>Checking application status...</p>
             </div>
         </div>
     </section>
+    
+    <!-- Inline script to update CTA immediately -->
+    <script>
+    (function() {
+        // Immediate update function
+        function updateCohortCTA() {
+            fetch('/api/public/cohorts/active')
+                .then(r => r.json())
+                .then(data => {
+                    const cta = document.getElementById('cohort-cta');
+                    if (!cta) return;
+                    
+                    if (data && data.data) {
+                        const cohort = data.data;
+                        const deadline = new Date(cohort.applicationDeadline);
+                        const now = new Date();
+                        
+                        if (now < deadline) {
+                            const days = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
+                            cta.innerHTML = `
+                                <h2>Applications Are Open for ${cohort.year} Cohort!</h2>
+                                <p>Join our prestigious ambassador program. Applications close on ${deadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (${days} days left).</p>
+                                <div class="cta-buttons">
+                                    <a href="#apply" class="btn btn-primary-large" data-modal="application-modal">
+                                        <i class="fas fa-paper-plane"></i>
+                                        Apply Now
+                                    </a>
+                                    <a href="about.html" class="btn btn-secondary-large">
+                                        <i class="fas fa-info-circle"></i>
+                                        Learn More
+                                    </a>
+                                </div>
+                            `;
+                        } else {
+                            const nextYear = parseInt(cohort.year) + 1;
+                            cta.innerHTML = `
+                                <h2>Ready to Become an Ambassador?</h2>
+                                <p>Applications for the ${nextYear} cohort will open soon. Follow us to stay updated!</p>
+                                <div class="cta-buttons">
+                                    <a href="#" class="btn btn-primary-large" data-modal="notification-modal">
+                                        <i class="fas fa-bell"></i>
+                                        Get Notified
+                                    </a>
+                                    <a href="about.html" class="btn btn-secondary-large">
+                                        <i class="fas fa-info-circle"></i>
+                                        Learn More
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        cta.innerHTML = `
+                            <h2>Ready to Become an Ambassador?</h2>
+                            <p>Applications will open soon. Follow us to stay updated!</p>
+                            <div class="cta-buttons">
+                                <a href="#" class="btn btn-primary-large" data-modal="notification-modal">
+                                    <i class="fas fa-bell"></i>
+                                    Get Notified
+                                </a>
+                                <a href="about.html" class="btn btn-secondary-large">
+                                    <i class="fas fa-info-circle"></i>
+                                    Learn More
+                                </a>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(e => console.error('Cohort update error:', e));
+        }
+        
+        // Run immediately
+        updateCohortCTA();
+        
+        // Run again when DOM is ready
+        if (document.readyState !== 'loading') {
+            updateCohortCTA();
+        } else {
+            document.addEventListener('DOMContentLoaded', updateCohortCTA);
+        }
+    })();
+    </script>
 </main>
 
 <!-- Application Modal -->
@@ -526,83 +597,84 @@
         </div>
         <div class="modal-body">
             <div class="application-form-container">
-                <p class="modal-description">
-                    Join our prestigious Student Ambassadors program and become a leader at EMSI Marrakech!
-                    Fill out the form below to submit your application.
-                </p>
-                
-                <form id="application-form" class="application-form" novalidate>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="apply-name" class="form-label">Full Name *</label>
-                            <input type="text" id="apply-name" name="name" class="form-input" required aria-describedby="apply-name-error">
-                            <div id="apply-name-error" class="error-message" role="alert"></div>
+                <div class="application-form-wrapper">
+                    <p class="modal-description">
+                        Join our prestigious Student Ambassadors program and become a leader at EMSI Marrakech!
+                        Fill out the form below to submit your application.
+                    </p>
+                    
+                    <form id="application-form" class="application-form" novalidate>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="apply-name" class="form-label">Full Name *</label>
+                                <input type="text" id="apply-name" name="name" class="form-input" required />
+                                <div id="apply-name-error" class="error-message" role="alert"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="apply-email" class="form-label">Email Address *</label>
+                                <input type="email" id="apply-email" name="email" class="form-input" placeholder="your.email@emsi.ma" required />
+                                <div id="apply-email-error" class="error-message" role="alert"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="apply-major" class="form-label">Major *</label>
+                                <select id="apply-major" name="major" class="form-select" required>
+                                    <option value="">Select your major</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Business Administration">Business Administration</option>
+                                    <option value="Digital Marketing">Digital Marketing</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div id="apply-major-error" class="error-message" role="alert"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="apply-year" class="form-label">Current Year *</label>
+                                <select id="apply-year" name="year" class="form-select" required>
+                                    <option value="">Select your year</option>
+                                    <option value="1st Year">1st Year</option>
+                                    <option value="2nd Year">2nd Year</option>
+                                    <option value="3rd Year">3rd Year</option>
+                                    <option value="4th Year">4th Year</option>
+                                    <option value="5th Year">5th Year</option>
+                                </select>
+                                <div id="apply-year-error" class="error-message" role="alert"></div>
+                            </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="apply-email" class="form-label">Email Address *</label>
-                            <input type="email" id="apply-email" name="email" class="form-input" placeholder="your.email@emsi.ma" required aria-describedby="apply-email-error">
-                            <div id="apply-email-error" class="error-message" role="alert"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="apply-major" class="form-label">Major *</label>
-                            <select id="apply-major" name="major" class="form-select" required aria-describedby="apply-major-error">
-                                <option value="">Select your major</option>
-                                <option value="Computer Science">Computer Science</option>
-                                <option value="Engineering">Engineering</option>
-                                <option value="Business Administration">Business Administration</option>
-                                <option value="Digital Marketing">Digital Marketing</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Other">Other</option>
-                            </select>
-                            <div id="apply-major-error" class="error-message" role="alert"></div>
+                            <label for="apply-linkedin" class="form-label">LinkedIn Profile</label>
+                            <input type="text" id="apply-linkedin" name="linkedin" class="form-input" placeholder="linkedin.com/in/yourprofile" />
                         </div>
                         
                         <div class="form-group">
-                            <label for="apply-year" class="form-label">Current Year *</label>
-                            <select id="apply-year" name="year" class="form-select" required aria-describedby="apply-year-error">
-                                <option value="">Select your year</option>
-                                <option value="1st Year">1st Year</option>
-                                <option value="2nd Year">2nd Year</option>
-                                <option value="3rd Year">3rd Year</option>
-                                <option value="4th Year">4th Year</option>
-                                <option value="5th Year">5th Year</option>
-                            </select>
-                            <div id="apply-year-error" class="error-message" role="alert"></div>
+                            <label for="apply-motivation" class="form-label">Why do you want to become an ambassador? *</label>
+                            <textarea id="apply-motivation" name="motivation" class="form-textarea" rows="4" required></textarea>
+                            <div id="apply-motivation-error" class="error-message" role="alert"></div>
                         </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="apply-linkedin" class="form-label">LinkedIn Profile</label>
-                        <input type="text" id="apply-linkedin" name="linkedin" class="form-input" placeholder="linkedin.com/in/yourprofile">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="apply-motivation" class="form-label">Why do you want to become an ambassador? *</label>
-                        <textarea id="apply-motivation" name="motivation" class="form-textarea" rows="4" required aria-describedby="apply-motivation-error"></textarea>
-                        <div id="apply-motivation-error" class="error-message" role="alert"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="apply-experience" class="form-label">Previous leadership experience (if any)</label>
-                        <textarea id="apply-experience" name="experience" class="form-textarea" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary btn-submit">
-                            <i class="fas fa-paper-plane"></i>
-                            Submit Application
-                        </button>
-                    </div>
-                </form>
+                        
+                        <div class="form-group">
+                            <label for="apply-experience" class="form-label">Previous leadership experience (if any)</label>
+                            <textarea id="apply-experience" name="experience" class="form-textarea" rows="3" placeholder="Describe any relevant leadership roles or experiences..."></textarea>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-submit">
+                                Submit Application
+                            </button>
+                        </div>
+                    </form>
+                </div>
                 
-                <div class="success-message">
-                    <i class="fas fa-check-circle"></i>
-                    <h3>Application Submitted Successfully!</h3>
-                    <p>Thank you for applying to be an EMSI Student Ambassador. We'll review your application and get back to you soon.</p>
+                <div class="success-message" id="application-success-message" style="display: none; background: #d4edda; color: #155724; padding: 2rem; border-radius: 8px; text-align: center; margin-top: 2rem;">
+                    <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                    <h3 style="margin: 1rem 0;">Application Submitted Successfully!</h3>
+                    <p style="margin: 0;">Thank you for applying to be an EMSI Student Ambassador. We'll review your application and get back to you soon.</p>
                 </div>
             </div>
         </div>
@@ -849,64 +921,32 @@
     </div>
 </footer>
 
-<script src="/main.js" defer></script>
+<script src="/main.js?v=2" defer></script>
+
+<!-- Force update CTA section with cohort data -->
 <script>
-// Cohort loader with multiple attempts to ensure it works
-(function() {
-    let attempts = 0;
-    const maxAttempts = 5;
-    
-    function updateCohortSection() {
-        const ctaSection = document.querySelector('.ambassadors-cta .cta-content');
+// Wait for everything to load then force update
+window.addEventListener('load', function() {
+    // Update function
+    function forceUpdateCTA() {
+        console.log('[Cohort Update] Starting update...');
         
-        // If element not found, retry
-        if (!ctaSection && attempts < maxAttempts) {
-            attempts++;
-            setTimeout(updateCohortSection, 500);
-            return;
-        }
-        
-        if (!ctaSection) {
-            console.error('CTA section not found after ' + maxAttempts + ' attempts');
-            return;
-        }
-        
-        // Fetch cohort data
         fetch('/api/public/cohorts/active')
-            .then(response => response.json())
+            .then(response => {
+                console.log('[Cohort Update] Response status:', response.status);
+                return response.json();
+            })
             .then(data => {
-                console.log('Cohort API response:', data);
+                console.log('[Cohort Update] Data received:', data);
                 
-                if (data && data.data) {
-                    const cohort = data.data;
-                    const now = new Date();
-                    const deadline = new Date(cohort.applicationDeadline);
+                if (!data || !data.data) {
+                    console.log('[Cohort Update] No active cohort found, showing default message');
                     
-                    console.log('Updating CTA section. Applications open?', now < deadline);
-                    
-                    if (now < deadline) {
-                        // Applications open
-                        const daysLeft = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
-                        ctaSection.innerHTML = `
-                            <h2>Applications Are Open for ${cohort.year} Cohort!</h2>
-                            <p>Join our prestigious ambassador program. Applications close on ${deadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (${daysLeft} days left).</p>
-                            <div class="cta-buttons">
-                                <a href="#apply" class="btn btn-primary-large" data-modal="application-modal">
-                                    <i class="fas fa-paper-plane"></i>
-                                    Apply Now
-                                </a>
-                                <a href="about.html" class="btn btn-secondary-large">
-                                    <i class="fas fa-info-circle"></i>
-                                    Learn More
-                                </a>
-                            </div>
-                        `;
-                    } else {
-                        // Applications closed
-                        const nextYear = parseInt(cohort.year) + 1;
+                    const ctaSection = document.querySelector('.ambassadors-cta .cta-content');
+                    if (ctaSection) {
                         ctaSection.innerHTML = `
                             <h2>Ready to Become an Ambassador?</h2>
-                            <p>Applications for the ${nextYear} cohort will open soon. Follow us to stay updated!</p>
+                            <p>Applications will open soon. Follow us to stay updated!</p>
                             <div class="cta-buttons">
                                 <a href="#" class="btn btn-primary-large" data-modal="notification-modal">
                                     <i class="fas fa-bell"></i>
@@ -918,34 +958,103 @@
                                 </a>
                             </div>
                         `;
+                        console.log('[Cohort Update] Set default message for no active cohort');
                     }
-                    
-                    // Re-attach modal listeners
-                    const modalTriggers = ctaSection.querySelectorAll('[data-modal]');
-                    modalTriggers.forEach(trigger => {
-                        trigger.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            const modalId = this.getAttribute('data-modal');
-                            const modal = document.getElementById(modalId);
-                            if (modal) modal.classList.add('active');
-                        });
-                    });
+                    return;
                 }
+                
+                const cohort = data.data;
+                const ctaSection = document.querySelector('.ambassadors-cta .cta-content');
+                
+                if (!ctaSection) {
+                    console.error('[Cohort Update] CTA section not found!');
+                    // Try to find it differently
+                    const sections = document.querySelectorAll('section');
+                    sections.forEach(s => {
+                        if (s.className.includes('ambassadors-cta')) {
+                            console.log('[Cohort Update] Found section:', s);
+                        }
+                    });
+                    return;
+                }
+                
+                console.log('[Cohort Update] CTA section found:', ctaSection);
+                
+                const now = new Date();
+                const deadline = new Date(cohort.applicationDeadline);
+                const applicationsOpen = now < deadline;
+                
+                console.log('[Cohort Update] Current date:', now.toISOString());
+                console.log('[Cohort Update] Application deadline:', deadline.toISOString());
+                console.log('[Cohort Update] Applications open?', applicationsOpen);
+                
+                // Force update the content
+                if (applicationsOpen) {
+                    const daysLeft = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
+                    const newHTML = `
+                        <h2>Applications Are Open for ${cohort.year} Cohort!</h2>
+                        <p>Join our prestigious ambassador program. Applications close on ${deadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (${daysLeft} days left).</p>
+                        <div class="cta-buttons">
+                            <a href="#apply" class="btn btn-primary-large" data-modal="application-modal">
+                                <i class="fas fa-paper-plane"></i>
+                                Apply Now
+                            </a>
+                            <a href="about.html" class="btn btn-secondary-large">
+                                <i class="fas fa-info-circle"></i>
+                                Learn More
+                            </a>
+                        </div>
+                    `;
+                    console.log('[Cohort Update] Setting HTML for OPEN applications');
+                    ctaSection.innerHTML = newHTML;
+                } else {
+                    const nextYear = parseInt(cohort.year) + 1;
+                    const newHTML = `
+                        <h2>Ready to Become an Ambassador?</h2>
+                        <p>Applications for the ${nextYear} cohort will open soon. Follow us to stay updated!</p>
+                        <div class="cta-buttons">
+                            <a href="#" class="btn btn-primary-large" data-modal="notification-modal">
+                                <i class="fas fa-bell"></i>
+                                Get Notified
+                            </a>
+                            <a href="about.html" class="btn btn-secondary-large">
+                                <i class="fas fa-info-circle"></i>
+                                Learn More
+                            </a>
+                        </div>
+                    `;
+                    console.log('[Cohort Update] Setting HTML for CLOSED applications');
+                    ctaSection.innerHTML = newHTML;
+                }
+                
+                console.log('[Cohort Update] Update complete!');
+                
+                // Re-attach modal handlers
+                const modalTriggers = ctaSection.querySelectorAll('[data-modal]');
+                modalTriggers.forEach(trigger => {
+                    trigger.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const modalId = this.getAttribute('data-modal');
+                        const modal = document.getElementById(modalId);
+                        if (modal) modal.classList.add('active');
+                    });
+                });
             })
-            .catch(err => console.error('Error loading cohort:', err));
+            .catch(error => {
+                console.error('[Cohort Update] Error:', error);
+            });
     }
     
-    // Try multiple ways to ensure it runs
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateCohortSection);
-    } else {
-        updateCohortSection();
-    }
+    // Run immediately
+    forceUpdateCTA();
     
-    // Also run after a delay as backup
-    setTimeout(updateCohortSection, 1000);
-})();
+    // Run again after a delay to override any other scripts
+    setTimeout(forceUpdateCTA, 2000);
+    setTimeout(forceUpdateCTA, 5000);
+});
+</script>
 
+<script>
 document.addEventListener('DOMContentLoaded', function() {
     // Load ambassadors from database
     async function loadAmbassadorsFromDatabase() {
@@ -1004,6 +1113,198 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load ambassadors on page load
     loadAmbassadorsFromDatabase();
+});
+
+// Handle modals and application form
+document.addEventListener('click', function(e) {
+    console.log('Click event on:', e.target);
+    
+    // Handle modal triggers
+    if (e.target.closest('[data-modal]')) {
+        e.preventDefault();
+        const modalId = e.target.closest('[data-modal]').getAttribute('data-modal');
+        console.log('Opening modal:', modalId);
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('active');
+            
+            // If it's the application modal, set up form handler
+            if (modalId === 'application-modal') {
+                console.log('Setting up application form...');
+                setupApplicationForm();
+            }
+        }
+    }
+    
+    // Handle modal close buttons
+    if (e.target.closest('.modal-close')) {
+        const modal = e.target.closest('.modal-overlay');
+        if (modal) {
+            modal.classList.remove('active');
+        }
+    }
+});
+
+// Setup application form handler
+function setupApplicationForm() {
+    const applicationForm = document.getElementById('application-form');
+    if (!applicationForm || applicationForm.hasAttribute('data-handler-attached')) {
+        console.log('Form already has handler or not found');
+        return;
+    }
+    
+    applicationForm.setAttribute('data-handler-attached', 'true');
+    console.log('Setting up application form handler');
+    
+    // Clear any text that might be in the textarea
+    const experienceTextarea = document.getElementById('apply-experience');
+    if (experienceTextarea && experienceTextarea.value.includes('Application Submitted Successfully')) {
+        experienceTextarea.value = '';
+    }
+    
+    
+    applicationForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        console.log('Application form submitted');
+        console.log('Form elements:', this.elements);
+        console.log('Form elements by name:');
+        console.log('  name:', this.elements.name);
+        console.log('  email:', this.elements.email);
+        console.log('  major:', this.elements.major);
+        console.log('  year:', this.elements.year);
+        console.log('  motivation:', this.elements.motivation);
+        
+        // Clear previous errors
+        const errorMessages = this.querySelectorAll('.error-message');
+        errorMessages.forEach(err => err.textContent = '');
+        
+        // Get form data
+        const formData = {
+            name: this.elements.name ? this.elements.name.value.trim() : '',
+            email: this.elements.email ? this.elements.email.value.trim() : '',
+            major: this.elements.major ? this.elements.major.value : '',
+            year: this.elements.year ? this.elements.year.value : '',
+            linkedin: this.elements.linkedin ? this.elements.linkedin.value.trim() : '',
+            motivation: this.elements.motivation ? this.elements.motivation.value.trim() : '',
+            experience: this.elements.experience ? this.elements.experience.value.trim() : ''
+        };
+        
+        console.log('Form data collected:', formData);
+        
+        // Validate
+        let hasError = false;
+        let errors = [];
+        
+        if (!formData.name) {
+            document.getElementById('apply-name-error').textContent = 'Name is required';
+            hasError = true;
+            errors.push('Name is empty');
+        }
+        
+        if (!formData.email || !formData.email.includes('@')) {
+            document.getElementById('apply-email-error').textContent = 'Valid email is required';
+            hasError = true;
+            errors.push('Email is invalid: ' + formData.email);
+        }
+        
+        if (!formData.major) {
+            document.getElementById('apply-major-error').textContent = 'Please select your major';
+            hasError = true;
+            errors.push('Major not selected');
+        }
+        
+        if (!formData.year) {
+            document.getElementById('apply-year-error').textContent = 'Please select your year';
+            hasError = true;
+            errors.push('Year not selected');
+        }
+        
+        if (!formData.motivation || formData.motivation.length < 50) {
+            document.getElementById('apply-motivation-error').textContent = 'Please provide at least 50 characters';
+            hasError = true;
+            errors.push('Motivation too short: ' + formData.motivation.length + ' chars');
+        }
+        
+        if (hasError) {
+            console.log('Validation errors found:', errors);
+            // Scroll to first error
+            const firstError = this.querySelector('.error-message:not(:empty)');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            // Show alert for debugging
+            alert('Please fill in all required fields:\n' + errors.join('\n'));
+            return;
+        }
+        
+        // Show loading state
+        const submitBtn = this.querySelector('.btn-submit');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = 'Submitting...';
+        submitBtn.disabled = true;
+        
+        try {
+            console.log('Sending application data:', formData);
+            const response = await fetch('/api/public/applications', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            console.log('Response:', result);
+            
+            if (response.ok && result.success) {
+                // Show success message
+                const formContainer = this.closest('.application-form-container');
+                const formWrapper = formContainer.querySelector('.application-form-wrapper');
+                if (formWrapper) {
+                    formWrapper.style.display = 'none';
+                }
+                const successMsg = document.getElementById('application-success-message');
+                if (successMsg) {
+                    successMsg.style.display = 'block';
+                    // Scroll to success message
+                    successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                // Reset form
+                this.reset();
+                
+                // Close modal after 3 seconds
+                setTimeout(() => {
+                    const modal = document.getElementById('application-modal');
+                    if (modal) {
+                        modal.classList.remove('active');
+                        // Reset view for next time
+                        setTimeout(() => {
+                            formContainer.querySelector('.application-form').style.display = 'block';
+                            formContainer.querySelector('.success-message').style.display = 'none';
+                        }, 500);
+                    }
+                }, 3000);
+            } else {
+                // Show error
+                alert(result.message || 'An error occurred. Please try again.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            alert('Network error. Please check your connection and try again.');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+}
+
+// Handle modal overlay clicks to close
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+        e.target.classList.remove('active');
+    }
 });
 </script>
 </body>

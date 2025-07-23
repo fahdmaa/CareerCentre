@@ -259,6 +259,23 @@ class ApiClient {
             body: JSON.stringify(data)
         });
     }
+    
+    // Application endpoints
+    async getApplications(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        return this.request(`/applications${queryString ? '?' + queryString : ''}`);
+    }
+    
+    async getApplication(id) {
+        return this.request(`/applications/${id}`);
+    }
+    
+    async updateApplication(id, data) {
+        return this.request(`/applications/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+    }
 }
 
 // Create global instance
