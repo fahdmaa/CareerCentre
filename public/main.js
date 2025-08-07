@@ -2,13 +2,11 @@
 
 // Prevent multiple initializations
 if (window.emsiCareerCenterInitialized) {
-    console.warn("EMSI Career Center already initialized, skipping duplicate initialization");
+    // Already initialized, skip
 } else {
     window.emsiCareerCenterInitialized = true;
 
     document.addEventListener("DOMContentLoaded", () => {
-        console.log("EMSI Career Center scripts initialized.");
-
         // --- Pill Navigation Bar Functionality --- //
         function initializePillNavigation() {
             const navbarItems = document.querySelectorAll('.pill-navbar-item');
@@ -90,20 +88,29 @@ if (window.emsiCareerCenterInitialized) {
             if (!hideOnScrollNavbar) return;
 
             let lastScrollTop = 0;
-            let scrollThreshold = 10; // More sensitive to scroll
+            let scrollThreshold = 3; // More sensitive
             let ticking = false;
 
             function updateNavbarVisibility() {
                 const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-
-                if (Math.abs(lastScrollTop - currentScroll) > scrollThreshold) {
-                    if (currentScroll > lastScrollTop && currentScroll > 50) { // Hide sooner
-                        hideOnScrollNavbar.classList.add('hidden');
-                    } else {
-                        hideOnScrollNavbar.classList.remove('hidden');
-                    }
-                    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+                const scrollDiff = currentScroll - lastScrollTop;
+                
+                // Skip very small movements
+                if (Math.abs(scrollDiff) <= scrollThreshold) {
+                    ticking = false;
+                    return;
                 }
+
+                // Scrolling down - hide immediately
+                if (scrollDiff > 0 && currentScroll > 30) {
+                    hideOnScrollNavbar.classList.add('hidden');
+                } 
+                // Scrolling up - show immediately
+                else if (scrollDiff < 0) {
+                    hideOnScrollNavbar.classList.remove('hidden');
+                }
+                
+                lastScrollTop = currentScroll;
                 ticking = false;
             }
 
@@ -112,7 +119,7 @@ if (window.emsiCareerCenterInitialized) {
                     requestAnimationFrame(updateNavbarVisibility);
                     ticking = true;
                 }
-            });
+            }, { passive: true });
         }
 
         // --- Optimized Intersection Observer for Scroll Animations --- //
@@ -778,8 +785,6 @@ if (window.emsiCareerCenterInitialized) {
                     // Get event ID from the clicked button
                     const eventId = this._eventId;
 
-                    console.log('Registration Data:', registrationData);
-
                     const submitButton = this.querySelector('.submit-btn');
                     const originalText = submitButton.textContent;
                     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
@@ -832,7 +837,6 @@ if (window.emsiCareerCenterInitialized) {
                         }
 
                     } catch (error) {
-                        console.error('Registration error:', error);
                         alert(error.message || 'Registration failed. Please try again.');
                     } finally {
                         submitButton.innerHTML = originalText;
@@ -1188,20 +1192,12 @@ if (window.emsiCareerCenterInitialized) {
             }
         }
 
-        // --- Error Handling --- //
-        window.addEventListener('error', (e) => {
-            console.error('JavaScript Error:', e.error);
-        });
 
         // --- Performance Monitoring --- //
         function initializePerformanceMonitoring() {
             if ('PerformanceObserver' in window) {
                 const perfObserver = new PerformanceObserver((list) => {
-                    list.getEntries().forEach((entry) => {
-                        if (entry.entryType === 'measure') {
-                            console.log(`Performance: ${entry.name} took ${entry.duration}ms`);
-                        }
-                    });
+                    // Performance monitoring without logging
                 });
 
                 perfObserver.observe({ entryTypes: ['measure'] });
@@ -1239,8 +1235,6 @@ if (window.emsiCareerCenterInitialized) {
 
             // Cleanup will-change after initialization
             setTimeout(cleanupWillChange, 2000);
-
-            console.log("All EMSI Career Center features initialized successfully with performance optimizations.");
         }
 
         // --- Modal Functionality --- //
@@ -1463,8 +1457,6 @@ if (window.emsiCareerCenterInitialized) {
                     
                     localStorage.setItem('ambassadorNotification', JSON.stringify(subscriptionData));
                     
-                    console.log('Notification subscription saved:', subscriptionData);
-                    
                     // Reset button state
                     submitButton.disabled = false;
                     submitButton.innerHTML = originalText;
@@ -1511,9 +1503,7 @@ if (window.emsiCareerCenterInitialized) {
         window.addEventListener('load', () => {
             document.body.classList.add('page-loaded');
 
-            preloadImages().then(() => {
-                console.log('All images preloaded successfully');
-            });
+            preloadImages();
         });
 
         // Initialize all features

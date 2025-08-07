@@ -279,30 +279,31 @@ ul, ol {
     transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* --- Enhanced Modern Pill Navigation Bar with Glassmorphism --- */
+/* --- Dark Liquid Glass Navigation Bar with Glassmorphism --- */
 .pill-navbar {
     width: fit-content;
     max-width: 90%;
-    height: 70px;
+    height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 35px;
+    border-radius: 36px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 28px;
+    gap: 4px;
     
-    /* Glassmorphism effect */
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Dark glassmorphism effect */
+    background: rgba(30, 30, 30, 0.25);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     
-    /* Liquid glass shadow and glow */
+    /* Dark glass shadow with depth */
     box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.08),
-        0 2px 8px rgba(0, 0, 0, 0.04),
-        inset 0 2px 4px rgba(255, 255, 255, 0.1),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        0 1px 2px rgba(255, 255, 255, 0.1) inset;
     
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
@@ -311,79 +312,44 @@ ul, ol {
     contain: layout style;
 }
 
-/* Enhanced navbar hover effect */
+/* Enhanced dark navbar hover effect */
 .pill-navbar:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
+    background: rgba(30, 30, 30, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 
-        0 12px 48px rgba(0, 0, 0, 0.12),
-        0 4px 16px rgba(0, 0, 0, 0.06),
-        inset 0 2px 4px rgba(255, 255, 255, 0.15),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.08);
+        0 12px 48px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 4px 16px rgba(0, 0, 0, 0.3),
+        0 1px 3px rgba(255, 255, 255, 0.15) inset;
 }
 
-/* Theme Variants with enhanced glassmorphism */
-.pill-navbar.dark {
-    background: rgba(34, 34, 34, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--navbar-text-dark);
+/* All theme variants now use dark glassmorphism */
+.pill-navbar.dark,
+.pill-navbar.blue,
+.pill-navbar.green,
+.pill-navbar.white,
+.pill-navbar.light,
+.pill-navbar.white-gradient {
+    /* Override with dark glassmorphism */
+    background: rgba(30, 30, 30, 0.25);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    
+    /* Consistent dark glass shadow */
     box-shadow: 
         0 8px 32px rgba(0, 0, 0, 0.3),
-        inset 0 1px 2px rgba(255, 255, 255, 0.1);
-}
-
-.pill-navbar.blue {
-    background: rgba(41, 98, 255, 0.15);
-    border: 1px solid rgba(41, 98, 255, 0.25);
-    color: var(--navbar-text-blue);
-    box-shadow: 
-        0 8px 32px rgba(41, 98, 255, 0.2),
-        inset 0 1px 2px rgba(255, 255, 255, 0.3);
-}
-
-.pill-navbar.green {
-    background: rgba(0, 166, 81, 0.15);
-    border: 1px solid rgba(0, 166, 81, 0.25);
-    color: var(--navbar-text-green);
-    box-shadow: 
-        0 8px 32px rgba(0, 166, 81, 0.2),
-        inset 0 1px 2px rgba(255, 255, 255, 0.3);
-}
-
-.pill-navbar.white {
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: var(--navbar-text-white);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.1),
-        inset 0 1px 2px rgba(255, 255, 255, 0.5);
-}
-
-.pill-navbar.light {
-    background: rgba(248, 249, 250, 0.8);
-    border: 1px solid rgba(233, 236, 239, 0.5);
-    color: var(--navbar-text-light);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.08),
-        inset 0 1px 2px rgba(255, 255, 255, 0.5);
-}
-
-/* White gradient variant for login page */
-.pill-navbar.white-gradient {
-    background: linear-gradient(135deg, 
-        rgba(255, 255, 255, 0.9) 0%, 
-        rgba(255, 255, 255, 0.7) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    color: var(--navbar-text-white);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.1),
-        inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        0 1px 2px rgba(255, 255, 255, 0.1) inset;
 }
 
 /* Navigation Items */
 .pill-navbar-nav {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -393,14 +359,14 @@ ul, ol {
     margin: 0;
 }
 
-/* Enhanced Modern Navbar Items with Glassmorphism */
+/* Dark Glassmorphism Navbar Items */
 .pill-navbar-item {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 12px 18px;
-    border-radius: 25px;
+    padding: 12px 20px;
+    border-radius: 28px;
     text-decoration: none;
     font-weight: 500;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -409,11 +375,14 @@ ul, ol {
     position: relative;
     overflow: hidden;
     transform: translateZ(0);
-    will-change: transform, box-shadow;
+    will-change: transform, background, box-shadow;
     
-    /* Subtle glass effect for items */
+    /* Default transparent state */
     background: transparent;
     border: 1px solid transparent;
+    
+    /* Soft white text for dark glass */
+    color: rgba(255, 255, 255, 0.85);
 }
 
 /* Never show underlines on navbar items */
@@ -435,14 +404,17 @@ ul, ol {
         inset 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
-/* Enhanced hover scaling effect with glass morphing */
+/* Dark glass hover effect with subtle glow */
 .pill-navbar-item:hover {
-    transform: scale(1.05) translateY(-2px);
+    transform: scale(1.02);
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 
-        0 4px 20px rgba(0, 0, 0, 0.1),
-        inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        0 4px 12px rgba(0, 0, 0, 0.2),
+        0 0 20px rgba(255, 255, 255, 0.1),
+        inset 0 1px 2px rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     z-index: 2;
 }
 
@@ -452,125 +424,87 @@ ul, ol {
     transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Icon styles with enhanced animations */
+/* Icon styles for dark glass effect */
 .pill-navbar-icon {
     width: 20px;
     height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: var(--transition-base);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pill-navbar-icon svg {
+    stroke: rgba(255, 255, 255, 0.85);
+    fill: none;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 .pill-navbar-item:hover .pill-navbar-icon {
     transform: scale(1.1);
 }
 
-/* Apply theme-specific styles to items */
-.pill-navbar.dark .pill-navbar-item {
-    color: var(--navbar-icon-dark);
+.pill-navbar-item:hover .pill-navbar-icon svg {
+    stroke: rgba(255, 255, 255, 0.95);
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
 }
 
-.pill-navbar.blue .pill-navbar-item {
-    color: var(--navbar-icon-blue);
-}
-
-.pill-navbar.green .pill-navbar-item {
-    color: var(--navbar-icon-green);
-}
-
+/* Unified white colors for dark glassmorphism */
+.pill-navbar.dark .pill-navbar-item,
+.pill-navbar.blue .pill-navbar-item,
+.pill-navbar.green .pill-navbar-item,
 .pill-navbar.white .pill-navbar-item,
-.pill-navbar.white-gradient .pill-navbar-item {
-    color: var(--navbar-icon-white);
-}
-
+.pill-navbar.white-gradient .pill-navbar-item,
 .pill-navbar.light .pill-navbar-item {
-    color: var(--navbar-icon-light);
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* Enhanced Active item styles with glassmorphism */
-.pill-navbar.dark .pill-navbar-item.active {
+.pill-navbar .pill-navbar-item svg {
+    stroke: rgba(255, 255, 255, 0.85);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Active item with enhanced glow for dark glass */
+.pill-navbar .pill-navbar-item.active {
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.25);
-    color: var(--navbar-text-dark);
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     box-shadow: 
-        0 4px 20px rgba(255, 255, 255, 0.1),
-        inset 0 1px 2px rgba(255, 255, 255, 0.3);
+        0 4px 16px rgba(0, 0, 0, 0.3),
+        0 0 24px rgba(255, 255, 255, 0.15),
+        inset 0 1px 3px rgba(255, 255, 255, 0.2),
+        0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.pill-navbar.blue .pill-navbar-item.active {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: var(--navbar-text-blue);
-    box-shadow: 
-        0 4px 20px rgba(255, 255, 255, 0.15),
-        inset 0 1px 2px rgba(255, 255, 255, 0.4);
+.pill-navbar .pill-navbar-item.active svg {
+    stroke: rgba(255, 255, 255, 0.95);
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
 }
 
-.pill-navbar.green .pill-navbar-item.active {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: var(--navbar-text-green);
-    box-shadow: 
-        0 4px 20px rgba(255, 255, 255, 0.15),
-        inset 0 1px 2px rgba(255, 255, 255, 0.4);
-}
-
-.pill-navbar.white .pill-navbar-item.active,
-.pill-navbar.white-gradient .pill-navbar-item.active {
-    background: rgba(0, 166, 81, 0.1);
-    border: 1px solid rgba(0, 166, 81, 0.2);
-    color: var(--navbar-text-white);
-    box-shadow: 
-        0 4px 20px rgba(0, 166, 81, 0.15),
-        inset 0 1px 2px rgba(255, 255, 255, 0.3);
-}
-
-.pill-navbar.light .pill-navbar-item.active {
-    background: rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    color: var(--navbar-text-light);
-    box-shadow: 
-        0 4px 20px rgba(0, 0, 0, 0.08),
-        inset 0 1px 2px rgba(255, 255, 255, 0.5);
-}
-
-/* Enhanced Hover effects with glassmorphism */
-.pill-navbar.dark .pill-navbar-item:hover:not(.active) {
+/* Unified dark glass hover effects for all themes */
+.pill-navbar .pill-navbar-item:hover:not(.active) {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        0 0 16px rgba(255, 255, 255, 0.08);
 }
 
-.pill-navbar.blue .pill-navbar-item:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.pill-navbar.green .pill-navbar-item:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.pill-navbar.white .pill-navbar-item:hover:not(.active),
-.pill-navbar.white-gradient .pill-navbar-item:hover:not(.active) {
-    background: rgba(0, 166, 81, 0.08);
-    border: 1px solid rgba(0, 166, 81, 0.15);
-}
-
-.pill-navbar.light .pill-navbar-item:hover:not(.active) {
-    background: rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-/* Special styles for the active item */
+/* Label styles with dark glass text shadows */
 .pill-navbar-item.active .pill-navbar-label {
     display: inline-block;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     animation: labelSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pill-navbar-item .pill-navbar-label {
     display: none;
-    transition: var(--transition-base);
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes labelSlideIn {
@@ -593,6 +527,8 @@ ul, ol {
     z-index: 1000;
     /* Add subtle animation */
     animation: navbarSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    /* Ensure it works on any background */
+    isolation: isolate;
 }
 
 @keyframes navbarSlideUp {
@@ -606,19 +542,21 @@ ul, ol {
     }
 }
 
-/* Enhanced hide on scroll behavior */
+/* Enhanced hide on scroll behavior with smooth animation */
 .pill-navbar.hide-on-scroll {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                backdrop-filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                backdrop-filter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.pill-navbar.hide-on-scroll.hidden {
-    transform: translateX(-50%) translateY(100px);
-    opacity: 0;
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
-    pointer-events: none;
+.pill-navbar.fixed-bottom.hide-on-scroll.hidden {
+    bottom: -90px !important;
+    opacity: 0 !important;
+    transform: translateX(-50%) scale(0.95) !important;
+    backdrop-filter: blur(0px) !important;
+    -webkit-backdrop-filter: blur(0px) !important;
+    pointer-events: none !important;
 }
 
 /* --- Header --- */
@@ -2778,10 +2716,14 @@ html {
         max-width: 95%;
         padding: 0 16px;
         height: 65px;
-        /* Adjust glassmorphism for mobile */
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(15px) saturate(160%);
-        -webkit-backdrop-filter: blur(15px) saturate(160%);
+        /* Dark glassmorphism for mobile */
+        background: rgba(30, 30, 30, 0.3);
+        backdrop-filter: blur(18px) saturate(140%);
+        -webkit-backdrop-filter: blur(18px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 
+            0 6px 24px rgba(0, 0, 0, 0.25),
+            0 0 0 1px rgba(255, 255, 255, 0.05) inset;
     }
 
     .pill-navbar-item {
@@ -2795,10 +2737,13 @@ html {
         height: 18px;
     }
 
-    /* Enhanced hover for mobile - more subtle */
+    /* Dark glass hover for mobile - subtle glow */
     .pill-navbar-item:hover {
         transform: scale(1.03) translateY(-1px);
         background: rgba(255, 255, 255, 0.08);
+        box-shadow: 
+            0 2px 6px rgba(0, 0, 0, 0.2),
+            0 0 12px rgba(255, 255, 255, 0.06);
     }
 
     /* For very small screens, make sure icons have enough spacing */

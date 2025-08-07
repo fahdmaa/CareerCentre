@@ -572,7 +572,7 @@
                         `;
                     }
                 })
-                .catch(e => console.error('Cohort update error:', e));
+                .catch(e => {});
         }
         
         // Run immediately
@@ -929,18 +929,14 @@
 window.addEventListener('load', function() {
     // Update function
     function forceUpdateCTA() {
-        console.log('[Cohort Update] Starting update...');
         
         fetch('/api/public/cohorts/active')
             .then(response => {
-                console.log('[Cohort Update] Response status:', response.status);
                 return response.json();
             })
             .then(data => {
-                console.log('[Cohort Update] Data received:', data);
                 
                 if (!data || !data.data) {
-                    console.log('[Cohort Update] No active cohort found, showing default message');
                     
                     const ctaSection = document.querySelector('.ambassadors-cta .cta-content');
                     if (ctaSection) {
@@ -958,7 +954,6 @@ window.addEventListener('load', function() {
                                 </a>
                             </div>
                         `;
-                        console.log('[Cohort Update] Set default message for no active cohort');
                     }
                     return;
                 }
@@ -967,26 +962,20 @@ window.addEventListener('load', function() {
                 const ctaSection = document.querySelector('.ambassadors-cta .cta-content');
                 
                 if (!ctaSection) {
-                    console.error('[Cohort Update] CTA section not found!');
                     // Try to find it differently
                     const sections = document.querySelectorAll('section');
                     sections.forEach(s => {
                         if (s.className.includes('ambassadors-cta')) {
-                            console.log('[Cohort Update] Found section:', s);
                         }
                     });
                     return;
                 }
                 
-                console.log('[Cohort Update] CTA section found:', ctaSection);
                 
                 const now = new Date();
                 const deadline = new Date(cohort.applicationDeadline);
                 const applicationsOpen = now < deadline;
                 
-                console.log('[Cohort Update] Current date:', now.toISOString());
-                console.log('[Cohort Update] Application deadline:', deadline.toISOString());
-                console.log('[Cohort Update] Applications open?', applicationsOpen);
                 
                 // Force update the content
                 if (applicationsOpen) {
@@ -1005,7 +994,6 @@ window.addEventListener('load', function() {
                             </a>
                         </div>
                     `;
-                    console.log('[Cohort Update] Setting HTML for OPEN applications');
                     ctaSection.innerHTML = newHTML;
                 } else {
                     const nextYear = parseInt(cohort.year) + 1;
@@ -1023,11 +1011,9 @@ window.addEventListener('load', function() {
                             </a>
                         </div>
                     `;
-                    console.log('[Cohort Update] Setting HTML for CLOSED applications');
                     ctaSection.innerHTML = newHTML;
                 }
                 
-                console.log('[Cohort Update] Update complete!');
                 
                 // Re-attach modal handlers
                 const modalTriggers = ctaSection.querySelectorAll('[data-modal]');
@@ -1041,7 +1027,6 @@ window.addEventListener('load', function() {
                 });
             })
             .catch(error => {
-                console.error('[Cohort Update] Error:', error);
             });
     }
     
@@ -1067,7 +1052,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         } catch (error) {
-            console.error('Error loading ambassadors:', error);
         }
     }
     
@@ -1117,20 +1101,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Handle modals and application form
 document.addEventListener('click', function(e) {
-    console.log('Click event on:', e.target);
     
     // Handle modal triggers
     if (e.target.closest('[data-modal]')) {
         e.preventDefault();
         const modalId = e.target.closest('[data-modal]').getAttribute('data-modal');
-        console.log('Opening modal:', modalId);
         const modal = document.getElementById(modalId);
         if (modal) {
             modal.classList.add('active');
             
             // If it's the application modal, set up form handler
             if (modalId === 'application-modal') {
-                console.log('Setting up application form...');
                 setupApplicationForm();
             }
         }
@@ -1149,12 +1130,10 @@ document.addEventListener('click', function(e) {
 function setupApplicationForm() {
     const applicationForm = document.getElementById('application-form');
     if (!applicationForm || applicationForm.hasAttribute('data-handler-attached')) {
-        console.log('Form already has handler or not found');
         return;
     }
     
     applicationForm.setAttribute('data-handler-attached', 'true');
-    console.log('Setting up application form handler');
     
     // Clear any text that might be in the textarea
     const experienceTextarea = document.getElementById('apply-experience');
@@ -1165,14 +1144,6 @@ function setupApplicationForm() {
     
     applicationForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        console.log('Application form submitted');
-        console.log('Form elements:', this.elements);
-        console.log('Form elements by name:');
-        console.log('  name:', this.elements.name);
-        console.log('  email:', this.elements.email);
-        console.log('  major:', this.elements.major);
-        console.log('  year:', this.elements.year);
-        console.log('  motivation:', this.elements.motivation);
         
         // Clear previous errors
         const errorMessages = this.querySelectorAll('.error-message');
@@ -1189,7 +1160,6 @@ function setupApplicationForm() {
             experience: this.elements.experience ? this.elements.experience.value.trim() : ''
         };
         
-        console.log('Form data collected:', formData);
         
         // Validate
         let hasError = false;
@@ -1226,14 +1196,12 @@ function setupApplicationForm() {
         }
         
         if (hasError) {
-            console.log('Validation errors found:', errors);
             // Scroll to first error
             const firstError = this.querySelector('.error-message:not(:empty)');
             if (firstError) {
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
             // Show alert for debugging
-            alert('Please fill in all required fields:\n' + errors.join('\n'));
             return;
         }
         
@@ -1244,7 +1212,6 @@ function setupApplicationForm() {
         submitBtn.disabled = true;
         
         try {
-            console.log('Sending application data:', formData);
             const response = await fetch('/api/public/applications', {
                 method: 'POST',
                 headers: {
@@ -1254,7 +1221,6 @@ function setupApplicationForm() {
             });
             
             const result = await response.json();
-            console.log('Response:', result);
             
             if (response.ok && result.success) {
                 // Show success message
@@ -1287,13 +1253,10 @@ function setupApplicationForm() {
                 }, 3000);
             } else {
                 // Show error
-                alert(result.message || 'An error occurred. Please try again.');
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }
         } catch (error) {
-            console.error('Submission error:', error);
-            alert('Network error. Please check your connection and try again.');
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
         }

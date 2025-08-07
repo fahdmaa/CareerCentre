@@ -23,13 +23,7 @@ app.use((req, res, next) => {
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
-// Logging middleware for debugging
-app.use((req, res, next) => {
-    if (!isProduction) {
-        console.log(`${req.method} ${req.path}`);
-    }
-    next();
-});
+// Logging middleware (disabled in production)
 
 // Serve static files from public directory for assets
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
@@ -39,11 +33,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 // Special handling for CSS and JS files
 app.get('/style.css', (req, res) => {
     const filePath = path.join(__dirname, 'public', 'style.css');
-    if (!isProduction) console.log('Serving style.css from:', filePath);
     res.type('text/css');
     res.sendFile(filePath, (err) => {
         if (err) {
-            if (!isProduction) console.error('Error serving style.css:', err);
             res.status(404).send('style.css not found');
         }
     });
@@ -51,11 +43,9 @@ app.get('/style.css', (req, res) => {
 
 app.get('/main.js', (req, res) => {
     const filePath = path.join(__dirname, 'public', 'main.js');
-    if (!isProduction) console.log('Serving main.js from:', filePath);
     res.type('application/javascript');
     res.sendFile(filePath, (err) => {
         if (err) {
-            if (!isProduction) console.error('Error serving main.js:', err);
             res.status(404).send('main.js not found');
         }
     });
@@ -74,13 +64,7 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 
-// Debug: Log all static file requests
-app.use((req, res, next) => {
-    if (req.path.endsWith('.css') || req.path.endsWith('.js') || req.path.includes('/images/') || req.path.includes('/videos/')) {
-        console.log(`Static file request: ${req.path}`);
-    }
-    next();
-});
+// Static file request handling (logging disabled in production)
 
 // Serve static HTML files with explicit routes
 app.get('/', (req, res) => {
@@ -116,13 +100,9 @@ app.get('/events.html', (req, res) => {
 });
 
 app.get('/ambassadors', (req, res) => {
-    console.log('Ambassadors route hit - serving ambassadors.html');
     const filePath = path.join(__dirname, 'ambassadors.html');
-    console.log('File path:', filePath);
-    console.log('File exists:', fs.existsSync(filePath));
     
     if (!fs.existsSync(filePath)) {
-        console.error('ambassadors.html not found!');
         return res.status(404).send('Ambassadors page not found');
     }
     
@@ -130,7 +110,6 @@ app.get('/ambassadors', (req, res) => {
 });
 
 app.get('/ambassadors.html', (req, res) => {
-    console.log('Ambassadors.html route hit');
     const filePath = path.join(__dirname, 'ambassadors.html');
     res.sendFile(filePath);
 });
@@ -253,7 +232,6 @@ app.post('/api/auth/login', rateLimitLogin, async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Login error:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });
@@ -277,7 +255,6 @@ const authenticateToken = (req, res, next) => {
         } else if (error.name === 'JsonWebTokenError') {
             return res.status(403).json({ message: 'Invalid token' });
         } else {
-            console.error('Token verification error:', error);
             return res.status(500).json({ message: 'Token verification failed' });
         }
     }
@@ -854,16 +831,6 @@ app.put('/api/applications/:id', authenticateToken, (req, res) => {
                 joinedDate: new Date().toISOString()
             };
             ambassadors.push(newAmbassador);
-            
-            // TODO: Send welcome email
-            console.log('New ambassador created:', newAmbassador.name);
-        }
-        
-        // TODO: Send notification emails based on status
-        if (status === APPLICATION_STATUSES.REJECTED) {
-            console.log('Send rejection email to:', application.email);
-        } else if (status === APPLICATION_STATUSES.INVITE_TO_INTERVIEW) {
-            console.log('Send interview invitation to:', application.email);
         }
     }
     
@@ -921,24 +888,20 @@ app.use(express.static(__dirname, {
 
 // Catch-all for 404s
 app.use((req, res) => {
-    console.log(`404 - Not found: ${req.path}`);
     res.status(404).send('Page not found');
 });
 
 // Global error handler
 app.use((err, req, res, next) => {
-    console.error('Global error handler:', err);
     res.status(500).json({ message: 'Internal server error' });
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-    console.log('SIGTERM received, shutting down gracefully');
     process.exit(0);
 });
 
 process.on('SIGINT', () => {
-    console.log('SIGINT received, shutting down gracefully');
     process.exit(0);
 });
 
@@ -950,7 +913,9 @@ const server = app.listen(PORT, () => {
 
 // Handle server errors
 server.on('error', (err) => {
-    console.error('Server error:', err);
+    if (!isProduction) {
+        console.error('Server error:', err);
+    }
 });
 
 module.exports = app;
