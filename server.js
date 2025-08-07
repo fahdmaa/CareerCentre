@@ -376,6 +376,11 @@ let cohortConfig = {
             maxAmbassadors: 20,
             applicationDeadline: '2024-08-15',
             perks: ['Leadership training', 'Networking events', 'Certificate of achievement', 'Priority access to career events'],
+            trainings: [
+                { id: 1, title: 'Leadership Fundamentals', description: 'Learn the basics of effective leadership and team management' },
+                { id: 2, title: 'Public Speaking', description: 'Master the art of presenting and communicating with confidence' },
+                { id: 3, title: 'Event Management', description: 'Organize successful events from planning to execution' }
+            ],
             requiredTrainings: ['Orientation', 'Leadership basics', 'EMSI values and culture']
         }
     ]
@@ -401,6 +406,33 @@ let nextApplicationId = 1;
 
 // Ambassador applications storage
 let applications = [];
+
+// Application status pipeline
+const APPLICATION_STATUSES = {
+    PENDING_REVIEW: 'pending_review',
+    INVITE_TO_INTERVIEW: 'invite_to_interview', 
+    INVITED: 'invited',
+    INTERVIEWED: 'interviewed',
+    SHORTLISTED: 'shortlisted',
+    VALIDATED: 'validated',
+    REJECTED: 'rejected'
+};
+
+// Email templates
+const EMAIL_TEMPLATES = {
+    REJECTION: {
+        subject: 'EMSI Student Ambassador Application Update',
+        body: 'Thank you for your interest in the EMSI Student Ambassador program. After careful consideration, we regret to inform you that we will not be moving forward with your application at this time. We encourage you to apply again in the future.'
+    },
+    INVITATION: {
+        subject: 'Interview Invitation - EMSI Student Ambassador Program',
+        body: 'Congratulations! We are impressed with your application and would like to invite you for an interview for the EMSI Student Ambassador program.'
+    },
+    WELCOME: {
+        subject: 'Welcome to the EMSI Student Ambassador Program!',
+        body: 'Congratulations! We are delighted to welcome you to the EMSI Student Ambassador program. You have been selected to join our prestigious community of student leaders.'
+    }
+};
 
 // Protected route example
 app.get('/api/admin/dashboard', authenticateToken, (req, res) => {
@@ -621,8 +653,19 @@ app.post('/api/public/applications', (req, res) => {
         motivation,
         experience: experience || '',
         cohort: activeCohort.year,
-        status: 'pending', // pending, accepted, rejected
-        submittedAt: new Date().toISOString()
+        status: APPLICATION_STATUSES.PENDING_REVIEW,
+        submittedAt: new Date().toISOString(),
+        // Interview fields
+        interviewNotes: '',
+        rating: null, // 1-5 star rating
+        interviewDate: null,
+        // Tracking fields
+        lastStatusUpdate: new Date().toISOString(),
+        statusHistory: [{
+            status: APPLICATION_STATUSES.PENDING_REVIEW,
+            date: new Date().toISOString(),
+            updatedBy: 'system'
+        }]
     };
     
     applications.push(newApplication);
@@ -656,6 +699,7 @@ app.post('/api/cohorts', authenticateToken, (req, res) => {
         maxAmbassadors: req.body.maxAmbassadors || 20,
         applicationDeadline: req.body.applicationDeadline,
         perks: req.body.perks || [],
+        trainings: req.body.trainings || [],
         requiredTrainings: req.body.requiredTrainings || []
     };
     
@@ -685,6 +729,58 @@ app.put('/api/cohorts/:year', authenticateToken, (req, res) => {
     }
     
     res.json({ data: cohortConfig.cohorts[index] });
+});
+
+// Training management endpoints for cohorts
+app.post('/api/cohorts/:year/trainings', authenticateToken, (req, res) => {
+    const cohort = cohortConfig.cohorts.find(c => c.year === req.params.year);
+    if (!cohort) {
+        return res.status(404).json({ message: 'Cohort not found' });
+    }
+    
+    const newTraining = {
+        id: cohort.trainings ? Math.max(...cohort.trainings.map(t => t.id), 0) + 1 : 1,
+        title: req.body.title,
+        description: req.body.description,
+        date: req.body.date,
+        duration: req.body.duration,
+        mandatory: req.body.mandatory || false
+    };
+    
+    if (!cohort.trainings) cohort.trainings = [];
+    cohort.trainings.push(newTraining);
+    
+    res.status(201).json({ data: newTraining });
+});
+
+app.put('/api/cohorts/:year/trainings/:trainingId', authenticateToken, (req, res) => {
+    const cohort = cohortConfig.cohorts.find(c => c.year === req.params.year);
+    if (!cohort) {
+        return res.status(404).json({ message: 'Cohort not found' });
+    }
+    
+    const trainingIndex = cohort.trainings?.findIndex(t => t.id == req.params.trainingId);
+    if (trainingIndex === -1 || trainingIndex === undefined) {
+        return res.status(404).json({ message: 'Training not found' });
+    }
+    
+    cohort.trainings[trainingIndex] = { ...cohort.trainings[trainingIndex], ...req.body };
+    res.json({ data: cohort.trainings[trainingIndex] });
+});
+
+app.delete('/api/cohorts/:year/trainings/:trainingId', authenticateToken, (req, res) => {
+    const cohort = cohortConfig.cohorts.find(c => c.year === req.params.year);
+    if (!cohort) {
+        return res.status(404).json({ message: 'Cohort not found' });
+    }
+    
+    const trainingIndex = cohort.trainings?.findIndex(t => t.id == req.params.trainingId);
+    if (trainingIndex === -1 || trainingIndex === undefined) {
+        return res.status(404).json({ message: 'Training not found' });
+    }
+    
+    cohort.trainings.splice(trainingIndex, 1);
+    res.json({ message: 'Training deleted successfully' });
 });
 
 // Application management endpoints (admin)
@@ -717,16 +813,68 @@ app.put('/api/applications/:id', authenticateToken, (req, res) => {
         return res.status(404).json({ message: 'Application not found' });
     }
     
-    const { status, notes } = req.body;
+    const { status, interviewNotes, rating } = req.body;
+    const application = applications[index];
     
-    if (status && ['pending', 'accepted', 'rejected'].includes(status)) {
-        applications[index].status = status;
-        applications[index].reviewedAt = new Date().toISOString();
-        applications[index].reviewedBy = req.user.username;
+    // Handle status update
+    if (status && Object.values(APPLICATION_STATUSES).includes(status)) {
+        const oldStatus = application.status;
+        application.status = status;
+        application.lastStatusUpdate = new Date().toISOString();
+        
+        // Add to status history
+        application.statusHistory.push({
+            status,
+            date: new Date().toISOString(),
+            updatedBy: req.user.username,
+            previousStatus: oldStatus
+        });
+        
+        // Handle special status transitions
+        if (status === APPLICATION_STATUSES.INTERVIEWED) {
+            application.interviewDate = new Date().toISOString();
+        }
+        
+        // Auto-create ambassador when validated
+        if (status === APPLICATION_STATUSES.VALIDATED) {
+            const newAmbassador = {
+                id: ambassadors.length + 1,
+                name: application.name,
+                email: application.email,
+                major: application.major,
+                year: application.year,
+                linkedin: application.linkedin,
+                role: 'Ambassador',
+                bio: application.motivation,
+                status: 'active',
+                cohort: application.cohort,
+                image: null,
+                perks: [],
+                trainings: [],
+                joinedDate: new Date().toISOString()
+            };
+            ambassadors.push(newAmbassador);
+            
+            // TODO: Send welcome email
+            console.log('New ambassador created:', newAmbassador.name);
+        }
+        
+        // TODO: Send notification emails based on status
+        if (status === APPLICATION_STATUSES.REJECTED) {
+            console.log('Send rejection email to:', application.email);
+        } else if (status === APPLICATION_STATUSES.INVITE_TO_INTERVIEW) {
+            console.log('Send interview invitation to:', application.email);
+        }
     }
     
-    if (notes !== undefined) {
-        applications[index].notes = notes;
+    // Handle interview notes
+    if (interviewNotes !== undefined) {
+        application.interviewNotes = interviewNotes;
+    }
+    
+    // Handle rating (1-5)
+    if (rating !== undefined && rating >= 1 && rating <= 5) {
+        application.rating = rating;
     }
     
     res.json({ data: applications[index] });
@@ -745,7 +893,7 @@ app.get('/api/admin/stats', authenticateToken, (req, res) => {
             total_registrations: events.reduce((sum, e) => sum + (e.registered_count || 0), 0),
             unread_messages: 17,
             active_jobs: jobs.filter(j => j.status === 'active').length,
-            pending_applications: cohortApplications.filter(app => app.status === 'pending').length,
+            pending_applications: cohortApplications.filter(app => app.status === APPLICATION_STATUSES.PENDING_REVIEW).length,
             total_applications: cohortApplications.length
         }
     });

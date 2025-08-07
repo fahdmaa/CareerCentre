@@ -90,14 +90,14 @@ if (window.emsiCareerCenterInitialized) {
             if (!hideOnScrollNavbar) return;
 
             let lastScrollTop = 0;
-            let scrollThreshold = 30;
+            let scrollThreshold = 10; // More sensitive to scroll
             let ticking = false;
 
             function updateNavbarVisibility() {
                 const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
                 if (Math.abs(lastScrollTop - currentScroll) > scrollThreshold) {
-                    if (currentScroll > lastScrollTop && currentScroll > 80) {
+                    if (currentScroll > lastScrollTop && currentScroll > 50) { // Hide sooner
                         hideOnScrollNavbar.classList.add('hidden');
                     } else {
                         hideOnScrollNavbar.classList.remove('hidden');
