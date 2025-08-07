@@ -20,10 +20,15 @@ class ApiClient {
 
     // Generic request method
     async request(url, options = {}) {
-        const headers = {
-            'Content-Type': 'application/json',
-            ...options.headers
-        };
+        const headers = {};
+        
+        // Add default Content-Type only if headers is not explicitly set to empty object
+        if (!options.headers || Object.keys(options.headers).length > 0) {
+            headers['Content-Type'] = 'application/json';
+        }
+        
+        // Merge with provided headers
+        Object.assign(headers, options.headers);
 
         if (this.token) {
             headers['Authorization'] = `Bearer ${this.token}`;
@@ -45,7 +50,7 @@ class ApiClient {
             const data = await response.json();
             
             if (!response.ok) {
-                throw new Error(data.message || 'Request failed');
+                throw new Error(data.message || `Request failed with status ${response.status}`);
             }
 
             return data;

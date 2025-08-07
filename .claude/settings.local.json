@@ -29,7 +29,8 @@
       "Bash(./setup-db-simple.sh:*)",
       "Bash(sudo:*)",
       "Bash(git remote set-url:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(cat:*)"
     ],
     "deny": []
   }

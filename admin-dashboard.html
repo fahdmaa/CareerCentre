@@ -2199,10 +2199,12 @@
                     // Reload data to get updated list
                     await loadDashboardData();
                     showNotification('Ambassador added successfully!', 'success');
+                } else {
+                    throw new Error('Invalid response from server');
                 }
             } catch (error) {
                 console.error('Error creating ambassador:', error);
-                showNotification('Error creating ambassador. Please try again.', 'error');
+                showNotification(`Error creating ambassador: ${error.message}`, 'error');
             }
         }
         
