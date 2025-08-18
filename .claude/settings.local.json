@@ -30,7 +30,8 @@
       "Bash(sudo:*)",
       "Bash(git remote set-url:*)",
       "Bash(mkdir:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(sed:*)"
     ],
     "deny": []
   }

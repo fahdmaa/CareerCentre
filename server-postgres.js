@@ -283,32 +283,15 @@ const upload = multer({
     }
 });
 
-// Protected route example - now fetching real data from database
-app.get('/api/admin/dashboard', authenticateToken, async (req, res) => {
-    try {
-        const stats = {};
-        
-        // Get upcoming events count
-        const eventsResult = await query('SELECT COUNT(*) FROM events WHERE status = $1', ['upcoming']);
-        stats.upcomingEvents = parseInt(eventsResult.rows[0].count);
-        
-        // Get active ambassadors count  
-        const ambassadorsResult = await query('SELECT COUNT(*) FROM ambassadors WHERE status = $1', ['active']);
-        stats.activeAmbassadors = parseInt(ambassadorsResult.rows[0].count);
-        
-        // Get total registrations
-        const registrationsResult = await query('SELECT COUNT(*) FROM event_registrations');
-        stats.eventRegistrations = parseInt(registrationsResult.rows[0].count);
-        
-        // Get unread messages count
-        const messagesResult = await query('SELECT COUNT(*) FROM messages WHERE status = $1', ['unread']);
-        stats.unreadMessages = parseInt(messagesResult.rows[0].count);
-        
-        res.json(stats);
-    } catch (error) {
-        console.error('Error fetching dashboard stats:', error);
-        res.status(500).json({ message: 'Error fetching dashboard statistics' });
-    }
+// Protected route example
+app.get('/api/admin/dashboard', authenticateToken, (req, res) => {
+    // This would fetch real data from database
+    res.json({
+        activeJobs: 24,
+        newApplications: 156,
+        upcomingEvents: 8,
+        unreadMessages: 17
+    });
 });
 
 // Ambassador endpoints
