@@ -279,27 +279,30 @@ ul, ol {
     transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* --- Elegant Green Gradient Navigation Bar --- */
+/* --- Modern White Glassmorphism Navigation Bar with Green Accents --- */
 .pill-navbar {
     width: fit-content;
     max-width: 90%;
-    height: 72px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 30px;
+    border-radius: 32px;
     margin: 0 auto;
-    padding: 8px;
-    gap: 5px;
+    padding: 4px;
+    gap: 2px;
     
-    /* Elegant Green Gradient Background */
-    background: linear-gradient(135deg, var(--emsi-accent-green) 0%, #00CC66 30%, var(--emsi-accent-green) 70%, var(--emsi-accent-green-darker) 100%);
-    background-size: 200% 200%;
-    animation: gradientShift 8s ease-in-out infinite;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Clean white background with subtle green accent */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(0, 166, 81, 0.15);
     
-    /* Elegant green shadow */
-    box-shadow: 0 8px 32px rgba(0, 166, 81, 0.3);
+    /* Elegant shadow with green tint */
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        0 4px 16px rgba(0, 166, 81, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
     
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
@@ -319,51 +322,32 @@ ul, ol {
     100% { background-position: 200% center; }
 }
 
-/* Elegant green hover effect for navbar */
+/* Modern white navbar hover effect */
 .pill-navbar:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0, 166, 81, 0.4);
-    position: relative;
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(0, 166, 81, 0.25);
+    box-shadow: 
+        0 12px 48px rgba(0, 0, 0, 0.12),
+        0 8px 24px rgba(0, 166, 81, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
-.pill-navbar:hover::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 30px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.4),
-        transparent
-    );
-    background-size: 200% 100%;
-    animation: shimmer 2s ease-in-out infinite;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.pill-navbar:hover::before {
-    opacity: 1;
-}
-
-/* All theme variants use the same elegant green gradient */
+/* All theme variants use the modern white design */
 .pill-navbar.dark,
 .pill-navbar.blue,
 .pill-navbar.green,
 .pill-navbar.white,
 .pill-navbar.light,
 .pill-navbar.white-gradient {
-    /* Elegant Green Gradient Background */
-    background: linear-gradient(135deg, var(--emsi-accent-green) 0%, #00CC66 30%, var(--emsi-accent-green) 70%, var(--emsi-accent-green-darker) 100%);
-    background-size: 200% 200%;
-    animation: gradientShift 8s ease-in-out infinite;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 166, 81, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(0, 166, 81, 0.15);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        0 4px 16px rgba(0, 166, 81, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 /* Navigation Items */
@@ -380,30 +364,30 @@ ul, ol {
     margin: 0;
 }
 
-/* Clean Navbar Items */
+/* Modern Navbar Items */
 .pill-navbar-item {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 12px 24px;
-    border-radius: 22px;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 28px;
     text-decoration: none;
     font-weight: 500;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     position: relative;
     overflow: hidden;
     transform: translateZ(0);
-    will-change: transform, background, box-shadow;
+    will-change: transform, background, color;
     
     /* Default transparent state */
     background: transparent;
     border: 1px solid transparent;
     
-    /* Clean white text */
-    color: rgba(255, 255, 255, 0.9);
+    /* Dark gray text for contrast on white background */
+    color: #374151;
 }
 
 /* Never show underlines on navbar items */
@@ -415,18 +399,18 @@ ul, ol {
     text-decoration: none;
 }
 
-/* Clean focus state */
+/* Modern focus state */
 .pill-navbar-item:focus {
     outline: none;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+    background: rgba(0, 166, 81, 0.1);
+    color: var(--emsi-accent-green);
+    box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.2);
 }
 
-/* Clean hover effect */
+/* Modern hover effect */
 .pill-navbar-item:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
+    background: rgba(0, 166, 81, 0.1);
+    color: var(--emsi-accent-green);
     transform: translateY(-1px);
 }
 
@@ -447,47 +431,49 @@ ul, ol {
 }
 
 .pill-navbar-icon svg {
-    stroke: rgba(255, 255, 255, 0.9);
+    stroke: #6B7280;
     fill: none;
+    transition: all 0.3s ease;
 }
 
 .pill-navbar-item:hover .pill-navbar-icon {
-    transform: scale(1.05);
+    transform: scale(1.1);
 }
 
 .pill-navbar-item:hover .pill-navbar-icon svg {
-    stroke: white;
+    stroke: var(--emsi-accent-green);
 }
 
-/* Unified clean colors */
+/* Unified modern colors */
 .pill-navbar.dark .pill-navbar-item,
 .pill-navbar.blue .pill-navbar-item,
 .pill-navbar.green .pill-navbar-item,
 .pill-navbar.white .pill-navbar-item,
 .pill-navbar.white-gradient .pill-navbar-item,
 .pill-navbar.light .pill-navbar-item {
-    color: rgba(255, 255, 255, 0.9);
+    color: #374151;
 }
 
 .pill-navbar .pill-navbar-item svg {
-    stroke: rgba(255, 255, 255, 0.9);
+    stroke: #6B7280;
 }
 
-/* Clean active item */
+/* Modern active item with green accent */
 .pill-navbar .pill-navbar-item.active {
-    background: rgba(255, 255, 255, 0.25);
+    background: var(--emsi-accent-green);
     color: white;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 166, 81, 0.3);
+    border: 1px solid var(--emsi-accent-green);
 }
 
 .pill-navbar .pill-navbar-item.active svg {
     stroke: white;
 }
 
-/* Unified clean hover effects for all themes */
+/* Unified modern hover effects for all themes */
 .pill-navbar .pill-navbar-item:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 166, 81, 0.1);
+    color: var(--emsi-accent-green);
 }
 
 /* Clean label styles */
@@ -531,12 +517,15 @@ ul, ol {
     0% {
         opacity: 0;
         transform: translateX(-50%) translateY(30px) scale(0.9);
-        box-shadow: 0 0 0 rgba(0, 166, 81, 0);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     }
     100% {
         opacity: 1;
         transform: translateX(-50%) translateY(0) scale(1);
-        box-shadow: 0 8px 32px rgba(0, 166, 81, 0.3);
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.08),
+            0 4px 16px rgba(0, 166, 81, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
     }
 }
 
@@ -552,7 +541,7 @@ ul, ol {
     bottom: -100px !important;
     opacity: 0 !important;
     transform: translateX(-50%) translateY(10px) scale(0.9) !important;
-    box-shadow: 0 0 0 rgba(0, 166, 81, 0) !important;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0) !important;
     pointer-events: none !important;
 }
 
@@ -566,11 +555,16 @@ ul, ol {
         bottom: -100px;
         opacity: 0;
         transform: translateX(-50%) translateY(20px) scale(0.9);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     }
     100% {
         bottom: 20px;
         opacity: 1;
         transform: translateX(-50%) translateY(0) scale(1);
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.08),
+            0 4px 16px rgba(0, 166, 81, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
     }
 }
 
@@ -2729,14 +2723,17 @@ html {
     .pill-navbar {
         width: 95%;
         max-width: 95%;
-        padding: 6px;
-        height: 65px;
-        /* Elegant green gradient for mobile */
-        background: linear-gradient(135deg, var(--emsi-accent-green) 0%, #00CC66 30%, var(--emsi-accent-green) 70%, var(--emsi-accent-green-darker) 100%);
-        background-size: 200% 200%;
-        animation: gradientShift 8s ease-in-out infinite;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 6px 24px rgba(0, 166, 81, 0.25);
+        padding: 4px;
+        height: 60px;
+        /* Modern white design for mobile */
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(0, 166, 81, 0.15);
+        box-shadow: 
+            0 6px 24px rgba(0, 0, 0, 0.08),
+            0 3px 12px rgba(0, 166, 81, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
     }
 
     .pill-navbar-item {
@@ -2750,9 +2747,10 @@ html {
         height: 18px;
     }
 
-    /* Clean hover for mobile */
+    /* Modern hover for mobile */
     .pill-navbar-item:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(0, 166, 81, 0.1);
+        color: var(--emsi-accent-green);
     }
 
     /* For very small screens, make sure icons have enough spacing */
