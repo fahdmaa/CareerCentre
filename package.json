@@ -21,6 +21,7 @@
   "license": "ISC",
   "description": "EMSI Marrakech Career Center - Connecting students and alumni with career opportunities",
   "dependencies": {
+    "@supabase/supabase-js": "^2.57.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "dotenv": "^17.2.0",

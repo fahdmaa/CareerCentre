@@ -9,7 +9,8 @@ This is a career center web application for EMSI Marrakech, providing students a
 ## Architecture
 
 - **Frontend**: Static HTML pages with CSS styling and vanilla JavaScript
-- **Backend**: Express.js server with JWT authentication
+- **Backend**: Express.js server with JWT authentication and Supabase database
+- **Database**: Supabase (PostgreSQL-based) with Row Level Security
 - **Deployment**: Configured for Vercel with static file serving
 - **Node.js**: Requires version 14.0.0 or higher
 
@@ -21,7 +22,9 @@ This is a career center web application for EMSI Marrakech, providing students a
 - `ambassadors.html` - Program ambassadors page
 - `admin-login.html` - Admin authentication page
 - `admin-dashboard.html` - Protected admin dashboard
-- `server.js` - Express backend with authentication routes
+- `server.js` - Express backend with authentication routes and Supabase integration
+- `database/supabase.js` - Supabase database configuration and query handler
+- `database/supabase-schema.sql` - SQL schema for Supabase database setup
 - `public/main.js` - Frontend JavaScript functionality
 - `public/style.css` - Complete styling system (104KB)
 - `public/style-optimized.css` - Optimized CSS variant (13KB)
@@ -111,10 +114,10 @@ No test framework is currently configured. The package.json contains a placehold
 
 ## Development Notes
 
-- **Database**: Currently uses in-memory storage for users - implement proper database for production
-- **Environment Variables**: JWT secret should use environment variables (currently has fallback)
+- **Database**: Uses Supabase (PostgreSQL) with Row Level Security policies
+- **Environment Variables**: Requires SUPABASE_URL and SUPABASE_ANON_KEY (see .env.example)
 - **Image Optimization**: Consider CDN integration for production deployment
-- **Dependencies**: All configured in package.json (express, body-parser, bcrypt, jsonwebtoken)
+- **Dependencies**: All configured in package.json (express, body-parser, bcrypt, jsonwebtoken, @supabase/supabase-js)
 
 ## Deployment
 
