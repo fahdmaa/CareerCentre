@@ -122,11 +122,11 @@ app.get('/admin-login.html', (req, res) => {
 });
 
 app.get('/admin-dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin-dashboard.html'));
+    res.sendFile(path.join(__dirname, 'admin-dashboard-new.html'));
 });
 
 app.get('/admin-dashboard.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin-dashboard.html'));
+    res.sendFile(path.join(__dirname, 'admin-dashboard-new.html'));
 });
 
 // Secret key for JWT (use environment variables in production)
@@ -677,61 +677,10 @@ app.get('/api/health', (req, res) => {
         status: 'OK', 
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
-        database: 'Supabase',
-        env: {
-            hasSupabaseUrl: !!process.env.SUPABASE_URL,
-            hasSupabaseKey: !!process.env.SUPABASE_ANON_KEY,
-            hasJwtSecret: !!process.env.JWT_SECRET,
-            nodeEnv: process.env.NODE_ENV
-        }
+        database: 'Supabase'
     });
 });
 
-// Debug endpoint for testing login (REMOVE IN PRODUCTION)
-app.get('/api/debug/test-login', async (req, res) => {
-    try {
-        const bcrypt = require('bcrypt');
-        
-        // Test password
-        const testPassword = 'admin123';
-        
-        // Fetch admin user
-        const result = await query('SELECT * FROM users WHERE username = $1', ['admin']);
-        
-        if (result.rows.length === 0) {
-            return res.json({ 
-                error: 'No admin user found',
-                query: 'SELECT * FROM users WHERE username = admin'
-            });
-        }
-        
-        const user = result.rows[0];
-        const storedHash = user.password_hash;
-        
-        // Test bcrypt comparison
-        const isMatch = await bcrypt.compare(testPassword, storedHash);
-        
-        // Generate a new hash for comparison
-        const newHash = await bcrypt.hash(testPassword, 10);
-        
-        res.json({
-            userFound: true,
-            userId: user.id,
-            username: user.username,
-            storedHashLength: storedHash.length,
-            storedHashPrefix: storedHash.substring(0, 7),
-            passwordToTest: testPassword,
-            bcryptMatch: isMatch,
-            newHashGenerated: newHash,
-            nodeVersion: process.version
-        });
-    } catch (error) {
-        res.json({ 
-            error: error.message,
-            stack: error.stack
-        });
-    }
-});
 
 // Additional admin endpoints for dashboard
 app.get('/api/applications', authenticateToken, async (req, res) => {

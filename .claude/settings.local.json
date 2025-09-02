@@ -32,7 +32,8 @@
       "Bash(mkdir:*)",
       "Bash(cat:*)",
       "Bash(sed:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "WebFetch(domain:dribbble.com)"
     ],
     "deny": []
   }

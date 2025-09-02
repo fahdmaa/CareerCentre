@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Dashboard - EMSI Marrakech Career Center">
+    <title>Admin Dashboard - EMSI Career Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/api-client.js"></script>
+    <style>
+        /* Modern Design System */
+        :root {
+            /* Green Theme Colors */
+            --primary-50: #f0fdf4;
+            --primary-100: #dcfce7;
+            --primary-200: #bbf7d0;
+            --primary-300: #86efac;
+            --primary-400: #4ade80;
+            --primary-500: #00A651;
+            --primary-600: #16a34a;
+            --primary-700: #15803d;
+            --primary-800: #166534;
+            --primary-900: #14532d;
+
+            /* Neutral Colors */
+            --gray-50: #fafafa;
+            --gray-100: #f4f4f5;
+            --gray-200: #e4e4e7;
+            --gray-300: #d4d4d8;
+            --gray-400: #a1a1aa;
+            --gray-500: #71717a;
+            --gray-600: #52525b;
+            --gray-700: #3f3f46;
+            --gray-800: #27272a;
+            --gray-900: #18181b;
+
+            /* Semantic Colors */
+            --success: var(--primary-500);
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+            /* Typography */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            --text-4xl: 2.25rem;
+
+            /* Transitions */
+            --transition-fast: 150ms ease-in-out;
+            --transition-base: 200ms ease-in-out;
+            --transition-slow: 300ms ease-in-out;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* Layout */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            background: var(--gray-50);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            padding: var(--space-6);
+            overflow-y: auto;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-8);
+            padding-bottom: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: var(--text-lg);
+        }
+
+        .sidebar-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: var(--space-2);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: var(--text-sm);
+            transition: var(--transition-base);
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+
+        .nav-link.active {
+            background: var(--primary-50);
+            color: var(--primary-700);
+            border: 1px solid var(--primary-200);
+        }
+
+        .nav-icon {
+            width: 20px;
+            font-size: var(--text-base);
+        }
+
+        /* Main Content */
+        .main-content {
+            overflow: auto;
+        }
+
+        .content-header {
+            background: white;
+            padding: var(--space-6) var(--space-8);
+            border-bottom: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .page-title {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            color: var(--gray-500);
+            font-size: var(--text-sm);
+        }
+
+        .breadcrumb-item {
+            color: var(--gray-500);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--primary-600);
+            font-weight: 500;
+        }
+
+        /* Content Area */
+        .content-body {
+            padding: var(--space-8);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+
+        .stat-card {
+            background: white;
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            transition: var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-400));
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+        }
+
+        .stat-title {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-lg);
+            color: white;
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, var(--info), #2563eb);
+        }
+
+        .stat-icon.yellow {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+        }
+
+        .stat-icon.red {
+            background: linear-gradient(135deg, var(--error), #dc2626);
+        }
+
+        .stat-value {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            font-weight: 500;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--error);
+        }
+
+        /* Data Tables */
+        .data-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            margin-bottom: var(--space-8);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .section-actions {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .btn-primary {
+            background: var(--primary-500);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-600);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: var(--space-4);
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .data-table th {
+            background: var(--gray-50);
+            font-weight: 600;
+            font-size: var(--text-sm);
+            color: var(--gray-700);
+        }
+
+        .data-table td {
+            font-size: var(--text-sm);
+            color: var(--gray-900);
+        }
+
+        .data-table tr:hover {
+            background: var(--gray-50);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: var(--space-1) var(--space-3);
+            border-radius: 9999px;
+            font-size: var(--text-xs);
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: var(--primary-100);
+            color: var(--primary-700);
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-inactive {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-12);
+            color: var(--gray-500);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--gray-300);
+            border-top: 2px solid var(--primary-500);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: var(--space-3);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: var(--space-4);
+            }
+            
+            .content-body {
+                padding: var(--space-6);
+            }
+            
+            .content-header {
+                padding: var(--space-4) var(--space-6);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .data-table {
+                font-size: var(--text-xs);
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: var(--space-2);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-400);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">EC</div>
+                <div class="sidebar-title">EMSI Career</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-section="overview">
+                            <i class="nav-icon fas fa-chart-line"></i>
+                            Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="ambassadors">
+                            <i class="nav-icon fas fa-users"></i>
+                            Ambassadors
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="events">
+                            <i class="nav-icon fas fa-calendar-alt"></i>
+                            Events
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="registrations">
+                            <i class="nav-icon fas fa-user-plus"></i>
+                            Registrations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="messages">
+                            <i class="nav-icon fas fa-envelope"></i>
+                            Messages
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="applications">
+                            <i class="nav-icon fas fa-file-alt"></i>
+                            Applications
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-top">
+                    <div>
+                        <h1 class="page-title" id="page-title">Dashboard Overview</h1>
+                        <div class="breadcrumbs">
+                            <span class="breadcrumb-item">Admin</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="breadcrumb-item active" id="breadcrumb-active">Overview</span>
+                        </div>
+                    </div>
+                    <div class="user-menu">
+                        <div class="user-avatar">A</div>
+                        <button class="btn btn-secondary" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Body -->
+            <div class="content-body">
+                <!-- Overview Section -->
+                <div id="overview-section" class="content-section">
+                    <!-- Stats Grid -->
+                    <div class="stats-grid fade-in-up">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Active Ambassadors</div>
+                                <div class="stat-icon green">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-ambassadors">-</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                12% from last month
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Upcoming Events</div>
+                                <div class="stat-icon blue">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-events">-</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                3 new this week
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Event Registrations</div>
+                                <div class="stat-icon yellow">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-registrations">-</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                28% increase
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Unread Messages</div>
+                                <div class="stat-icon red">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="stat-messages">-</div>
+                            <div class="stat-change">
+                                <i class="fas fa-clock"></i>
+                                Needs attention
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="data-section fade-in-up">
+                        <div class="section-header">
+                            <h2 class="section-title">Recent Activity</h2>
+                            <div class="section-actions">
+                                <button class="btn btn-secondary" onclick="refreshData()">
+                                    <i class="fas fa-refresh"></i>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div id="recent-activity">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading recent activity...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Sections (Initially Hidden) -->
+                <div id="ambassadors-section" class="content-section" style="display: none;">
+                    <div class="data-section fade-in-up">
+                        <div class="section-header">
+                            <h2 class="section-title">Program Ambassadors</h2>
+                            <div class="section-actions">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-plus"></i>
+                                    Add Ambassador
+                                </button>
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-download"></i>
+                                    Export
+                                </button>
+                            </div>
+                        </div>
+                        <div id="ambassadors-table">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading ambassadors...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="events-section" class="content-section" style="display: none;">
+                    <div class="data-section fade-in-up">
+                        <div class="section-header">
+                            <h2 class="section-title">Career Events</h2>
+                            <div class="section-actions">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-plus"></i>
+                                    Create Event
+                                </button>
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-calendar"></i>
+                                    Calendar View
+                                </button>
+                            </div>
+                        </div>
+                        <div id="events-table">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading events...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="registrations-section" class="content-section" style="display: none;">
+                    <div class="data-section fade-in-up">
+                        <div class="section-header">
+                            <h2 class="section-title">Event Registrations</h2>
+                            <div class="section-actions">
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-filter"></i>
+                                    Filter
+                                </button>
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-download"></i>
+                                    Export CSV
+                                </button>
+                            </div>
+                        </div>
+                        <div id="registrations-table">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading registrations...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="messages-section" class="content-section" style="display: none;">
+                    <div class="data-section fade-in-up">
+                        <div class="section-header">
+                            <h2 class="section-title">Messages & Inquiries</h2>
+                            <div class="section-actions">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-check-double"></i>
+                                    Mark All Read
+                                </button>
+                            </div>
+                        </div>
+                        <div id="messages-table">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading messages...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="applications-section" class="content-section" style="display: none;">
+                    <div class="data-section fade-in-up">
+                        <div class="section-header">
+                            <h2 class="section-title">Ambassador Applications</h2>
+                            <div class="section-actions">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-user-check"></i>
+                                    Bulk Approve
+                                </button>
+                            </div>
+                        </div>
+                        <div id="applications-table">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading applications...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Dashboard State Management
+        let dashboardData = {};
+        let currentSection = 'overview';
+
+        // Initialize Dashboard
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Check authentication
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    window.location.href = '/admin-login';
+                    return;
+                }
+
+                // Initialize navigation
+                initializeNavigation();
+                
+                // Load dashboard data
+                await loadDashboardData();
+                
+                console.log('✅ Modern Dashboard initialized successfully!');
+            } catch (error) {
+                console.error('❌ Dashboard initialization failed:', error);
+                showError('Failed to initialize dashboard. Please refresh the page.');
+            }
+        });
+
+        // Navigation Management
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    switchSection(section);
+                });
+            });
+        }
+
+        function switchSection(sectionName) {
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show target section
+            document.getElementById(`${sectionName}-section`).style.display = 'block';
+
+            // Update page title and breadcrumb
+            const titles = {
+                overview: 'Dashboard Overview',
+                ambassadors: 'Program Ambassadors',
+                events: 'Career Events',
+                registrations: 'Event Registrations',
+                messages: 'Messages & Inquiries',
+                applications: 'Ambassador Applications'
+            };
+
+            document.getElementById('page-title').textContent = titles[sectionName];
+            document.getElementById('breadcrumb-active').textContent = titles[sectionName].split(' ').pop();
+
+            currentSection = sectionName;
+
+            // Load section data if needed
+            loadSectionData(sectionName);
+        }
+
+        // Data Loading Functions
+        async function loadDashboardData() {
+            try {
+                showLoading();
+
+                // Load stats
+                const statsResponse = await window.apiClient.getStats();
+                updateStatsCards(statsResponse.data);
+
+                // Load recent activity
+                await loadRecentActivity();
+
+                hideLoading();
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showError('Failed to load dashboard data');
+                hideLoading();
+            }
+        }
+
+        function updateStatsCards(stats) {
+            document.getElementById('stat-ambassadors').textContent = stats.active_ambassadors || 0;
+            document.getElementById('stat-events').textContent = stats.upcoming_events || 0;
+            document.getElementById('stat-registrations').textContent = stats.total_registrations || 0;
+            document.getElementById('stat-messages').textContent = stats.unread_messages || 0;
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const recentContainer = document.getElementById('recent-activity');
+                
+                // Create recent activity display
+                const activityHtml = `
+                    <div style="padding: var(--space-6);">
+                        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+                            <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-left: 4px solid var(--primary-500); background: var(--primary-50);">
+                                <i class="fas fa-users" style="color: var(--primary-600);"></i>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--gray-900);">New ambassador registered</div>
+                                    <div style="font-size: var(--text-sm); color: var(--gray-600);">2 hours ago</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-left: 4px solid var(--info); background: #eff6ff;">
+                                <i class="fas fa-calendar-alt" style="color: var(--info);"></i>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--gray-900);">Career fair event updated</div>
+                                    <div style="font-size: var(--text-sm); color: var(--gray-600);">4 hours ago</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-left: 4px solid var(--warning); background: #fffbeb;">
+                                <i class="fas fa-envelope" style="color: var(--warning);"></i>
+                                <div>
+                                    <div style="font-weight: 500; color: var(--gray-900);">3 new messages received</div>
+                                    <div style="font-size: var(--text-sm); color: var(--gray-600);">6 hours ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                recentContainer.innerHTML = activityHtml;
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+            }
+        }
+
+        async function loadSectionData(sectionName) {
+            try {
+                const container = document.getElementById(`${sectionName}-table`);
+                container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+
+                switch (sectionName) {
+                    case 'ambassadors':
+                        await loadAmbassadors(container);
+                        break;
+                    case 'events':
+                        await loadEvents(container);
+                        break;
+                    case 'registrations':
+                        await loadRegistrations(container);
+                        break;
+                    case 'messages':
+                        await loadMessages(container);
+                        break;
+                    case 'applications':
+                        await loadApplications(container);
+                        break;
+                }
+            } catch (error) {
+                console.error(`Error loading ${sectionName} data:`, error);
+                showError(`Failed to load ${sectionName} data`);
+            }
+        }
+
+        async function loadAmbassadors(container) {
+            const response = await window.apiClient.getAmbassadors();
+            const ambassadors = response.data || [];
+
+            const tableHtml = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Ambassador</th>
+                            <th>Role</th>
+                            <th>Major</th>
+                            <th>Year</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${ambassadors.map(ambassador => `
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: var(--space-3);">
+                                        <div style="width: 40px; height: 40px; background: var(--primary-500); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                                            ${ambassador.name.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 500;">${ambassador.name}</div>
+                                            <div style="font-size: var(--text-sm); color: var(--gray-600);">${ambassador.email || ''}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>${ambassador.role || 'Ambassador'}</td>
+                                <td>${ambassador.major || 'N/A'}</td>
+                                <td>${ambassador.year || 'N/A'}</td>
+                                <td>
+                                    <span class="status-badge ${ambassador.status === 'active' ? 'status-active' : 'status-inactive'}">
+                                        ${ambassador.status || 'active'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-secondary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">
+                                        <i class="fas fa-edit"></i>
+                                        Edit
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHtml;
+        }
+
+        async function loadEvents(container) {
+            const response = await window.apiClient.getEvents();
+            const events = response.data || [];
+
+            const tableHtml = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Capacity</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${events.map(event => `
+                            <tr>
+                                <td>
+                                    <div>
+                                        <div style="font-weight: 500;">${event.title}</div>
+                                        <div style="font-size: var(--text-sm); color: var(--gray-600);">${event.description ? event.description.substring(0, 50) + '...' : ''}</div>
+                                    </div>
+                                </td>
+                                <td>${event.event_date || 'TBD'}</td>
+                                <td>${event.location || 'TBD'}</td>
+                                <td>${event.capacity || 'Unlimited'}</td>
+                                <td>
+                                    <span class="status-badge ${event.status === 'upcoming' ? 'status-active' : 'status-pending'}">
+                                        ${event.status || 'upcoming'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-secondary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">
+                                        <i class="fas fa-edit"></i>
+                                        Edit
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHtml;
+        }
+
+        async function loadRegistrations(container) {
+            const response = await window.apiClient.getRegistrations();
+            const registrations = response.data || [];
+
+            const tableHtml = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Email</th>
+                            <th>Major</th>
+                            <th>Year</th>
+                            <th>Registration Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${registrations.map(reg => `
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 500;">${reg.student_name}</div>
+                                </td>
+                                <td>${reg.student_email}</td>
+                                <td>${reg.major || 'N/A'}</td>
+                                <td>${reg.year || 'N/A'}</td>
+                                <td>${reg.registration_date ? new Date(reg.registration_date).toLocaleDateString() : 'N/A'}</td>
+                                <td>
+                                    <span class="status-badge status-active">
+                                        ${reg.status || 'confirmed'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHtml;
+        }
+
+        async function loadMessages(container) {
+            const response = await window.apiClient.getMessages();
+            const messages = response.data || [];
+
+            const tableHtml = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>From</th>
+                            <th>Subject</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${messages.map(msg => `
+                            <tr>
+                                <td>
+                                    <div>
+                                        <div style="font-weight: 500;">${msg.sender_name || 'Anonymous'}</div>
+                                        <div style="font-size: var(--text-sm); color: var(--gray-600);">${msg.sender_email || ''}</div>
+                                    </div>
+                                </td>
+                                <td>${msg.subject || 'No Subject'}</td>
+                                <td>${msg.created_at ? new Date(msg.created_at).toLocaleDateString() : 'N/A'}</td>
+                                <td>
+                                    <span class="status-badge ${msg.status === 'read' ? 'status-inactive' : 'status-pending'}">
+                                        ${msg.status || 'unread'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-secondary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">
+                                        <i class="fas fa-eye"></i>
+                                        View
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHtml;
+        }
+
+        async function loadApplications(container) {
+            const response = await window.apiClient.getApplications();
+            const applications = response.data || [];
+
+            const tableHtml = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Applicant</th>
+                            <th>Subject</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${applications.map(app => `
+                            <tr>
+                                <td>
+                                    <div>
+                                        <div style="font-weight: 500;">${app.sender_name || 'Anonymous'}</div>
+                                        <div style="font-size: var(--text-sm); color: var(--gray-600);">${app.sender_email || ''}</div>
+                                    </div>
+                                </td>
+                                <td>${app.subject || 'Ambassador Application'}</td>
+                                <td>${app.created_at ? new Date(app.created_at).toLocaleDateString() : 'N/A'}</td>
+                                <td>
+                                    <span class="status-badge status-pending">
+                                        Pending Review
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-secondary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs); margin-right: var(--space-2);">
+                                        <i class="fas fa-eye"></i>
+                                        Review
+                                    </button>
+                                    <button class="btn btn-primary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">
+                                        <i class="fas fa-check"></i>
+                                        Approve
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHtml;
+        }
+
+        // Utility Functions
+        function showLoading() {
+            // Implementation for global loading state if needed
+        }
+
+        function hideLoading() {
+            // Implementation for global loading state if needed
+        }
+
+        function showError(message) {
+            console.error(message);
+            // Could implement toast notifications here
+        }
+
+        function refreshData() {
+            loadDashboardData();
+            if (currentSection !== 'overview') {
+                loadSectionData(currentSection);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/admin-login';
+        }
+
+        // Global error handler
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Unhandled promise rejection:', event.reason);
+            showError('An unexpected error occurred. Please refresh the page.');
+        });
+    </script>
+</body>
+</html>
