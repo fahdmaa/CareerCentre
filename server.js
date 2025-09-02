@@ -649,6 +649,52 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// Debug endpoint for testing login (REMOVE IN PRODUCTION)
+app.get('/api/debug/test-login', async (req, res) => {
+    try {
+        const bcrypt = require('bcrypt');
+        
+        // Test password
+        const testPassword = 'admin123';
+        
+        // Fetch admin user
+        const result = await query('SELECT * FROM users WHERE username = $1', ['admin']);
+        
+        if (result.rows.length === 0) {
+            return res.json({ 
+                error: 'No admin user found',
+                query: 'SELECT * FROM users WHERE username = admin'
+            });
+        }
+        
+        const user = result.rows[0];
+        const storedHash = user.password_hash;
+        
+        // Test bcrypt comparison
+        const isMatch = await bcrypt.compare(testPassword, storedHash);
+        
+        // Generate a new hash for comparison
+        const newHash = await bcrypt.hash(testPassword, 10);
+        
+        res.json({
+            userFound: true,
+            userId: user.id,
+            username: user.username,
+            storedHashLength: storedHash.length,
+            storedHashPrefix: storedHash.substring(0, 7),
+            passwordToTest: testPassword,
+            bcryptMatch: isMatch,
+            newHashGenerated: newHash,
+            nodeVersion: process.version
+        });
+    } catch (error) {
+        res.json({ 
+            error: error.message,
+            stack: error.stack
+        });
+    }
+});
+
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {
     res.status(404).json({ message: 'API endpoint not found' });
