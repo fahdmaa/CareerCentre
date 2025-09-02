@@ -568,7 +568,45 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
     }
 });
 
-// Cohort endpoints (simplified for now)
+// Cohort endpoints
+app.get('/api/cohorts', authenticateToken, async (req, res) => {
+    // Return default cohort data for now
+    res.json({
+        data: [
+            {
+                year: '2024',
+                active: true,
+                startDate: '2024-09-01',
+                endDate: '2025-06-30',
+                maxAmbassadors: 20,
+                applicationDeadline: '2024-08-15',
+                perks: ['Leadership training', 'Networking events', 'Certificate of achievement', 'Priority access to career events'],
+                trainings: [
+                    { id: 1, title: 'Leadership Fundamentals', description: 'Learn the basics of effective leadership and team management' },
+                    { id: 2, title: 'Public Speaking', description: 'Master the art of presenting and communicating with confidence' },
+                    { id: 3, title: 'Event Management', description: 'Organize successful events from planning to execution' }
+                ]
+            }
+        ]
+    });
+});
+
+app.get('/api/cohorts/:year', authenticateToken, async (req, res) => {
+    const { year } = req.params;
+    res.json({
+        data: {
+            year: year,
+            active: year === '2024',
+            startDate: `${year}-09-01`,
+            endDate: `${parseInt(year) + 1}-06-30`,
+            maxAmbassadors: 20,
+            applicationDeadline: `${year}-08-15`,
+            perks: ['Leadership training', 'Networking events', 'Certificate of achievement', 'Priority access to career events']
+        }
+    });
+});
+
+// Public cohort endpoint
 app.get('/api/public/cohorts/active', (req, res) => {
     // Return a default cohort for now
     res.json({
@@ -692,6 +730,59 @@ app.get('/api/debug/test-login', async (req, res) => {
             error: error.message,
             stack: error.stack
         });
+    }
+});
+
+// Additional admin endpoints for dashboard
+app.get('/api/applications', authenticateToken, async (req, res) => {
+    try {
+        // Return applications from messages table where subject contains 'Ambassador Application'
+        const result = await query(
+            "SELECT * FROM messages WHERE subject LIKE '%Ambassador Application%' ORDER BY created_at DESC"
+        );
+        res.json({ data: result.rows });
+    } catch (error) {
+        console.error('Error fetching applications:', error);
+        res.status(500).json({ message: 'Error fetching applications' });
+    }
+});
+
+app.get('/api/registrations', authenticateToken, async (req, res) => {
+    try {
+        const result = await query('SELECT * FROM event_registrations ORDER BY registration_date DESC');
+        res.json({ data: result.rows });
+    } catch (error) {
+        console.error('Error fetching registrations:', error);
+        res.status(500).json({ message: 'Error fetching registrations' });
+    }
+});
+
+app.get('/api/messages', authenticateToken, async (req, res) => {
+    try {
+        const result = await query('SELECT * FROM messages ORDER BY created_at DESC');
+        res.json({ data: result.rows });
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        res.status(500).json({ message: 'Error fetching messages' });
+    }
+});
+
+app.get('/api/messages/stats/overview', authenticateToken, async (req, res) => {
+    try {
+        const stats = {};
+        
+        // Get unread messages count
+        const unreadResult = await query('SELECT COUNT(*) FROM messages WHERE status = $1', ['unread']);
+        stats.unread = parseInt(unreadResult.rows[0].count);
+        
+        // Get total messages count
+        const totalResult = await query('SELECT COUNT(*) FROM messages');
+        stats.total = parseInt(totalResult.rows[0].count);
+        
+        res.json({ data: stats });
+    } catch (error) {
+        console.error('Error fetching message stats:', error);
+        res.status(500).json({ message: 'Error fetching message statistics' });
     }
 });
 
