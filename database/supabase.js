@@ -7,7 +7,9 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
     console.error('Missing Supabase environment variables. Please set SUPABASE_URL and SUPABASE_ANON_KEY in your .env file');
-    process.exit(1);
+    console.error('SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing');
+    console.error('SUPABASE_ANON_KEY:', supabaseKey ? 'Set (length: ' + supabaseKey.length + ')' : 'Missing');
+    throw new Error('Missing required Supabase environment variables');
 }
 
 // Create Supabase client
@@ -348,11 +350,14 @@ const testConnection = async () => {
         }
     } catch (error) {
         console.error('❌ Failed to connect to Supabase:', error.message);
+        // Don't exit, just log the error
     }
 };
 
-// Test connection on initialization
-testConnection();
+// Test connection on initialization (don't block server startup)
+if (supabaseUrl && supabaseKey) {
+    testConnection();
+}
 
 module.exports = {
     supabase,
