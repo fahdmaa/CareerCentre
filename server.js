@@ -6,7 +6,7 @@ const fs = require('fs');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
-const { query, pool } = require('./database/db');
+const { query, supabase } = require('./database/supabase');
 require('dotenv').config();
 
 const app = express();
@@ -639,7 +639,7 @@ app.get('/api/health', (req, res) => {
         status: 'OK', 
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
-        database: 'PostgreSQL'
+        database: 'Supabase'
     });
 });
 
@@ -670,10 +670,8 @@ process.on('SIGTERM', () => {
     console.log('SIGTERM signal received: closing HTTP server');
     server.close(() => {
         console.log('HTTP server closed');
-        pool.end(() => {
-            console.log('Database pool closed');
-            process.exit(0);
-        });
+        console.log('Supabase connection closed');
+        process.exit(0);
     });
 });
 
@@ -681,10 +679,8 @@ process.on('SIGINT', () => {
     console.log('SIGINT signal received: closing HTTP server');
     server.close(() => {
         console.log('HTTP server closed');
-        pool.end(() => {
-            console.log('Database pool closed');
-            process.exit(0);
-        });
+        console.log('Supabase connection closed');
+        process.exit(0);
     });
 });
 
@@ -692,7 +688,7 @@ process.on('SIGINT', () => {
 const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Database: PostgreSQL connected`);
+    console.log(`Database: Supabase connected`);
 });
 
 // Handle server errors
