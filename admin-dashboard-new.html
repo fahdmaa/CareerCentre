@@ -1114,10 +1114,10 @@
             
             <div class="sidebar-controls">
                 <button class="glassmorphism-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
-                    <i class="fas fa-chevron-left" id="toggle-icon"></i>
+                    <i class="fas fa-chevron-left" id="sidebar-toggle-icon"></i>
                     <span>Hide</span>
                 </button>
-                <button class="glassmorphism-btn danger" onclick="showLogoutConfirm()" title="Logout">
+                <button class="glassmorphism-btn danger" onclick="confirmLogout()" title="Logout">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </button>
@@ -1154,7 +1154,7 @@
                                         Change Picture
                                     </div>
                                     <div class="dropdown-divider"></div>
-                                    <div class="dropdown-item danger" onclick="showLogoutConfirm()">
+                                    <div class="dropdown-item danger" onclick="confirmLogout()">
                                         <i class="fas fa-sign-out-alt"></i>
                                         Logout
                                     </div>
@@ -1179,9 +1179,9 @@
                                 </div>
                             </div>
                             <div class="stat-value" id="stat-ambassadors">-</div>
-                            <div class="stat-change positive">
+                            <div class="stat-change positive" id="stat-ambassadors-change">
                                 <i class="fas fa-arrow-up"></i>
-                                12% from last month
+                                Loading...
                             </div>
                         </div>
 
@@ -1193,9 +1193,9 @@
                                 </div>
                             </div>
                             <div class="stat-value" id="stat-events">-</div>
-                            <div class="stat-change positive">
+                            <div class="stat-change positive" id="stat-events-change">
                                 <i class="fas fa-arrow-up"></i>
-                                3 new this week
+                                Loading...
                             </div>
                         </div>
 
@@ -1207,9 +1207,9 @@
                                 </div>
                             </div>
                             <div class="stat-value" id="stat-registrations">-</div>
-                            <div class="stat-change positive">
+                            <div class="stat-change positive" id="stat-registrations-change">
                                 <i class="fas fa-arrow-up"></i>
-                                28% increase
+                                Loading...
                             </div>
                         </div>
 
@@ -1221,9 +1221,9 @@
                                 </div>
                             </div>
                             <div class="stat-value" id="stat-messages">-</div>
-                            <div class="stat-change">
+                            <div class="stat-change" id="stat-messages-change">
                                 <i class="fas fa-clock"></i>
-                                Needs attention
+                                Loading...
                             </div>
                         </div>
                     </div>
@@ -1588,14 +1588,22 @@
         }
 
         function updateStatsCards(data) {
+            console.log('Updating stats with data:', data);
+            
             // Update main stats
-            document.getElementById('stat-ambassadors').textContent = data.activeAmbassadors || 0;
-            document.getElementById('stat-events').textContent = data.upcomingEvents || 0;
-            document.getElementById('stat-registrations').textContent = data.eventRegistrations || 0;
-            document.getElementById('stat-messages').textContent = data.unreadMessages || 0;
+            const ambassadorsEl = document.getElementById('stat-ambassadors');
+            const eventsEl = document.getElementById('stat-events');
+            const registrationsEl = document.getElementById('stat-registrations');
+            const messagesEl = document.getElementById('stat-messages');
+            
+            if (ambassadorsEl) ambassadorsEl.textContent = data.activeAmbassadors || 0;
+            if (eventsEl) eventsEl.textContent = data.upcomingEvents || 0;
+            if (registrationsEl) registrationsEl.textContent = data.eventRegistrations || 0;
+            if (messagesEl) messagesEl.textContent = data.unreadMessages || 0;
             
             // Update insights with real calculated data
             if (data.insights) {
+                console.log('Updating insights:', data.insights);
                 updateInsightDisplay('stat-ambassadors-change', data.insights.ambassadorsChange);
                 updateInsightDisplay('stat-events-change', data.insights.eventsChange);
                 updateInsightDisplay('stat-registrations-change', data.insights.registrationsChange);
@@ -1605,28 +1613,35 @@
         
         function updateInsightDisplay(elementId, change) {
             const element = document.getElementById(elementId);
-            if (!element) return;
+            if (!element) {
+                console.warn('Element not found:', elementId);
+                return;
+            }
             
             const isPositive = change >= 0;
             const changeText = `${isPositive ? '+' : ''}${change}%`;
             
-            element.textContent = `${changeText} from last month`;
+            element.innerHTML = `<i class="fas fa-arrow-${isPositive ? 'up' : 'down'}"></i> ${changeText} from last month`;
             element.className = `stat-change ${isPositive ? 'positive' : 'negative'}`;
         }
 
         async function loadRecentActivity() {
             try {
+                console.log('Loading recent activities...');
                 const response = await fetch('/api/admin/activities', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                     }
                 });
                 
+                console.log('Activities response:', response.status);
+                
                 if (!response.ok) {
-                    throw new Error('Failed to load recent activities');
+                    throw new Error(`Failed to load recent activities: ${response.status}`);
                 }
                 
                 const result = await response.json();
+                console.log('Activities data:', result);
                 const activities = result.data || [];
                 
                 const recentContainer = document.getElementById('recent-activity');
@@ -2267,21 +2282,21 @@
         // Sidebar toggle functionality
         function toggleSidebar() {
             const dashboardLayout = document.querySelector('.dashboard-layout');
-            const toggleIcon = document.getElementById('toggle-icon');
-            const hideButtonText = document.querySelector('.glassmorphism-btn span');
+            const toggleIcon = document.getElementById('sidebar-toggle-icon');
+            const hideButtonText = document.querySelector('.sidebar-controls .glassmorphism-btn:first-child span');
             
             const isCollapsed = dashboardLayout.classList.contains('sidebar-collapsed');
             
             if (isCollapsed) {
                 // Expand sidebar
                 dashboardLayout.classList.remove('sidebar-collapsed');
-                toggleIcon.className = 'fas fa-chevron-left';
-                hideButtonText.textContent = 'Hide';
+                if (toggleIcon) toggleIcon.className = 'fas fa-chevron-left';
+                if (hideButtonText) hideButtonText.textContent = 'Hide';
             } else {
                 // Collapse sidebar
                 dashboardLayout.classList.add('sidebar-collapsed');
-                toggleIcon.className = 'fas fa-chevron-right';
-                hideButtonText.textContent = 'Show';
+                if (toggleIcon) toggleIcon.className = 'fas fa-chevron-right';
+                if (hideButtonText) hideButtonText.textContent = 'Show';
             }
         }
 
