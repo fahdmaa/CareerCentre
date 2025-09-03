@@ -1113,11 +1113,11 @@
             </nav>
             
             <div class="sidebar-controls">
-                <button class="glassmorphism-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
+                <button class="glassmorphism-btn" onclick="console.log('Toggle clicked!'); toggleSidebar();" title="Toggle Sidebar">
                     <i class="fas fa-chevron-left" id="sidebar-toggle-icon"></i>
                     <span>Hide</span>
                 </button>
-                <button class="glassmorphism-btn danger" onclick="confirmLogout()" title="Logout">
+                <button class="glassmorphism-btn danger" onclick="console.log('Logout clicked!'); confirmLogout();" title="Logout">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </button>
@@ -1489,24 +1489,29 @@
 
         // Initialize Dashboard
         document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 DOM Content Loaded - Starting dashboard initialization...');
             try {
                 // Check authentication
                 const token = localStorage.getItem('authToken');
+                console.log('Auth token check:', token ? 'Found' : 'Missing');
                 if (!token) {
+                    console.log('No auth token, redirecting to login...');
                     window.location.href = '/admin-login';
                     return;
                 }
 
                 // Initialize navigation
+                console.log('Initializing navigation...');
                 initializeNavigation();
                 
                 // Load dashboard data
+                console.log('Loading dashboard data...');
                 await loadDashboardData();
                 
                 console.log('✅ Modern Dashboard initialized successfully!');
             } catch (error) {
                 console.error('❌ Dashboard initialization failed:', error);
-                showError('Failed to initialize dashboard. Please refresh the page.');
+                showError('Failed to initialize dashboard: ' + error.message);
             }
         });
 
@@ -1679,8 +1684,8 @@
                                 };
                                 
                                 return `
-                                    <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-left: 4px solid ${colorMap[activity.type] || 'var(--gray-400)'}; background: ${bgMap[activity.type] || 'var(--gray-50)');">
-                                        <i class="fas fa-${iconMap[activity.type] || 'info-circle'}" style="color: ${colorMap[activity.type] || 'var(--gray-600)'};}"></i>
+                                    <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-left: 4px solid ${colorMap[activity.type] || 'var(--gray-400)'}; background: ${bgMap[activity.type] || 'var(--gray-50)';">
+                                        <i class="fas fa-${iconMap[activity.type] || 'info-circle'}" style="color: ${colorMap[activity.type] || 'var(--gray-600)'};"></i>
                                         <div>
                                             <div style="font-weight: 500; color: var(--gray-900);">${activity.description}</div>
                                             <div style="font-size: var(--text-sm); color: var(--gray-600);">
@@ -1987,16 +1992,18 @@
 
         // Utility Functions
         function showLoading() {
+            console.log('Loading started...');
             // Implementation for global loading state if needed
         }
 
         function hideLoading() {
+            console.log('Loading finished.');
             // Implementation for global loading state if needed
         }
 
         function showError(message) {
-            console.error(message);
-            // Could implement toast notifications here
+            console.error('ERROR:', message);
+            alert('Error: ' + message); // Temporary alert for debugging
         }
 
         function refreshData() {
@@ -2309,7 +2316,20 @@
         // Global error handler
         window.addEventListener('unhandledrejection', function(event) {
             console.error('Unhandled promise rejection:', event.reason);
-            showError('An unexpected error occurred. Please refresh the page.');
+            showError('An unexpected error occurred: ' + event.reason);
+        });
+        
+        window.addEventListener('error', function(event) {
+            console.error('JavaScript error:', event.error);
+            showError('Script error: ' + event.error?.message);
+        });
+        
+        // Add debug info on load
+        console.log('🔧 Dashboard script loaded successfully');
+        console.log('📊 Dashboard functions available:', {
+            toggleSidebar: typeof toggleSidebar,
+            loadDashboardData: typeof loadDashboardData,
+            confirmLogout: typeof confirmLogout
         });
     </script>
 </body>

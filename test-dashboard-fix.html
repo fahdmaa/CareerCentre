@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Test - EMSI Career Center</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Dashboard Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>Authentication Test</h2>
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="setTestToken()">Set Test Token</button>
+        <button onclick="clearToken()">Clear Token</button>
+        <div id="auth-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>API Endpoints Test</h2>
+        <button onclick="testDashboardAPI()">Test Dashboard API</button>
+        <button onclick="testActivitiesAPI()">Test Activities API</button>
+        <button onclick="testProfileAPI()">Test Profile API</button>
+        <div id="api-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Dashboard Navigation</h2>
+        <a href="/admin-login" target="_blank">Go to Admin Login</a><br><br>
+        <a href="/admin-dashboard" target="_blank">Go to Admin Dashboard</a>
+        <div id="nav-info" class="info">
+            <p><strong>Test Instructions:</strong></p>
+            <ol>
+                <li>Click "Test Login" to verify login API works</li>
+                <li>Click "Set Test Token" to simulate successful authentication</li>
+                <li>Click "Go to Admin Dashboard" to test the actual dashboard</li>
+                <li>Check browser console for debugging information</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        async function testLogin() {
+            const authStatus = document.getElementById('auth-status');
+            authStatus.innerHTML = '<div class="info">Testing login...</div>';
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin', password: 'admin123' })
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    authStatus.innerHTML = '<div class="success">✅ Login successful! Token: ' + result.token.substring(0, 20) + '...</div>';
+                    localStorage.setItem('authToken', result.token);
+                } else {
+                    authStatus.innerHTML = '<div class="error">❌ Login failed: ' + result.message + '</div>';
+                }
+            } catch (error) {
+                authStatus.innerHTML = '<div class="error">❌ Login error: ' + error.message + '</div>';
+            }
+        }
+        
+        function setTestToken() {
+            // Set a test token for debugging
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: 'admin', password: 'admin123' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                localStorage.setItem('authToken', data.token);
+                document.getElementById('auth-status').innerHTML = '<div class="success">✅ Test token set in localStorage</div>';
+            });
+        }
+        
+        function clearToken() {
+            localStorage.removeItem('authToken');
+            document.getElementById('auth-status').innerHTML = '<div class="info">ℹ️ Auth token cleared</div>';
+        }
+        
+        async function testDashboardAPI() {
+            const results = document.getElementById('api-results');
+            const token = localStorage.getItem('authToken');
+            
+            if (!token) {
+                results.innerHTML = '<div class="error">❌ No auth token. Please login first.</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/dashboard', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await response.json();
+                results.innerHTML = '<div class="success">✅ Dashboard API works:</div><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                results.innerHTML = '<div class="error">❌ Dashboard API error: ' + error.message + '</div>';
+            }
+        }
+        
+        async function testActivitiesAPI() {
+            const results = document.getElementById('api-results');
+            const token = localStorage.getItem('authToken');
+            
+            if (!token) {
+                results.innerHTML = '<div class="error">❌ No auth token. Please login first.</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/activities', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await response.json();
+                results.innerHTML = '<div class="success">✅ Activities API works:</div><pre>' + JSON.stringify(data.data.slice(0, 2), null, 2) + '</pre>';
+            } catch (error) {
+                results.innerHTML = '<div class="error">❌ Activities API error: ' + error.message + '</div>';
+            }
+        }
+        
+        async function testProfileAPI() {
+            const results = document.getElementById('api-results');
+            const token = localStorage.getItem('authToken');
+            
+            if (!token) {
+                results.innerHTML = '<div class="error">❌ No auth token. Please login first.</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/profile', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await response.json();
+                results.innerHTML = '<div class="success">✅ Profile API works:</div><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                results.innerHTML = '<div class="error">❌ Profile API error: ' + error.message + '</div>';
+            }
+        }
+        
+        // Check current auth status on load
+        window.addEventListener('load', function() {
+            const token = localStorage.getItem('authToken');
+            const authStatus = document.getElementById('auth-status');
+            if (token) {
+                authStatus.innerHTML = '<div class="success">✅ Auth token present in localStorage</div>';
+            } else {
+                authStatus.innerHTML = '<div class="info">ℹ️ No auth token in localStorage</div>';
+            }
+        });
+    </script>
+</body>
+</html>
