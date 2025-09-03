@@ -304,7 +304,97 @@ app.get('/api/admin/dashboard', authenticateToken, async (req, res) => {
         const messagesResult = await query('SELECT COUNT(*) FROM messages WHERE status = $1', ['unread']);
         stats.unreadMessages = parseInt(messagesResult.rows[0].count);
         
-        res.json(stats);
+        // Calculate insights based on real data
+        const insights = {};
+        
+        // Events insight - compare this month vs last month
+        try {
+            const thisMonthEvents = await query(
+                "SELECT COUNT(*) FROM events WHERE DATE_TRUNC('month', event_date) = DATE_TRUNC('month', CURRENT_DATE)"
+            );
+            const lastMonthEvents = await query(
+                "SELECT COUNT(*) FROM events WHERE DATE_TRUNC('month', event_date) = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')"
+            );
+            
+            const thisMonth = parseInt(thisMonthEvents.rows[0].count);
+            const lastMonth = parseInt(lastMonthEvents.rows[0].count);
+            
+            if (lastMonth > 0) {
+                insights.eventsChange = Math.round(((thisMonth - lastMonth) / lastMonth) * 100);
+            } else {
+                insights.eventsChange = thisMonth > 0 ? 100 : 0;
+            }
+        } catch (error) {
+            insights.eventsChange = 0;
+        }
+        
+        // Registration insights
+        try {
+            const thisMonthRegs = await query(
+                "SELECT COUNT(*) FROM event_registrations WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)"
+            );
+            const lastMonthRegs = await query(
+                "SELECT COUNT(*) FROM event_registrations WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')"
+            );
+            
+            const thisMonth = parseInt(thisMonthRegs.rows[0].count);
+            const lastMonth = parseInt(lastMonthRegs.rows[0].count);
+            
+            if (lastMonth > 0) {
+                insights.registrationsChange = Math.round(((thisMonth - lastMonth) / lastMonth) * 100);
+            } else {
+                insights.registrationsChange = thisMonth > 0 ? 100 : 0;
+            }
+        } catch (error) {
+            insights.registrationsChange = 0;
+        }
+        
+        // Ambassador insights
+        try {
+            const thisMonthAmb = await query(
+                "SELECT COUNT(*) FROM ambassadors WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)"
+            );
+            const lastMonthAmb = await query(
+                "SELECT COUNT(*) FROM ambassadors WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')"
+            );
+            
+            const thisMonth = parseInt(thisMonthAmb.rows[0].count);
+            const lastMonth = parseInt(lastMonthAmb.rows[0].count);
+            
+            if (lastMonth > 0) {
+                insights.ambassadorsChange = Math.round(((thisMonth - lastMonth) / lastMonth) * 100);
+            } else {
+                insights.ambassadorsChange = thisMonth > 0 ? 100 : 0;
+            }
+        } catch (error) {
+            insights.ambassadorsChange = 0;
+        }
+        
+        // Messages insight
+        try {
+            const thisMonthMsgs = await query(
+                "SELECT COUNT(*) FROM messages WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)"
+            );
+            const lastMonthMsgs = await query(
+                "SELECT COUNT(*) FROM messages WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')"
+            );
+            
+            const thisMonth = parseInt(thisMonthMsgs.rows[0].count);
+            const lastMonth = parseInt(lastMonthMsgs.rows[0].count);
+            
+            if (lastMonth > 0) {
+                insights.messagesChange = Math.round(((thisMonth - lastMonth) / lastMonth) * 100);
+            } else {
+                insights.messagesChange = thisMonth > 0 ? 100 : 0;
+            }
+        } catch (error) {
+            insights.messagesChange = 0;
+        }
+        
+        res.json({
+            ...stats,
+            insights
+        });
     } catch (error) {
         console.error('Error fetching dashboard stats:', error);
         res.status(500).json({ message: 'Error fetching dashboard statistics' });
@@ -571,25 +661,30 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
 // Admin profile endpoints
 app.get('/api/admin/profile', authenticateToken, async (req, res) => {
     try {
-        // Get admin user profile
-        const userResult = await query('SELECT id, username FROM users WHERE id = $1', [req.user.id]);
+        // Get admin profile from database
+        const profileResult = await query('SELECT * FROM admin_profiles WHERE user_id = $1', [req.user.id]);
         
-        if (userResult.rows.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
+        let profile;
+        if (profileResult.rows.length === 0) {
+            // Create default profile if doesn't exist
+            const insertResult = await query(
+                'INSERT INTO admin_profiles (user_id, name, occupation, phone, email) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+                [req.user.id, 'Admin User', 'Career Center Administrator', '+212 6 12 34 56 78', 'admin@emsi.ma']
+            );
+            profile = insertResult.rows[0];
+        } else {
+            profile = profileResult.rows[0];
         }
         
-        const user = userResult.rows[0];
-        
-        // Return default profile data (can be enhanced with a profiles table later)
         res.json({
             data: {
-                id: user.id,
-                username: user.username,
-                name: 'Admin User',
-                occupation: 'Career Center Administrator',
-                phone: '+212 6 12 34 56 78',
-                email: 'admin@emsi.ma',
-                profile_picture: null
+                id: profile.user_id,
+                username: req.user.username,
+                name: profile.name,
+                occupation: profile.occupation,
+                phone: profile.phone,
+                email: profile.email,
+                profile_picture: profile.profile_picture
             }
         });
     } catch (error) {
@@ -600,7 +695,7 @@ app.get('/api/admin/profile', authenticateToken, async (req, res) => {
 
 app.put('/api/admin/profile', authenticateToken, async (req, res) => {
     try {
-        const { name, occupation, phone, email } = req.body;
+        const { name, occupation, phone, email, profile_picture } = req.body;
         
         // Validate required fields
         if (!name || !email) {
@@ -609,21 +704,77 @@ app.put('/api/admin/profile', authenticateToken, async (req, res) => {
             });
         }
         
-        // For now, just return success (can be enhanced with a profiles table later)
+        // Update profile in database
+        const updateResult = await query(
+            `UPDATE admin_profiles 
+             SET name = $1, occupation = $2, phone = $3, email = $4, profile_picture = $5, updated_at = NOW() 
+             WHERE user_id = $6 
+             RETURNING *`,
+            [name, occupation || 'Career Center Administrator', phone || '', email, profile_picture, req.user.id]
+        );
+        
+        if (updateResult.rows.length === 0) {
+            // Create profile if doesn't exist
+            const insertResult = await query(
+                'INSERT INTO admin_profiles (user_id, name, occupation, phone, email, profile_picture) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+                [req.user.id, name, occupation || 'Career Center Administrator', phone || '', email, profile_picture]
+            );
+            const profile = insertResult.rows[0];
+            
+            return res.json({
+                data: {
+                    id: profile.user_id,
+                    username: req.user.username,
+                    name: profile.name,
+                    occupation: profile.occupation,
+                    phone: profile.phone,
+                    email: profile.email,
+                    profile_picture: profile.profile_picture
+                },
+                message: 'Profile created successfully'
+            });
+        }
+        
+        const profile = updateResult.rows[0];
         res.json({
             data: {
-                id: req.user.id,
+                id: profile.user_id,
                 username: req.user.username,
-                name,
-                occupation: occupation || 'Career Center Administrator',
-                phone: phone || '',
-                email
+                name: profile.name,
+                occupation: profile.occupation,
+                phone: profile.phone,
+                email: profile.email,
+                profile_picture: profile.profile_picture
             },
             message: 'Profile updated successfully'
         });
     } catch (error) {
         console.error('Error updating profile:', error);
         res.status(500).json({ message: 'Error updating profile' });
+    }
+});
+
+// Recent activities endpoint
+app.get('/api/admin/activities', authenticateToken, async (req, res) => {
+    try {
+        const activitiesResult = await query(
+            'SELECT * FROM recent_activities ORDER BY created_at DESC LIMIT 10'
+        );
+        
+        res.json({
+            data: activitiesResult.rows.map(activity => ({
+                id: activity.id,
+                type: activity.activity_type,
+                description: activity.description,
+                user_name: activity.user_name,
+                user_email: activity.user_email,
+                data: activity.activity_data,
+                time: activity.created_at
+            }))
+        });
+    } catch (error) {
+        console.error('Error fetching activities:', error);
+        res.status(500).json({ message: 'Error fetching activities' });
     }
 });
 
