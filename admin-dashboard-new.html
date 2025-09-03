@@ -575,6 +575,80 @@
             display: none;
         }
 
+        /* Sidebar Collapsed State */
+        .dashboard-layout.sidebar-collapsed {
+            grid-template-columns: 80px 1fr;
+        }
+
+        .dashboard-layout.sidebar-collapsed .sidebar {
+            padding: var(--space-4);
+            width: 80px;
+            overflow: visible;
+        }
+
+        .dashboard-layout.sidebar-collapsed .sidebar-header {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+        }
+
+        .dashboard-layout.sidebar-collapsed .logo {
+            width: 48px;
+            height: 48px;
+            font-size: var(--text-base);
+        }
+
+        .dashboard-layout.sidebar-collapsed .nav-text {
+            display: none;
+        }
+
+        .dashboard-layout.sidebar-collapsed .nav-link {
+            justify-content: center;
+            padding: var(--space-3);
+            position: relative;
+        }
+
+        .dashboard-layout.sidebar-collapsed .nav-icon {
+            margin: 0;
+        }
+
+        /* Tooltip for collapsed navigation */
+        .dashboard-layout.sidebar-collapsed .nav-link::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: calc(100% + var(--space-3));
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--gray-900);
+            color: white;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            font-size: var(--text-xs);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .dashboard-layout.sidebar-collapsed .nav-link:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dashboard-layout.sidebar-collapsed .sidebar-controls {
+            padding: var(--space-3);
+        }
+
+        .dashboard-layout.sidebar-collapsed .glassmorphism-btn {
+            justify-content: center;
+            padding: var(--space-3);
+        }
+
+        .dashboard-layout.sidebar-collapsed .glassmorphism-btn span {
+            display: none;
+        }
+
         /* Show Sidebar Button */
         .show-sidebar-btn {
             position: fixed;
@@ -604,9 +678,14 @@
             display: flex;
         }
 
+        .dashboard-layout.sidebar-collapsed .show-sidebar-btn {
+            display: none;
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
-            .dashboard-layout {
+            .dashboard-layout,
+            .dashboard-layout.sidebar-collapsed {
                 grid-template-columns: 1fr;
             }
             
@@ -857,12 +936,16 @@
 
         /* Sidebar Controls */
         .sidebar-controls {
+            position: sticky;
+            bottom: 0;
             margin-top: auto;
-            padding-top: var(--space-6);
+            padding: var(--space-4) var(--space-6) var(--space-6);
             border-top: 1px solid var(--gray-200);
+            background: white;
             display: flex;
             flex-direction: column;
             gap: var(--space-3);
+            z-index: 10;
         }
 
         .glassmorphism-btn {
@@ -963,7 +1046,8 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                    <img src="/public/images/logo-admin.svg" alt="EMSI Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\"color: white; font-weight: 700;\">EC</span>'; this.parentElement.style.background='linear-gradient(135deg, var(--primary-500), var(--primary-600))'; this.parentElement.style.borderRadius='var(--radius-lg)';">
+                    <img src="/public/images/logo-admin.svg" alt="EMSI Logo" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <span class="logo-fallback" style="display: none; color: white; font-weight: 700;">EC</span>
                 </div>
             </div>
             
@@ -1009,13 +1093,13 @@
             </nav>
             
             <div class="sidebar-controls">
-                <button class="glassmorphism-btn" onclick="toggleSidebar()" title="Hide Sidebar">
-                    <i class="fas fa-chevron-left"></i>
-                    Hide
+                <button class="glassmorphism-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
+                    <i class="fas fa-chevron-left" id="toggle-icon"></i>
+                    <span>Hide</span>
                 </button>
                 <button class="glassmorphism-btn danger" onclick="showLogoutConfirm()" title="Logout">
                     <i class="fas fa-sign-out-alt"></i>
-                    Logout
+                    <span>Logout</span>
                 </button>
             </div>
         </aside>
@@ -2081,12 +2165,28 @@
         // Sidebar toggle functionality
         function toggleSidebar() {
             const dashboardLayout = document.querySelector('.dashboard-layout');
-            dashboardLayout.classList.toggle('sidebar-hidden');
+            const toggleIcon = document.getElementById('toggle-icon');
+            const hideButtonText = document.querySelector('.glassmorphism-btn span');
+            
+            const isCollapsed = dashboardLayout.classList.contains('sidebar-collapsed');
+            
+            if (isCollapsed) {
+                // Expand sidebar
+                dashboardLayout.classList.remove('sidebar-collapsed');
+                toggleIcon.className = 'fas fa-chevron-left';
+                hideButtonText.textContent = 'Hide';
+            } else {
+                // Collapse sidebar
+                dashboardLayout.classList.add('sidebar-collapsed');
+                toggleIcon.className = 'fas fa-chevron-right';
+                hideButtonText.textContent = 'Show';
+            }
         }
 
         function showSidebar() {
             const dashboardLayout = document.querySelector('.dashboard-layout');
             dashboardLayout.classList.remove('sidebar-hidden');
+            dashboardLayout.classList.remove('sidebar-collapsed');
         }
 
         // Global error handler
