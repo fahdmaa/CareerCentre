@@ -108,11 +108,16 @@
             padding: var(--space-6);
             overflow-y: auto;
             box-shadow: var(--shadow-sm);
+            position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar-header {
             display: flex;
             align-items: center;
+            justify-content: center;
+            flex-direction: column;
             gap: var(--space-3);
             margin-bottom: var(--space-8);
             padding-bottom: var(--space-6);
@@ -120,8 +125,8 @@
         }
 
         .logo {
-            width: 40px;
-            height: 40px;
+            width: 60px;
+            height: 60px;
             background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
             border-radius: var(--radius-lg);
             display: flex;
@@ -130,16 +135,20 @@
             color: white;
             font-weight: 700;
             font-size: var(--text-lg);
+            margin: 0 auto;
         }
 
-        .sidebar-title {
-            font-size: var(--text-lg);
-            font-weight: 600;
-            color: var(--gray-900);
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
+
+        /* Sidebar title removed */
 
         .nav-menu {
             list-style: none;
+            flex-grow: 1;
         }
 
         .nav-item {
@@ -183,16 +192,29 @@
 
         .content-header {
             background: white;
-            padding: var(--space-6) var(--space-8);
             border-bottom: 1px solid var(--gray-200);
             box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .header-content {
+            padding: var(--space-6) var(--space-8);
+        }
+
+        .user-avatar-fixed {
+            position: absolute;
+            top: 50%;
+            right: var(--space-8);
+            transform: translateY(-50%);
+            z-index: 100;
         }
 
         .header-top {
             display: flex;
-            justify-content: between;
+            justify-content: flex-start;
             align-items: center;
             margin-bottom: var(--space-4);
+            position: relative;
         }
 
         .page-title {
@@ -544,6 +566,44 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Sidebar Hidden State */
+        .dashboard-layout.sidebar-hidden {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-layout.sidebar-hidden .sidebar {
+            display: none;
+        }
+
+        /* Show Sidebar Button */
+        .show-sidebar-btn {
+            position: fixed;
+            top: var(--space-6);
+            left: var(--space-4);
+            z-index: 1001;
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .show-sidebar-btn:hover {
+            background: var(--primary-600);
+            transform: scale(1.05);
+        }
+
+        .dashboard-layout.sidebar-hidden .show-sidebar-btn {
+            display: flex;
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .dashboard-layout {
@@ -552,6 +612,10 @@
             
             .sidebar {
                 display: none;
+            }
+            
+            .show-sidebar-btn {
+                display: flex;
             }
             
             .stats-grid {
@@ -791,6 +855,52 @@
             border-color: var(--primary-500);
         }
 
+        /* Sidebar Controls */
+        .sidebar-controls {
+            margin-top: auto;
+            padding-top: var(--space-6);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .glassmorphism-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-4);
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--radius-lg);
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: var(--text-sm);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .glassmorphism-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .glassmorphism-btn.danger {
+            background: rgba(239, 68, 68, 0.25);
+            color: var(--error);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .glassmorphism-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.35);
+            color: white;
+        }
+
         /* Logout Animation */
         .logout-overlay {
             position: fixed;
@@ -844,18 +954,18 @@
 </head>
 <body>
     <div class="dashboard-layout">
+        <!-- Show Sidebar Button -->
+        <button class="show-sidebar-btn" onclick="showSidebar()" title="Show Sidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+        
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                    <img src="/images/logo-admin.svg" alt="EMSI Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\"color: white; font-weight: 700;\">EC</span>'; this.parentElement.style.background='linear-gradient(135deg, var(--primary-500), var(--primary-600))'; this.parentElement.style.borderRadius='var(--radius-lg)';">
+                    <img src="/public/images/logo-admin.svg" alt="EMSI Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\"color: white; font-weight: 700;\">EC</span>'; this.parentElement.style.background='linear-gradient(135deg, var(--primary-500), var(--primary-600))'; this.parentElement.style.borderRadius='var(--radius-lg)';">
                 </div>
-                <div class="sidebar-title">EMSI Career</div>
             </div>
-            
-            <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">
-                <i class="fas fa-chevron-left" id="sidebar-toggle-icon"></i>
-            </button>
             
             <nav>
                 <ul class="nav-menu">
@@ -897,40 +1007,53 @@
                     </li>
                 </ul>
             </nav>
+            
+            <div class="sidebar-controls">
+                <button class="glassmorphism-btn" onclick="toggleSidebar()" title="Hide Sidebar">
+                    <i class="fas fa-chevron-left"></i>
+                    Hide
+                </button>
+                <button class="glassmorphism-btn danger" onclick="showLogoutConfirm()" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Header -->
             <header class="content-header">
-                <div class="header-top">
-                    <div>
-                        <h1 class="page-title" id="page-title">Dashboard Overview</h1>
-                        <div class="breadcrumbs">
-                            <span class="breadcrumb-item">Admin</span>
-                            <i class="fas fa-chevron-right"></i>
-                            <span class="breadcrumb-item active" id="breadcrumb-active">Overview</span>
-                        </div>
-                    </div>
-                    <div class="user-menu">
-                        <div class="user-avatar-container">
-                            <div class="user-avatar" id="user-avatar" onclick="showProfileMenu(event)">
-                                <img id="profile-image" src="" alt="Profile" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-                                <span id="profile-initials">A</span>
+                <div class="header-content">
+                    <div class="header-top">
+                        <div>
+                            <h1 class="page-title" id="page-title">Dashboard Overview</h1>
+                            <div class="breadcrumbs">
+                                <span class="breadcrumb-item">Admin</span>
+                                <i class="fas fa-chevron-right"></i>
+                                <span class="breadcrumb-item active" id="breadcrumb-active">Overview</span>
                             </div>
-                            <div class="profile-dropdown" id="profile-dropdown">
-                                <div class="dropdown-item" onclick="openProfileModal()">
-                                    <i class="fas fa-user"></i>
-                                    View Profile
+                        </div>
+                        <div class="user-avatar-fixed">
+                            <div class="user-avatar-container">
+                                <div class="user-avatar" id="user-avatar" onclick="showProfileMenu(event)">
+                                    <img id="profile-image" src="" alt="Profile" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                    <span id="profile-initials">A</span>
                                 </div>
-                                <div class="dropdown-item" onclick="openPictureModal()">
-                                    <i class="fas fa-camera"></i>
-                                    Change Picture
-                                </div>
-                                <div class="dropdown-divider"></div>
-                                <div class="dropdown-item danger" onclick="showLogoutConfirm()">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    Logout
+                                <div class="profile-dropdown" id="profile-dropdown">
+                                    <div class="dropdown-item" onclick="openProfileModal()">
+                                        <i class="fas fa-user"></i>
+                                        View Profile
+                                    </div>
+                                    <div class="dropdown-item" onclick="openPictureModal()">
+                                        <i class="fas fa-camera"></i>
+                                        Change Picture
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="dropdown-item danger" onclick="showLogoutConfirm()">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        Logout
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1770,11 +1893,7 @@
                 initials.textContent = getInitials(profileData.name || 'Admin');
             }
 
-            // Update page title if needed
-            const sidebarTitle = document.querySelector('.sidebar-title');
-            if (sidebarTitle) {
-                sidebarTitle.textContent = profileData.name ? `Hello, ${profileData.name.split(' ')[0]}` : 'EMSI Career';
-            }
+            // Profile updated successfully
         }
 
         function getInitials(name) {
@@ -1962,18 +2081,12 @@
         // Sidebar toggle functionality
         function toggleSidebar() {
             const dashboardLayout = document.querySelector('.dashboard-layout');
-            const sidebarToggleIcon = document.getElementById('sidebar-toggle-icon');
-            
-            dashboardLayout.classList.toggle('sidebar-collapsed');
-            
-            // Toggle icon direction
-            if (dashboardLayout.classList.contains('sidebar-collapsed')) {
-                sidebarToggleIcon.classList.remove('fa-chevron-left');
-                sidebarToggleIcon.classList.add('fa-chevron-right');
-            } else {
-                sidebarToggleIcon.classList.remove('fa-chevron-right');
-                sidebarToggleIcon.classList.add('fa-chevron-left');
-            }
+            dashboardLayout.classList.toggle('sidebar-hidden');
+        }
+
+        function showSidebar() {
+            const dashboardLayout = document.querySelector('.dashboard-layout');
+            dashboardLayout.classList.remove('sidebar-hidden');
         }
 
         // Global error handler
