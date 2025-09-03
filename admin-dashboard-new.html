@@ -127,21 +127,30 @@
         .logo {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: var(--text-lg);
             margin: 0 auto;
+            background: none;
         }
 
         .logo img {
             width: 100%;
             height: 100%;
             object-fit: contain;
+        }
+
+        .logo-fallback {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600)) !important;
+            border-radius: var(--radius-lg) !important;
+            color: white !important;
+            font-weight: 700;
+            font-size: var(--text-lg);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Sidebar title removed */
@@ -637,12 +646,15 @@
         }
 
         .dashboard-layout.sidebar-collapsed .sidebar-controls {
+            flex-direction: column;
             padding: var(--space-3);
         }
 
         .dashboard-layout.sidebar-collapsed .glassmorphism-btn {
             justify-content: center;
-            padding: var(--space-3);
+            padding: var(--space-2);
+            flex: none;
+            width: 40px;
         }
 
         .dashboard-layout.sidebar-collapsed .glassmorphism-btn span {
@@ -939,12 +951,11 @@
             position: sticky;
             bottom: 0;
             margin-top: auto;
-            padding: var(--space-4) var(--space-6) var(--space-6);
+            padding: var(--space-4) var(--space-3) var(--space-4);
             border-top: 1px solid var(--gray-200);
             background: white;
             display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
+            gap: var(--space-2);
             z-index: 10;
         }
 
@@ -953,7 +964,7 @@
             align-items: center;
             justify-content: center;
             gap: var(--space-2);
-            padding: var(--space-3) var(--space-4);
+            padding: var(--space-2) var(--space-3);
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.18);
@@ -965,6 +976,8 @@
             cursor: pointer;
             transition: all var(--transition-base);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            height: 40px;
         }
 
         .glassmorphism-btn:hover {
@@ -1047,7 +1060,7 @@
             <div class="sidebar-header">
                 <div class="logo">
                     <img src="/public/images/logo-admin.svg" alt="EMSI Logo" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <span class="logo-fallback" style="display: none; color: white; font-weight: 700;">EC</span>
+                    <span class="logo-fallback" style="display: none;">EC</span>
                 </div>
             </div>
             
