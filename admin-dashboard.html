@@ -822,6 +822,22 @@
         .modal-overlay.show .modal {
             transform: scale(1) translateY(0);
         }
+        
+        .modal-container {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.95) translateY(20px);
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.show .modal-container {
+            transform: scale(1) translateY(0);
+        }
 
         .modal-header {
             padding: var(--space-6);
@@ -2680,7 +2696,9 @@
             document.getElementById('ambassador-modal-title').textContent = 'Add New Ambassador';
             document.getElementById('save-btn-text').textContent = 'Add Ambassador';
             resetAmbassadorForm();
-            document.getElementById('ambassador-modal').style.display = 'flex';
+            const modal = document.getElementById('ambassador-modal');
+            modal.style.display = 'flex';
+            modal.classList.add('show');
         }
         
         function editAmbassador(id) {
@@ -2689,7 +2707,9 @@
             document.getElementById('ambassador-modal-title').textContent = 'Edit Ambassador';
             document.getElementById('save-btn-text').textContent = 'Update Ambassador';
             loadAmbassadorData(id);
-            document.getElementById('ambassador-modal').style.display = 'flex';
+            const modal = document.getElementById('ambassador-modal');
+            modal.style.display = 'flex';
+            modal.classList.add('show');
         }
         
         async function loadAmbassadorData(id) {
@@ -2729,7 +2749,11 @@
         }
         
         function closeAmbassadorModal() {
-            document.getElementById('ambassador-modal').style.display = 'none';
+            const modal = document.getElementById('ambassador-modal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300); // Wait for animation
             resetAmbassadorForm();
             currentAmbassadorId = null;
             currentAmbassadorImage = null;
@@ -2738,34 +2762,35 @@
         async function saveAmbassador() {
             try {
                 console.log('💾 Saving ambassador...');
-                const form = document.getElementById('ambassador-form');
-                const formData = new FormData();
                 
-                // Add form fields
-                formData.append('name', document.getElementById('ambassador-name').value);
-                formData.append('role', document.getElementById('ambassador-role').value);
-                formData.append('major', document.getElementById('ambassador-major').value);
-                formData.append('year', document.getElementById('ambassador-year').value);
-                formData.append('email', document.getElementById('ambassador-email').value);
-                formData.append('linkedin', document.getElementById('ambassador-linkedin').value);
-                formData.append('bio', document.getElementById('ambassador-bio').value);
-                formData.append('status', document.getElementById('ambassador-status').value);
+                // Prepare data object for API client
+                const ambassadorData = {
+                    name: document.getElementById('ambassador-name').value,
+                    role: document.getElementById('ambassador-role').value,
+                    major: document.getElementById('ambassador-major').value,
+                    year: document.getElementById('ambassador-year').value,
+                    email: document.getElementById('ambassador-email').value,
+                    linkedin: document.getElementById('ambassador-linkedin').value,
+                    bio: document.getElementById('ambassador-bio').value,
+                    status: document.getElementById('ambassador-status').value
+                };
                 
-                // Add image if selected
+                // Get image file if selected
                 const imageInput = document.getElementById('ambassador-image-input');
-                if (imageInput.files[0]) {
-                    formData.append('image', imageInput.files[0]);
-                }
+                const imageFile = imageInput.files[0] || null;
+                
+                console.log('📋 Ambassador data:', ambassadorData);
+                console.log('🖼️ Image file:', imageFile);
                 
                 let response;
                 if (currentAmbassadorId) {
                     // Update existing ambassador
-                    response = await window.apiClient.updateAmbassador(currentAmbassadorId, formData, imageInput.files[0]);
+                    response = await window.apiClient.updateAmbassador(currentAmbassadorId, ambassadorData, imageFile);
                     console.log('✅ Ambassador updated:', response);
                     showSuccess('Ambassador updated successfully!');
                 } else {
                     // Create new ambassador
-                    response = await window.apiClient.createAmbassador(formData, imageInput.files[0]);
+                    response = await window.apiClient.createAmbassador(ambassadorData, imageFile);
                     console.log('✅ Ambassador added:', response);
                     showSuccess('Ambassador added successfully!');
                 }

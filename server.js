@@ -122,11 +122,11 @@ app.get('/admin-login.html', (req, res) => {
 });
 
 app.get('/admin-dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin-dashboard-new.html'));
+    res.sendFile(path.join(__dirname, 'admin-dashboard.html'));
 });
 
 app.get('/admin-dashboard.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin-dashboard-new.html'));
+    res.sendFile(path.join(__dirname, 'admin-dashboard.html'));
 });
 
 // Secret key for JWT (use environment variables in production)
