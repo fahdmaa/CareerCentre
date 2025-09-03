@@ -568,6 +568,65 @@ app.get('/api/admin/stats', authenticateToken, async (req, res) => {
     }
 });
 
+// Admin profile endpoints
+app.get('/api/admin/profile', authenticateToken, async (req, res) => {
+    try {
+        // Get admin user profile
+        const userResult = await query('SELECT id, username FROM users WHERE id = $1', [req.user.id]);
+        
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        const user = userResult.rows[0];
+        
+        // Return default profile data (can be enhanced with a profiles table later)
+        res.json({
+            data: {
+                id: user.id,
+                username: user.username,
+                name: 'Admin User',
+                occupation: 'Career Center Administrator',
+                phone: '+212 6 12 34 56 78',
+                email: 'admin@emsi.ma',
+                profile_picture: null
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        res.status(500).json({ message: 'Error fetching profile' });
+    }
+});
+
+app.put('/api/admin/profile', authenticateToken, async (req, res) => {
+    try {
+        const { name, occupation, phone, email } = req.body;
+        
+        // Validate required fields
+        if (!name || !email) {
+            return res.status(400).json({ 
+                message: 'Name and email are required' 
+            });
+        }
+        
+        // For now, just return success (can be enhanced with a profiles table later)
+        res.json({
+            data: {
+                id: req.user.id,
+                username: req.user.username,
+                name,
+                occupation: occupation || 'Career Center Administrator',
+                phone: phone || '',
+                email
+            },
+            message: 'Profile updated successfully'
+        });
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        res.status(500).json({ message: 'Error updating profile' });
+    }
+});
+
 // Cohort endpoints
 app.get('/api/cohorts', authenticateToken, async (req, res) => {
     // Return default cohort data for now

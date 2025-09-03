@@ -207,6 +207,10 @@
             gap: var(--space-4);
         }
 
+        .user-avatar-container {
+            position: relative;
+        }
+
         .user-avatar {
             width: 40px;
             height: 40px;
@@ -217,6 +221,67 @@
             justify-content: center;
             color: white;
             font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-avatar:hover {
+            border-color: var(--primary-400);
+            transform: scale(1.05);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--gray-200);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all var(--transition-base);
+            z-index: 1000;
+        }
+
+        .profile-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            cursor: pointer;
+            transition: var(--transition-base);
+            font-size: var(--text-sm);
+            color: var(--gray-700);
+        }
+
+        .dropdown-item:hover {
+            background: var(--gray-50);
+        }
+
+        .dropdown-item.danger {
+            color: var(--error);
+        }
+
+        .dropdown-item.danger:hover {
+            background: #fef2f2;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--gray-200);
+            margin: var(--space-2) 0;
         }
 
         .breadcrumbs {
@@ -551,6 +616,230 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--gray-400);
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+            z-index: 2000;
+            padding: var(--space-4);
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.95) translateY(20px);
+            transition: all var(--transition-base);
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--gray-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            color: var(--gray-500);
+        }
+
+        .modal-close:hover {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+        }
+
+        .modal-footer {
+            padding: var(--space-6);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: var(--space-5);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-2);
+            font-weight: 500;
+            color: var(--gray-700);
+            font-size: var(--text-sm);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            transition: var(--transition-base);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
+        }
+
+        /* Image Upload and Crop */
+        .image-upload-area {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            margin-bottom: var(--space-4);
+        }
+
+        .image-upload-area:hover {
+            border-color: var(--primary-500);
+            background: var(--primary-50);
+        }
+
+        .image-upload-area.has-image {
+            border-style: solid;
+            padding: var(--space-4);
+        }
+
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: var(--radius-lg);
+            margin: 0 auto var(--space-4);
+            display: block;
+        }
+
+        .crop-container {
+            position: relative;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .crop-controls {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: center;
+            margin-top: var(--space-4);
+        }
+
+        .crop-btn {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--gray-300);
+            background: white;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition-base);
+            font-size: var(--text-sm);
+        }
+
+        .crop-btn:hover {
+            background: var(--gray-50);
+        }
+
+        .crop-btn.active {
+            background: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+        }
+
+        /* Logout Animation */
+        .logout-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease-in-out;
+            z-index: 3000;
+        }
+
+        .logout-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .logout-content {
+            text-align: center;
+            color: white;
+            transform: translateY(20px);
+            transition: transform 0.5s ease-in-out 0.2s;
+        }
+
+        .logout-overlay.show .logout-content {
+            transform: translateY(0);
+        }
+
+        .logout-icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-4);
+            opacity: 0.8;
+        }
+
+        .logout-text {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+        }
+
+        .logout-subtext {
+            font-size: var(--text-base);
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -618,11 +907,27 @@
                         </div>
                     </div>
                     <div class="user-menu">
-                        <div class="user-avatar">A</div>
-                        <button class="btn btn-secondary" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Logout
-                        </button>
+                        <div class="user-avatar-container">
+                            <div class="user-avatar" id="user-avatar" onclick="showProfileMenu(event)">
+                                <img id="profile-image" src="" alt="Profile" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                <span id="profile-initials">A</span>
+                            </div>
+                            <div class="profile-dropdown" id="profile-dropdown">
+                                <div class="dropdown-item" onclick="openProfileModal()">
+                                    <i class="fas fa-user"></i>
+                                    View Profile
+                                </div>
+                                <div class="dropdown-item" onclick="openPictureModal()">
+                                    <i class="fas fa-camera"></i>
+                                    Change Picture
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-item danger" onclick="showLogoutConfirm()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Logout
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -826,10 +1131,128 @@
         </main>
     </div>
 
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Admin Profile</h2>
+                <button class="modal-close" onclick="closeModal('profile-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label class="form-label" for="admin-name">Full Name</label>
+                        <input type="text" id="admin-name" class="form-input" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="admin-occupation">Occupation</label>
+                        <input type="text" id="admin-occupation" class="form-input" placeholder="Enter your occupation">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="admin-phone">Phone Number</label>
+                        <input type="tel" id="admin-phone" class="form-input" placeholder="Enter your phone number">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="admin-email">Email Address</label>
+                        <input type="email" id="admin-email" class="form-input" placeholder="Enter your email address">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('profile-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Picture Upload Modal -->
+    <div class="modal-overlay" id="picture-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Change Profile Picture</h2>
+                <button class="modal-close" onclick="closeModal('picture-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="image-upload-area" id="upload-area" onclick="triggerFileInput()">
+                    <div id="upload-placeholder">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--gray-400); margin-bottom: var(--space-3);"></i>
+                        <div style="font-weight: 500; color: var(--gray-700); margin-bottom: var(--space-2);">Click to upload or drag image here</div>
+                        <div style="font-size: var(--text-sm); color: var(--gray-500);">PNG, JPG up to 5MB</div>
+                    </div>
+                    <div id="image-preview-container" style="display: none;">
+                        <canvas id="crop-canvas" style="max-width: 100%; height: auto; border-radius: var(--radius-lg);"></canvas>
+                        <div class="crop-controls">
+                            <button type="button" class="crop-btn" onclick="rotateImage(-90)">
+                                <i class="fas fa-undo"></i> Rotate Left
+                            </button>
+                            <button type="button" class="crop-btn" onclick="rotateImage(90)">
+                                <i class="fas fa-redo"></i> Rotate Right
+                            </button>
+                            <button type="button" class="crop-btn" onclick="resetImage()">
+                                <i class="fas fa-refresh"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="removeProfilePicture()">
+                    <i class="fas fa-trash"></i>
+                    Remove Picture
+                </button>
+                <button class="btn btn-secondary" onclick="closeModal('picture-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveProfilePicture()" id="save-picture-btn" disabled>Save Picture</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logout-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirm Logout</h2>
+                <button class="modal-close" onclick="closeModal('logout-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; padding: var(--space-4);">
+                    <i class="fas fa-sign-out-alt" style="font-size: 3rem; color: var(--primary-500); margin-bottom: var(--space-4);"></i>
+                    <div style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-2);">Are you sure you want to logout?</div>
+                    <div style="color: var(--gray-600);">You will be redirected to the login page.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('logout-modal')">Cancel</button>
+                <button class="btn" style="background: var(--error); color: white;" onclick="confirmLogout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Transition Overlay -->
+    <div class="logout-overlay" id="logout-overlay">
+        <div class="logout-content">
+            <i class="fas fa-sign-out-alt logout-icon"></i>
+            <div class="logout-text">Logging out...</div>
+            <div class="logout-subtext">See you soon!</div>
+        </div>
+    </div>
+
     <script>
         // Dashboard State Management
         let dashboardData = {};
         let currentSection = 'overview';
+        let profileData = {};
+        let currentImage = null;
+        let imageRotation = 0;
 
         // Initialize Dashboard
         document.addEventListener('DOMContentLoaded', async function() {
@@ -1256,6 +1679,278 @@
         function logout() {
             localStorage.removeItem('authToken');
             window.location.href = '/admin-login';
+        }
+
+        // Profile Management Functions
+        function showProfileMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('profile-dropdown');
+            dropdown.classList.toggle('show');
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function closeDropdown() {
+                dropdown.classList.remove('show');
+                document.removeEventListener('click', closeDropdown);
+            });
+        }
+
+        function openProfileModal() {
+            loadProfileData();
+            showModal('profile-modal');
+        }
+
+        function openPictureModal() {
+            resetImageUpload();
+            showModal('picture-modal');
+        }
+
+        function showLogoutConfirm() {
+            showModal('logout-modal');
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('show');
+        }
+
+        // Profile Data Management
+        async function loadProfileData() {
+            try {
+                // Try to load profile from localStorage first
+                const savedProfile = localStorage.getItem('adminProfile');
+                if (savedProfile) {
+                    profileData = JSON.parse(savedProfile);
+                } else {
+                    // Set default values
+                    profileData = {
+                        name: 'Administrator',
+                        occupation: 'Career Center Manager',
+                        phone: '',
+                        email: 'admin@emsi.ma',
+                        profilePicture: null
+                    };
+                }
+
+                // Populate form fields
+                document.getElementById('admin-name').value = profileData.name || '';
+                document.getElementById('admin-occupation').value = profileData.occupation || '';
+                document.getElementById('admin-phone').value = profileData.phone || '';
+                document.getElementById('admin-email').value = profileData.email || '';
+
+                // Update UI elements
+                updateProfileUI();
+            } catch (error) {
+                console.error('Error loading profile data:', error);
+            }
+        }
+
+        function updateProfileUI() {
+            // Update avatar initials
+            const initials = document.getElementById('profile-initials');
+            const profileImage = document.getElementById('profile-image');
+            
+            if (profileData.profilePicture) {
+                profileImage.src = profileData.profilePicture;
+                profileImage.style.display = 'block';
+                initials.style.display = 'none';
+            } else {
+                profileImage.style.display = 'none';
+                initials.style.display = 'flex';
+                initials.textContent = getInitials(profileData.name || 'Admin');
+            }
+
+            // Update page title if needed
+            const sidebarTitle = document.querySelector('.sidebar-title');
+            if (sidebarTitle) {
+                sidebarTitle.textContent = profileData.name ? `Hello, ${profileData.name.split(' ')[0]}` : 'EMSI Career';
+            }
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        async function saveProfile() {
+            try {
+                // Get form data
+                profileData.name = document.getElementById('admin-name').value;
+                profileData.occupation = document.getElementById('admin-occupation').value;
+                profileData.phone = document.getElementById('admin-phone').value;
+                profileData.email = document.getElementById('admin-email').value;
+
+                // Save to localStorage
+                localStorage.setItem('adminProfile', JSON.stringify(profileData));
+
+                // Update UI
+                updateProfileUI();
+
+                // Close modal
+                closeModal('profile-modal');
+
+                // Show success message (you could implement a toast here)
+                console.log('Profile saved successfully!');
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('Failed to save profile. Please try again.');
+            }
+        }
+
+        // Image Upload and Editing Functions
+        function triggerFileInput() {
+            document.getElementById('file-input').click();
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB.');
+                return;
+            }
+
+            // Load and display image
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentImage = new Image();
+                currentImage.onload = function() {
+                    displayImageForEditing();
+                };
+                currentImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function displayImageForEditing() {
+            const uploadArea = document.getElementById('upload-area');
+            const placeholder = document.getElementById('upload-placeholder');
+            const previewContainer = document.getElementById('image-preview-container');
+            const canvas = document.getElementById('crop-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Hide placeholder, show preview
+            placeholder.style.display = 'none';
+            previewContainer.style.display = 'block';
+            uploadArea.classList.add('has-image');
+
+            // Set canvas size
+            const maxSize = 300;
+            const scale = Math.min(maxSize / currentImage.width, maxSize / currentImage.height);
+            canvas.width = currentImage.width * scale;
+            canvas.height = currentImage.height * scale;
+
+            // Draw image
+            drawImage();
+
+            // Enable save button
+            document.getElementById('save-picture-btn').disabled = false;
+        }
+
+        function drawImage() {
+            const canvas = document.getElementById('crop-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Save context
+            ctx.save();
+
+            // Apply rotation
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate((imageRotation * Math.PI) / 180);
+            ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+            // Draw image
+            ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+
+            // Restore context
+            ctx.restore();
+        }
+
+        function rotateImage(angle) {
+            imageRotation += angle;
+            drawImage();
+        }
+
+        function resetImage() {
+            imageRotation = 0;
+            drawImage();
+        }
+
+        function resetImageUpload() {
+            const uploadArea = document.getElementById('upload-area');
+            const placeholder = document.getElementById('upload-placeholder');
+            const previewContainer = document.getElementById('image-preview-container');
+            
+            placeholder.style.display = 'block';
+            previewContainer.style.display = 'none';
+            uploadArea.classList.remove('has-image');
+            
+            currentImage = null;
+            imageRotation = 0;
+            document.getElementById('file-input').value = '';
+            document.getElementById('save-picture-btn').disabled = true;
+        }
+
+        async function saveProfilePicture() {
+            try {
+                if (!currentImage) return;
+
+                const canvas = document.getElementById('crop-canvas');
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+                // Save to profile data
+                profileData.profilePicture = dataUrl;
+                localStorage.setItem('adminProfile', JSON.stringify(profileData));
+
+                // Update UI
+                updateProfileUI();
+
+                // Close modal
+                closeModal('picture-modal');
+
+                console.log('Profile picture saved successfully!');
+            } catch (error) {
+                console.error('Error saving profile picture:', error);
+                alert('Failed to save profile picture. Please try again.');
+            }
+        }
+
+        function removeProfilePicture() {
+            if (confirm('Are you sure you want to remove your profile picture?')) {
+                profileData.profilePicture = null;
+                localStorage.setItem('adminProfile', JSON.stringify(profileData));
+                updateProfileUI();
+                closeModal('picture-modal');
+            }
+        }
+
+        // Logout Functions
+        function confirmLogout() {
+            closeModal('logout-modal');
+            
+            // Show logout transition
+            const overlay = document.getElementById('logout-overlay');
+            overlay.classList.add('show');
+
+            // Redirect after animation
+            setTimeout(() => {
+                localStorage.removeItem('authToken');
+                window.location.href = '/admin-login';
+            }, 1500);
         }
 
         // Global error handler
