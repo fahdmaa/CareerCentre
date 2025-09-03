@@ -1490,6 +1490,16 @@
         // Initialize Dashboard
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('🚀 DOM Content Loaded - Starting dashboard initialization...');
+            
+            // Debug: Check if key DOM elements exist
+            const debugElements = [
+                'stat-ambassadors', 'stat-events', 'stat-registrations', 'stat-messages'
+            ];
+            console.log('🔍 Checking DOM elements:');
+            debugElements.forEach(id => {
+                const el = document.getElementById(id);
+                console.log(`  ${id}: ${el ? '✅ Found' : '❌ Missing'}`);
+            });
             try {
                 // Check authentication
                 const token = localStorage.getItem('authToken');
@@ -1593,7 +1603,7 @@
         }
 
         function updateStatsCards(data) {
-            console.log('Updating stats with data:', data);
+            console.log('🔄 Updating stats with data:', data);
             
             // Update main stats
             const ambassadorsEl = document.getElementById('stat-ambassadors');
@@ -1601,10 +1611,29 @@
             const registrationsEl = document.getElementById('stat-registrations');
             const messagesEl = document.getElementById('stat-messages');
             
-            if (ambassadorsEl) ambassadorsEl.textContent = data.activeAmbassadors || 0;
-            if (eventsEl) eventsEl.textContent = data.upcomingEvents || 0;
-            if (registrationsEl) registrationsEl.textContent = data.eventRegistrations || 0;
-            if (messagesEl) messagesEl.textContent = data.unreadMessages || 0;
+            console.log('📊 DOM elements found:', {
+                ambassadors: !!ambassadorsEl,
+                events: !!eventsEl,
+                registrations: !!registrationsEl,
+                messages: !!messagesEl
+            });
+            
+            if (ambassadorsEl) {
+                ambassadorsEl.textContent = data.activeAmbassadors || 0;
+                console.log('✅ Updated ambassadors:', data.activeAmbassadors);
+            }
+            if (eventsEl) {
+                eventsEl.textContent = data.upcomingEvents || 0;
+                console.log('✅ Updated events:', data.upcomingEvents);
+            }
+            if (registrationsEl) {
+                registrationsEl.textContent = data.eventRegistrations || 0;
+                console.log('✅ Updated registrations:', data.eventRegistrations);
+            }
+            if (messagesEl) {
+                messagesEl.textContent = data.unreadMessages || 0;
+                console.log('✅ Updated messages:', data.unreadMessages);
+            }
             
             // Update insights with real calculated data
             if (data.insights) {
@@ -1683,9 +1712,15 @@
                                     'message_received': '#fffbeb'
                                 };
                                 
+                                // Get mapped values to avoid complex template expressions
+                                const icon = iconMap[activity.type] || 'info-circle';
+                                const color = colorMap[activity.type] || 'var(--gray-600)';
+                                const borderColor = colorMap[activity.type] || 'var(--gray-400)';
+                                const backgroundColor = bgMap[activity.type] || 'var(--gray-50)';
+                                
                                 return `
-                                    <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-left: 4px solid ${colorMap[activity.type] || 'var(--gray-400)'}; background: ${bgMap[activity.type] || 'var(--gray-50)';">
-                                        <i class="fas fa-${iconMap[activity.type] || 'info-circle'}" style="color: ${colorMap[activity.type] || 'var(--gray-600)'};"></i>
+                                    <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-left: 4px solid ${borderColor}; background: ${backgroundColor};">
+                                        <i class="fas fa-${icon}" style="color: ${color};"></i>
                                         <div>
                                             <div style="font-weight: 500; color: var(--gray-900);">${activity.description}</div>
                                             <div style="font-size: var(--text-sm); color: var(--gray-600);">
