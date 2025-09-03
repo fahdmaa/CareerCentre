@@ -847,46 +847,52 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="logo">EC</div>
+                <div class="logo">
+                    <img src="/images/logo-admin.svg" alt="EMSI Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\"color: white; font-weight: 700;\">EC</span>'; this.parentElement.style.background='linear-gradient(135deg, var(--primary-500), var(--primary-600))'; this.parentElement.style.borderRadius='var(--radius-lg)';">
+                </div>
                 <div class="sidebar-title">EMSI Career</div>
             </div>
+            
+            <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">
+                <i class="fas fa-chevron-left" id="sidebar-toggle-icon"></i>
+            </button>
             
             <nav>
                 <ul class="nav-menu">
                     <li class="nav-item">
-                        <a href="#" class="nav-link active" data-section="overview">
+                        <a href="#" class="nav-link active" data-section="overview" data-tooltip="Overview">
                             <i class="nav-icon fas fa-chart-line"></i>
-                            Overview
+                            <span class="nav-text">Overview</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link" data-section="ambassadors">
+                        <a href="#" class="nav-link" data-section="ambassadors" data-tooltip="Ambassadors">
                             <i class="nav-icon fas fa-users"></i>
-                            Ambassadors
+                            <span class="nav-text">Ambassadors</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link" data-section="events">
+                        <a href="#" class="nav-link" data-section="events" data-tooltip="Events">
                             <i class="nav-icon fas fa-calendar-alt"></i>
-                            Events
+                            <span class="nav-text">Events</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link" data-section="registrations">
+                        <a href="#" class="nav-link" data-section="registrations" data-tooltip="Registrations">
                             <i class="nav-icon fas fa-user-plus"></i>
-                            Registrations
+                            <span class="nav-text">Registrations</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link" data-section="messages">
+                        <a href="#" class="nav-link" data-section="messages" data-tooltip="Messages">
                             <i class="nav-icon fas fa-envelope"></i>
-                            Messages
+                            <span class="nav-text">Messages</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link" data-section="applications">
+                        <a href="#" class="nav-link" data-section="applications" data-tooltip="Applications">
                             <i class="nav-icon fas fa-file-alt"></i>
-                            Applications
+                            <span class="nav-text">Applications</span>
                         </a>
                     </li>
                 </ul>
@@ -1951,6 +1957,23 @@
                 localStorage.removeItem('authToken');
                 window.location.href = '/admin-login';
             }, 1500);
+        }
+
+        // Sidebar toggle functionality
+        function toggleSidebar() {
+            const dashboardLayout = document.querySelector('.dashboard-layout');
+            const sidebarToggleIcon = document.getElementById('sidebar-toggle-icon');
+            
+            dashboardLayout.classList.toggle('sidebar-collapsed');
+            
+            // Toggle icon direction
+            if (dashboardLayout.classList.contains('sidebar-collapsed')) {
+                sidebarToggleIcon.classList.remove('fa-chevron-left');
+                sidebarToggleIcon.classList.add('fa-chevron-right');
+            } else {
+                sidebarToggleIcon.classList.remove('fa-chevron-right');
+                sidebarToggleIcon.classList.add('fa-chevron-left');
+            }
         }
 
         // Global error handler
