@@ -95,8 +95,8 @@ const handleSelectQuery = async (text, params, start) => {
     }
     const tableName = tableMatch[1];
     
-    // Handle complex queries with joins
-    if (text.includes('JOIN') || text.includes('event_registrations')) {
+    // Handle complex queries with joins (but NOT simple event_registrations WHERE queries)
+    if (text.includes('JOIN') || (text.includes('event_registrations') && text.includes('registered_count'))) {
         return await handleComplexSelectQuery(text, params, start);
     }
     
@@ -131,34 +131,76 @@ const handleSelectQuery = async (text, params, start) => {
 const handleComplexSelectQuery = async (text, params, start) => {
     // Special handling for events with registration count
     if (text.includes('event_registrations') && text.includes('registered_count')) {
-        const { data, error } = await supabase
-            .from('events')
-            .select(`
-                *,
-                event_registrations(count)
-            `)
-            .eq('status', params[0] || 'upcoming')
-            .order('event_date', { ascending: true });
+        try {
+            // Get events with status filter
+            const { data, error } = await supabase
+                .from('events')
+                .select('*')
+                .eq('status', params[0] || 'upcoming')
+                .order('event_date', { ascending: true });
+                
+            if (error) throw error;
             
-        if (error) throw error;
-        
-        // Transform the data to match the expected format
-        const transformedData = data?.map(event => ({
-            ...event,
-            registered_count: event.event_registrations?.length || 0
-        })) || [];
-        
-        const duration = Date.now() - start;
-        console.log('Executed Supabase complex SELECT query', { text, duration, rows: transformedData.length });
-        
-        return {
-            rows: transformedData,
-            rowCount: transformedData.length
-        };
+            // For each event, get the registration count separately
+            const eventsWithCounts = await Promise.all(
+                data.map(async (event) => {
+                    const { count, error: countError } = await supabase
+                        .from('event_registrations')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('event_id', event.id);
+                        
+                    return {
+                        ...event,
+                        registered_count: countError ? 0 : (count || 0)
+                    };
+                })
+            );
+            
+            const duration = Date.now() - start;
+            console.log('Executed Supabase complex SELECT query', { text, duration, rows: eventsWithCounts.length });
+            
+            return {
+                rows: eventsWithCounts,
+                rowCount: eventsWithCounts.length
+            };
+        } catch (error) {
+            console.error('Complex query error:', error);
+            throw error;
+        }
     }
     
-    // Default handling for other complex queries
-    return await handleSelectQuery(text, params, start);
+    // For other complex queries, fall back to simple select without recursion
+    const tableMatch = text.match(/from\s+(\w+)/i);
+    if (!tableMatch) {
+        throw new Error('Could not parse table name from query');
+    }
+    const tableName = tableMatch[1];
+    
+    let query_builder = supabase.from(tableName).select('*');
+    
+    // Apply WHERE conditions
+    query_builder = applyWhereConditions(query_builder, text, params);
+    
+    // Handle ORDER BY
+    if (text.includes('ORDER BY')) {
+        const orderMatch = text.match(/ORDER BY\s+([\w.]+)\s+(ASC|DESC)?/i);
+        if (orderMatch) {
+            const column = orderMatch[1];
+            const ascending = orderMatch[2]?.toLowerCase() !== 'desc';
+            query_builder = query_builder.order(column, { ascending });
+        }
+    }
+    
+    const { data, error } = await query_builder;
+    if (error) throw error;
+    
+    const duration = Date.now() - start;
+    console.log('Executed Supabase complex SELECT query (fallback)', { text, duration, rows: data?.length || 0 });
+    
+    return {
+        rows: data || [],
+        rowCount: data?.length || 0
+    };
 };
 
 // Apply WHERE conditions to query builder
@@ -167,20 +209,23 @@ const applyWhereConditions = (queryBuilder, text, params) => {
         return queryBuilder;
     }
     
-    // Handle specific WHERE patterns
+    // Handle specific WHERE patterns (check more specific patterns first)
+    if (text.includes('event_id = $1 AND student_email = $2')) {
+        return queryBuilder.eq('event_id', params[0]).eq('student_email', params[1]);
+    }
     if (text.includes('username = $1')) {
         return queryBuilder.eq('username', params[0]);
     }
     if (text.includes('status = $1')) {
         return queryBuilder.eq('status', params[0]);
     }
-    if (text.includes('id = $1')) {
+    // Check for exact " id = $1" pattern (with space before) to avoid matching "event_id = $1"
+    if (text.includes(' id = $1')) {
         return queryBuilder.eq('id', params[0]);
     }
-    if (text.includes('event_id = $1 AND student_email = $2')) {
-        return queryBuilder.eq('event_id', params[0]).eq('student_email', params[1]);
-    }
     
+    // Log if no pattern matches to help with debugging
+    console.warn('Warning: No matching WHERE pattern found for query:', text.substring(0, 100));
     return queryBuilder;
 };
 
@@ -203,7 +248,15 @@ const handleInsertQuery = async (text, params, start) => {
     
     columns.forEach((col, index) => {
         if (params[index] !== undefined) {
-            data[col] = params[index];
+            // Handle empty strings for time fields
+            if ((col === 'event_time' || col === 'time') && params[index] === '') {
+                data[col] = null;
+            } else if (params[index] === '') {
+                // Handle other empty strings based on column type
+                data[col] = null;
+            } else {
+                data[col] = params[index];
+            }
         }
     });
     
@@ -232,14 +285,18 @@ const handleUpdateQuery = async (text, params, start) => {
     }
     const tableName = tableMatch[1];
     
-    // Parse SET clause - this is simplified
-    const setMatch = text.match(/set\s+(.+?)\s+where/i);
-    if (!setMatch) {
-        throw new Error('Could not parse SET clause from UPDATE query');
+    // Parse SET clause - for ambassadors table, we don't actually need to parse the SET clause
+    // since we're using hardcoded field mapping. Just validate it has SET and WHERE
+    console.log('DEBUG: Parsing UPDATE query:', text);
+    if (!text.toLowerCase().includes('set') || !text.toLowerCase().includes('where')) {
+        throw new Error('Invalid UPDATE query format: ' + text.substring(0, 200));
     }
     
     // For ambassadors table
     if (tableName === 'ambassadors') {
+        console.log('DEBUG: Ambassador UPDATE params:', params);
+        console.log('DEBUG: Params length:', params.length);
+        
         const updateData = {
             name: params[0],
             role: params[1],
@@ -249,8 +306,12 @@ const handleUpdateQuery = async (text, params, start) => {
             linkedin: params[5],
             bio: params[6],
             image_url: params[7],
-            status: params[8]
+            status: params[8],
+            updated_at: new Date().toISOString()
         };
+        
+        console.log('DEBUG: Update data:', updateData);
+        console.log('DEBUG: ID for where clause:', params[9]);
         
         const { data, error } = await supabase
             .from(tableName)
@@ -276,7 +337,7 @@ const handleUpdateQuery = async (text, params, start) => {
             title: params[0],
             description: params[1],
             event_date: params[2],
-            event_time: params[3],
+            event_time: params[3] === '' ? null : params[3],
             location: params[4],
             capacity: params[5],
             status: params[6]
@@ -311,11 +372,19 @@ const handleDeleteQuery = async (text, params, start) => {
     }
     const tableName = tableMatch[1];
     
-    const { data, error } = await supabase
-        .from(tableName)
-        .delete()
-        .eq('id', params[0])
-        .select();
+    let query_builder = supabase.from(tableName).delete().select();
+    
+    // Apply WHERE conditions for DELETE queries
+    if (text.includes('student_email = $1')) {
+        query_builder = query_builder.eq('student_email', params[0]);
+    } else if (text.includes(' id = $1')) {
+        query_builder = query_builder.eq('id', params[0]);
+    } else {
+        // Default to id for backward compatibility
+        query_builder = query_builder.eq('id', params[0]);
+    }
+    
+    const { data, error } = await query_builder;
         
     if (error) throw error;
     

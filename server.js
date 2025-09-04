@@ -585,6 +585,41 @@ app.delete('/api/events/:id', authenticateToken, async (req, res) => {
     }
 });
 
+app.get('/api/events/:id/stats', authenticateToken, async (req, res) => {
+    try {
+        const eventId = req.params.id;
+        
+        // Get event details and registration count
+        const eventResult = await query(
+            `SELECT e.*,
+                    (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id) as registrations
+             FROM events e 
+             WHERE e.id = $1`,
+            [eventId]
+        );
+        
+        if (eventResult.rows.length === 0) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+        
+        const event = eventResult.rows[0];
+        const stats = {
+            event_id: event.id,
+            event_title: event.title,
+            registrations: parseInt(event.registrations) || 0,
+            capacity: event.capacity,
+            status: event.status,
+            event_date: event.event_date,
+            location: event.location
+        };
+        
+        res.json({ data: stats });
+    } catch (error) {
+        console.error('Error fetching event stats:', error);
+        res.status(500).json({ message: 'Error fetching event stats' });
+    }
+});
+
 // Public endpoints (no auth required)
 app.get('/api/public/ambassadors', async (req, res) => {
     try {
@@ -620,13 +655,29 @@ app.post('/api/public/register', async (req, res) => {
     try {
         const { event_id, student_name, student_email, student_phone, major, year } = req.body;
         
+        // Validate required fields
+        if (!event_id || !student_name || !student_email) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Missing required fields: event_id, student_name, and student_email are required' 
+            });
+        }
+        
+        // Normalize email to lowercase for consistent comparison
+        const normalizedEmail = student_email.toLowerCase().trim();
+        
+        console.log(`Registration attempt for event ${event_id} by ${normalizedEmail}`);
+        
         // Check if already registered
         const existing = await query(
             'SELECT id FROM event_registrations WHERE event_id = $1 AND student_email = $2',
-            [event_id, student_email]
+            [event_id, normalizedEmail]
         );
         
+        console.log(`Duplicate check result: ${existing.rows.length} existing registrations found`);
+        
         if (existing.rows.length > 0) {
+            console.log(`Registration blocked: ${normalizedEmail} already registered for event ${event_id}`);
             return res.status(400).json({ 
                 success: false,
                 message: 'You are already registered for this event' 
@@ -637,8 +688,10 @@ app.post('/api/public/register', async (req, res) => {
         const result = await query(
             `INSERT INTO event_registrations (event_id, student_name, student_email, student_phone, major, year) 
              VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-            [event_id, student_name, student_email, student_phone, major, year]
+            [event_id, student_name, normalizedEmail, student_phone, major, year]
         );
+        
+        console.log(`Registration successful: ${normalizedEmail} registered for event ${event_id}`);
         
         res.json({ 
             success: true,

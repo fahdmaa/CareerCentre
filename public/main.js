@@ -768,14 +768,40 @@ if (window.emsiCareerCenterInitialized) {
 
             // Form submission
             if (registrationForm) {
+                let isSubmitting = false; // Prevent race conditions
+                
                 registrationForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
+
+                    // Prevent double submissions
+                    if (isSubmitting) {
+                        console.log('Registration already in progress, ignoring duplicate submission');
+                        return;
+                    }
+                    isSubmitting = true;
 
                     const formData = new FormData(this);
                     const registrationData = {};
 
                     for (let [key, value] of formData.entries()) {
-                        registrationData[key] = value;
+                        registrationData[key] = value.trim();
+                    }
+
+                    // Basic client-side validation
+                    if (!registrationData.fullName) {
+                        alert('Please enter your full name');
+                        isSubmitting = false;
+                        return;
+                    }
+                    if (!registrationData.email || !registrationData.email.includes('@')) {
+                        alert('Please enter a valid email address');
+                        isSubmitting = false;
+                        return;
+                    }
+                    if (!registrationData.phoneNumber) {
+                        alert('Please enter your phone number');
+                        isSubmitting = false;
+                        return;
                     }
 
                     if (selectedEventTitle) {
@@ -784,6 +810,11 @@ if (window.emsiCareerCenterInitialized) {
 
                     // Get event ID from the clicked button
                     const eventId = this._eventId;
+                    if (!eventId) {
+                        alert('Error: Event ID not found. Please try again.');
+                        isSubmitting = false;
+                        return;
+                    }
 
                     const submitButton = this.querySelector('.submit-btn');
                     const originalText = submitButton.textContent;
@@ -792,30 +823,35 @@ if (window.emsiCareerCenterInitialized) {
                     submitButton.style.background = '#ccc';
 
                     try {
-                        // Submit to database if event ID is available
-                        if (eventId) {
-                            const response = await fetch('/api/public/register', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    event_id: parseInt(eventId),
-                                    student_name: registrationData.fullName,
-                                    student_email: registrationData.email,
-                                    student_phone: registrationData.phoneNumber,
-                                    major: registrationData.major,
-                                    year: registrationData.yearOfStudy
-                                })
-                            });
+                        const response = await fetch('/api/public/register', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                event_id: parseInt(eventId),
+                                student_name: registrationData.fullName,
+                                student_email: registrationData.email,
+                                student_phone: registrationData.phoneNumber,
+                                major: registrationData.major,
+                                year: registrationData.yearOfStudy
+                            })
+                        });
 
-                            const result = await response.json();
-                            
-                            if (!response.ok) {
+                        const result = await response.json();
+                        
+                        if (!response.ok) {
+                            if (result.message && result.message.includes('already registered')) {
+                                // Show specific message for duplicate registration
+                                alert('You are already registered for this event. If this is an error, please contact support.');
+                            } else {
                                 throw new Error(result.message || 'Registration failed');
                             }
+                            return;
                         }
 
+                        // Reset form on successful registration
+                        this.reset();
                         closeModal(registrationModal);
 
                         if (successModal) {
@@ -837,11 +873,13 @@ if (window.emsiCareerCenterInitialized) {
                         }
 
                     } catch (error) {
-                        alert(error.message || 'Registration failed. Please try again.');
+                        console.error('Registration error:', error);
+                        alert(error.message || 'Registration failed. Please check your connection and try again.');
                     } finally {
                         submitButton.innerHTML = originalText;
                         submitButton.disabled = false;
                         submitButton.style.background = '';
+                        isSubmitting = false;
                     }
                 });
             }
@@ -1506,7 +1544,13 @@ if (window.emsiCareerCenterInitialized) {
             preloadImages();
         });
 
+        // Events page has its own loading logic in inline script
+
         // Initialize all features
         initializeAllFeatures();
     });
+    
+    // Make registration modal function globally accessible for events.html
+    window.initializeRegistrationModal = initializeRegistrationModal;
+
 }
