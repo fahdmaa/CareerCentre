@@ -1032,6 +1032,57 @@
             max-height: 90vh;
             overflow-y: auto;
         }
+
+        /* Event Stats Modal Styles */
+        #event-stats-modal .modal {
+            max-width: 600px;
+            width: 90vw;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        #event-stats-modal .modal-body {
+            padding: var(--space-6) var(--space-6) var(--space-4) var(--space-6);
+        }
+
+        /* Stats Card Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        /* Individual Stat Card */
+        .stat-card {
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-2);
+        }
+
+        .stat-label {
+            font-size: var(--text-sm);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-label i {
+            margin-right: var(--space-1);
+        }
         
         .ambassador-form {
             padding: var(--space-2);
@@ -1189,6 +1240,184 @@
         
         .action-btn.delete:hover {
             background: var(--red-200);
+        }
+
+        /* Toast Notification Styles */
+        .toast {
+            min-width: 350px;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+            transition: all 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        
+        .toast.removing {
+            animation: slideOut 0.3s ease-out;
+        }
+        
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+        
+        .toast.success .toast-icon {
+            background: var(--primary-100);
+            color: var(--success);
+        }
+        
+        .toast.error {
+            border-left: 4px solid var(--error);
+        }
+        
+        .toast.error .toast-icon {
+            background: #fee2e2;
+            color: var(--error);
+        }
+        
+        .toast.info {
+            border-left: 4px solid var(--info);
+        }
+        
+        .toast.info .toast-icon {
+            background: #dbeafe;
+            color: var(--info);
+        }
+        
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+        
+        .toast.warning .toast-icon {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+        
+        .toast-content {
+            flex: 1;
+        }
+        
+        .toast-title {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 2px;
+            font-size: 14px;
+        }
+        
+        .toast-message {
+            color: var(--gray-600);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+        
+        .toast-close:hover {
+            color: var(--gray-600);
+        }
+        
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary-500);
+            border-radius: 0 0 0 var(--radius-lg);
+            animation: progress 5s linear;
+        }
+        
+        @keyframes progress {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+        
+        /* Confirmation Toast Styles */
+        .confirmation-toast {
+            min-width: 400px;
+        }
+        
+        .toast-actions {
+            margin-top: var(--space-3);
+            display: flex;
+            gap: var(--space-2);
+            justify-content: flex-end;
+        }
+        
+        .toast-actions button {
+            padding: var(--space-2) var(--space-3);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-confirm {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-confirm:hover {
+            background: #dc2626;
+        }
+        
+        .btn-cancel {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+        
+        .btn-cancel:hover {
+            background: var(--gray-300);
         }
 
         /* Logout Animation */
@@ -1465,11 +1694,11 @@
                         <div class="section-header">
                             <h2 class="section-title">Career Events</h2>
                             <div class="section-actions">
-                                <button class="btn btn-primary">
+                                <button class="btn btn-primary" onclick="openAddEventModal()">
                                     <i class="fas fa-plus"></i>
                                     Create Event
                                 </button>
-                                <button class="btn btn-secondary">
+                                <button class="btn btn-secondary" onclick="toggleCalendarView()">
                                     <i class="fas fa-calendar"></i>
                                     Calendar View
                                 </button>
@@ -1701,8 +1930,14 @@
                                 <i class="fas fa-graduation-cap"></i>
                                 Major/Field of Study
                             </label>
-                            <input type="text" id="ambassador-major" name="major" class="form-input" 
-                                   placeholder="e.g., Computer Science, Marketing">
+                            <select id="ambassador-major" name="major" class="form-input">
+                                <option value="">Select Major</option>
+                                <option value="Ingénierie Informatique et Réseaux">Ingénierie Informatique et Réseaux</option>
+                                <option value="Génie Electrique et Systèmes Intelligents">Génie Electrique et Systèmes Intelligents</option>
+                                <option value="Génie Industriel">Génie Industriel</option>
+                                <option value="Génie Civil, Bâtiments et Travaux Publics">Génie Civil, Bâtiments et Travaux Publics</option>
+                                <option value="Génie Financier">Génie Financier</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="ambassador-year" class="form-label">
@@ -1797,6 +2032,104 @@
         </div>
     </div>
 
+    <!-- Event Modal -->
+    <div class="modal-overlay" id="event-modal" style="display: none;">
+        <div class="modal-container large-modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="event-modal-title">Add New Event</h2>
+                <button type="button" class="modal-close" onclick="closeEventModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="event-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="event-title" class="form-label">
+                                <i class="fas fa-heading"></i>
+                                Event Title
+                            </label>
+                            <input type="text" id="event-title" name="title" class="form-input" 
+                                   placeholder="e.g., Career Fair 2024" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="event-description" class="form-label">
+                                <i class="fas fa-align-left"></i>
+                                Description
+                            </label>
+                            <textarea id="event-description" name="description" class="form-input" 
+                                      placeholder="Event description..." rows="4" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="event-date" class="form-label">
+                                <i class="fas fa-calendar"></i>
+                                Event Date
+                            </label>
+                            <input type="date" id="event-date" name="event_date" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="event-time" class="form-label">
+                                <i class="fas fa-clock"></i>
+                                Event Time
+                            </label>
+                            <input type="time" id="event-time" name="event_time" class="form-input">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="event-location" class="form-label">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Location
+                            </label>
+                            <input type="text" id="event-location" name="location" class="form-input" 
+                                   placeholder="e.g., Main Auditorium" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="event-capacity" class="form-label">
+                                <i class="fas fa-users"></i>
+                                Capacity
+                            </label>
+                            <input type="number" id="event-capacity" name="capacity" class="form-input" 
+                                   placeholder="e.g., 100" min="1">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="event-status" class="form-label">
+                                <i class="fas fa-flag"></i>
+                                Status
+                            </label>
+                            <select id="event-status" name="status" class="form-input">
+                                <option value="upcoming">Upcoming</option>
+                                <option value="ongoing">Ongoing</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeEventModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveEvent()" id="save-event-btn">
+                    <i class="fas fa-save"></i>
+                    <span id="save-event-btn-text">Add Event</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px;"></div>
+
     <script>
         // Dashboard State Management
         let dashboardData = {};
@@ -1839,7 +2172,7 @@
                 console.log('✅ Modern Dashboard initialized successfully!');
             } catch (error) {
                 console.error('❌ Dashboard initialization failed:', error);
-                showError('Failed to initialize dashboard: ' + error.message);
+                showError('Initialization Error', 'Failed to initialize dashboard: ' + error.message);
             }
         });
 
@@ -1915,7 +2248,7 @@
                 hideLoading();
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
-                showError('Failed to load dashboard data');
+                showError('Loading Error', 'Failed to load dashboard data');
                 hideLoading();
             }
         }
@@ -2102,7 +2435,7 @@
                 }
             } catch (error) {
                 console.error(`Error loading ${sectionName} data:`, error);
-                showError(`Failed to load ${sectionName} data`);
+                showError('Loading Error', `Failed to load ${sectionName} data`);
             }
         }
 
@@ -2204,17 +2537,41 @@
                                 </td>
                                 <td>${event.event_date || 'TBD'}</td>
                                 <td>${event.location || 'TBD'}</td>
-                                <td>${event.capacity || 'Unlimited'}</td>
+                                <td>${(() => {
+                                    // Ensure capacity is displayed correctly regardless of type
+                                    if (event.capacity === null || event.capacity === undefined || event.capacity === '') {
+                                        return 'Unlimited';
+                                    }
+                                    // Handle numeric values (including 0)
+                                    const numCapacity = Number(event.capacity);
+                                    if (!isNaN(numCapacity) && numCapacity >= 0) {
+                                        return Math.floor(numCapacity).toString();
+                                    }
+                                    return 'Unlimited';
+                                })()}</td>
                                 <td>
                                     <span class="status-badge ${event.status === 'upcoming' ? 'status-active' : 'status-pending'}">
                                         ${event.status || 'upcoming'}
                                     </span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-secondary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </button>
+                                    <div class="action-buttons" style="display: flex; gap: var(--space-2);">
+                                        <button class="btn btn-secondary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);" 
+                                                onclick="editEvent(${event.id})">
+                                            <i class="fas fa-edit"></i>
+                                            Edit
+                                        </button>
+                                        <button class="btn btn-danger" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);" 
+                                                onclick="deleteEvent(${event.id}, '${event.title}')">
+                                            <i class="fas fa-trash"></i>
+                                            Delete
+                                        </button>
+                                        <button class="btn btn-primary" style="padding: var(--space-2) var(--space-3); font-size: var(--text-xs);" 
+                                                onclick="viewEventStats(${event.id})">
+                                            <i class="fas fa-chart-bar"></i>
+                                            Stats
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         `).join('')}
@@ -2372,10 +2729,7 @@
             // Implementation for global loading state if needed
         }
 
-        function showError(message) {
-            console.error('ERROR:', message);
-            alert('Error: ' + message); // Temporary alert for debugging
-        }
+        // showError function moved to toast notification system below
 
         function refreshData() {
             loadDashboardData();
@@ -2500,7 +2854,7 @@
                 console.log('Profile saved successfully!');
             } catch (error) {
                 console.error('Error saving profile:', error);
-                alert('Failed to save profile. Please try again.');
+                showError('Profile Error', 'Failed to save profile. Please try again.');
             }
         }
 
@@ -2515,13 +2869,13 @@
 
             // Validate file type
             if (!file.type.startsWith('image/')) {
-                alert('Please select an image file.');
+                showError('Invalid File', 'Please select an image file.');
                 return;
             }
 
             // Validate file size (5MB max)
             if (file.size > 5 * 1024 * 1024) {
-                alert('File size must be less than 5MB.');
+                showError('Invalid File', 'File size must be less than 5MB.');
                 return;
             }
 
@@ -2629,7 +2983,7 @@
                 console.log('Profile picture saved successfully!');
             } catch (error) {
                 console.error('Error saving profile picture:', error);
-                alert('Failed to save profile picture. Please try again.');
+                showError('Profile Error', 'Failed to save profile picture. Please try again.');
             }
         }
 
@@ -2737,7 +3091,7 @@
                 
             } catch (error) {
                 console.error('❌ Error loading ambassador data:', error);
-                showError('Failed to load ambassador data: ' + error.message);
+                showError('Error', 'Failed to load ambassador data: ' + error.message);
             }
         }
         
@@ -2787,12 +3141,12 @@
                     // Update existing ambassador
                     response = await window.apiClient.updateAmbassador(currentAmbassadorId, ambassadorData, imageFile);
                     console.log('✅ Ambassador updated:', response);
-                    showSuccess('Ambassador updated successfully!');
+                    showSuccess('Success', 'Ambassador updated successfully!');
                 } else {
                     // Create new ambassador
                     response = await window.apiClient.createAmbassador(ambassadorData, imageFile);
                     console.log('✅ Ambassador added:', response);
-                    showSuccess('Ambassador added successfully!');
+                    showSuccess('Success', 'Ambassador added successfully!');
                 }
                 
                 // Close modal and refresh list
@@ -2801,12 +3155,18 @@
                 
             } catch (error) {
                 console.error('❌ Error saving ambassador:', error);
-                showError('Failed to save ambassador: ' + error.message);
+                showError('Error', 'Failed to save ambassador: ' + error.message);
             }
         }
         
         async function deleteAmbassador(id, name) {
-            if (!confirm(`Are you sure you want to delete ambassador "${name}"? This action cannot be undone.`)) {
+            // Show confirmation using an enhanced warning toast
+            const confirmed = await showConfirmationToast(
+                'Delete Ambassador', 
+                `Are you sure you want to delete ambassador "${name}"? This action cannot be undone.`
+            );
+            
+            if (!confirmed) {
                 return;
             }
             
@@ -2814,14 +3174,14 @@
                 console.log('🗑️ Deleting ambassador:', id);
                 await window.apiClient.deleteAmbassador(id);
                 console.log('✅ Ambassador deleted successfully');
-                showSuccess(`Ambassador "${name}" deleted successfully!`);
+                showSuccess('Success', `Ambassador "${name}" deleted successfully!`);
                 
                 // Refresh the ambassadors list
                 await loadSectionData('ambassadors');
                 
             } catch (error) {
                 console.error('❌ Error deleting ambassador:', error);
-                showError('Failed to delete ambassador: ' + error.message);
+                showError('Error', 'Failed to delete ambassador: ' + error.message);
             }
         }
         
@@ -2836,13 +3196,13 @@
             
             // Validate file size (2MB max)
             if (file.size > 2 * 1024 * 1024) {
-                showError('Image size must be less than 2MB');
+                showError('Invalid File', 'Image size must be less than 2MB');
                 return;
             }
             
             // Validate file type
             if (!file.type.startsWith('image/')) {
-                showError('Please select a valid image file');
+                showError('Invalid File', 'Please select a valid image file');
                 return;
             }
             
@@ -2879,10 +3239,514 @@
             resetAmbassadorImage();
         }
         
-        function showSuccess(message) {
-            // Use the same showError function but with success styling
-            console.log('SUCCESS:', message);
-            alert('✅ ' + message); // Temporary - can be enhanced with toast notifications
+        // Event Management Functions
+        let currentEventId = null;
+        
+        function openAddEventModal() {
+            currentEventId = null;
+            document.getElementById('event-modal-title').textContent = 'Add New Event';
+            document.getElementById('save-event-btn-text').textContent = 'Add Event';
+            resetEventForm();
+            const modal = document.getElementById('event-modal');
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+        }
+        
+        async function editEvent(id) {
+            currentEventId = id;
+            document.getElementById('event-modal-title').textContent = 'Edit Event';
+            document.getElementById('save-event-btn-text').textContent = 'Update Event';
+            
+            try {
+                console.log('🔄 Loading event data for ID:', id);
+                const response = await window.apiClient.getEvent(id);
+                const event = response.data;
+                
+                // Fill form with event data
+                document.getElementById('event-title').value = event.title || '';
+                document.getElementById('event-description').value = event.description || '';
+                document.getElementById('event-date').value = event.event_date ? event.event_date.split('T')[0] : '';
+                document.getElementById('event-time').value = event.event_time || '';
+                document.getElementById('event-location').value = event.location || '';
+                // Set capacity field with proper handling
+                const capacityValue = event.capacity;
+                if (capacityValue === null || capacityValue === undefined || capacityValue === '') {
+                    document.getElementById('event-capacity').value = '';
+                } else {
+                    // Ensure we display the capacity as an integer
+                    const numCapacity = Number(capacityValue);
+                    if (!isNaN(numCapacity) && numCapacity >= 0) {
+                        document.getElementById('event-capacity').value = Math.floor(numCapacity).toString();
+                    } else {
+                        document.getElementById('event-capacity').value = '';
+                    }
+                }
+                document.getElementById('event-status').value = event.status || 'upcoming';
+                
+                const modal = document.getElementById('event-modal');
+                modal.style.display = 'flex';
+                modal.classList.add('show');
+                
+            } catch (error) {
+                console.error('❌ Error loading event data:', error);
+                showError('Error', 'Failed to load event data: ' + error.message);
+            }
+        }
+        
+        async function deleteEvent(id, title) {
+            const confirmed = await showConfirmationToast(
+                'Delete Event',
+                `Are you sure you want to delete event "${title}"? This action cannot be undone.`
+            );
+            
+            if (!confirmed) {
+                return;
+            }
+            
+            try {
+                console.log('🗑️ Deleting event:', id);
+                await window.apiClient.deleteEvent(id);
+                console.log('✅ Event deleted successfully');
+                showSuccess('Success', `Event "${title}" deleted successfully!`);
+                
+                // Refresh the events list
+                await loadSectionData('events');
+                
+            } catch (error) {
+                console.error('❌ Error deleting event:', error);
+                showError('Error', 'Failed to delete event: ' + error.message);
+            }
+        }
+        
+        async function viewEventStats(id) {
+            try {
+                console.log('📈 Loading event stats for ID:', id);
+                const response = await window.apiClient.getEventStats(id);
+                const stats = response.data;
+                
+                // Show the enhanced stats modal
+                showEventStatsModal(stats);
+                
+            } catch (error) {
+                console.error('❌ Error loading event stats:', error);
+                showError('Error', 'Failed to load event statistics: ' + error.message);
+            }
+        }
+
+        function showEventStatsModal(stats) {
+            // Calculate percentage filled
+            const registrations = stats.registrations || 0;
+            const capacity = stats.capacity || null;
+            let percentageFilled = 0;
+            let capacityText = 'Unlimited';
+            
+            if (capacity && capacity > 0) {
+                percentageFilled = Math.round((registrations / capacity) * 100);
+                capacityText = capacity.toString();
+            }
+
+            // Determine status color and icon
+            let statusColor = 'var(--primary-500)';
+            let statusIcon = 'fas fa-calendar';
+            
+            switch (stats.status) {
+                case 'completed':
+                    statusColor = 'var(--success)';
+                    statusIcon = 'fas fa-check-circle';
+                    break;
+                case 'cancelled':
+                    statusColor = 'var(--error)';
+                    statusIcon = 'fas fa-times-circle';
+                    break;
+                case 'upcoming':
+                    statusColor = 'var(--primary-500)';
+                    statusIcon = 'fas fa-calendar-alt';
+                    break;
+                default:
+                    statusColor = 'var(--gray-500)';
+                    statusIcon = 'fas fa-calendar';
+            }
+
+            // Create and show the modal
+            const modalHtml = `
+                <div class="modal-overlay" id="event-stats-modal" style="display: flex;">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h2 class="modal-title">
+                                <i class="fas fa-chart-bar" style="margin-right: var(--space-2);"></i>
+                                Event Statistics
+                            </h2>
+                            <button class="modal-close" onclick="closeEventStatsModal()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div style="margin-bottom: var(--space-6);">
+                                <h3 style="font-size: var(--text-lg); font-weight: 600; color: var(--gray-900); margin-bottom: var(--space-4); display: flex; align-items: center;">
+                                    <i class="fas fa-calendar-alt" style="margin-right: var(--space-2); color: var(--primary-500);"></i>
+                                    ${stats.title || 'Event'}
+                                </h3>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6);">
+                                <!-- Total Registrations -->
+                                <div style="background: linear-gradient(135deg, var(--primary-50), var(--primary-100)); border: 1px solid var(--primary-200); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center;">
+                                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-600); margin-bottom: var(--space-2);">
+                                        ${registrations}
+                                    </div>
+                                    <div style="font-size: var(--text-sm); color: var(--primary-700); font-weight: 500;">
+                                        <i class="fas fa-users" style="margin-right: var(--space-1);"></i>
+                                        Total Registrations
+                                    </div>
+                                </div>
+                                
+                                <!-- Event Capacity -->
+                                <div style="background: linear-gradient(135deg, var(--gray-50), var(--gray-100)); border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center;">
+                                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--gray-700); margin-bottom: var(--space-2);">
+                                        ${capacityText}
+                                    </div>
+                                    <div style="font-size: var(--text-sm); color: var(--gray-600); font-weight: 500;">
+                                        <i class="fas fa-chair" style="margin-right: var(--space-1);"></i>
+                                        Event Capacity
+                                    </div>
+                                </div>
+                                
+                                <!-- Percentage Filled -->
+                                <div style="background: linear-gradient(135deg, var(--success-50), var(--success-100)); border: 1px solid var(--success-200); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center;">
+                                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--success-600); margin-bottom: var(--space-2);">
+                                        ${capacity && capacity > 0 ? percentageFilled + '%' : '-'}
+                                    </div>
+                                    <div style="font-size: var(--text-sm); color: var(--success-700); font-weight: 500;">
+                                        <i class="fas fa-percentage" style="margin-right: var(--space-1);"></i>
+                                        Capacity Filled
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar (if capacity is set) -->
+                            ${capacity && capacity > 0 ? `
+                            <div style="margin-bottom: var(--space-6);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+                                    <span style="font-size: var(--text-sm); color: var(--gray-600);">Registration Progress</span>
+                                    <span style="font-size: var(--text-sm); color: var(--gray-600);">${registrations} / ${capacity}</span>
+                                </div>
+                                <div style="background: var(--gray-200); border-radius: var(--radius-full); height: 12px; overflow: hidden;">
+                                    <div style="background: linear-gradient(90deg, var(--primary-500), var(--primary-600)); height: 100%; width: ${Math.min(percentageFilled, 100)}%; transition: width 0.3s ease; border-radius: var(--radius-full);"></div>
+                                </div>
+                            </div>
+                            ` : ''}
+
+                            <!-- Event Status -->
+                            <div style="display: flex; align-items: center; justify-content: center; padding: var(--space-3); background: var(--gray-50); border-radius: var(--radius-lg); margin-bottom: var(--space-6);">
+                                <i class="${statusIcon}" style="color: ${statusColor}; margin-right: var(--space-2); font-size: var(--text-lg);"></i>
+                                <span style="font-weight: 600; color: var(--gray-700); text-transform: capitalize;">
+                                    Status: ${stats.status || 'Unknown'}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" onclick="closeEventStatsModal()">
+                                <i class="fas fa-times"></i>
+                                Close
+                            </button>
+                            <button class="btn btn-primary" onclick="navigateToRegistrations('${stats.id}', '${stats.title}')">
+                                <i class="fas fa-users"></i>
+                                View Registrations
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Remove any existing stats modal
+            const existingModal = document.getElementById('event-stats-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Add the modal to the document
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show the modal with animation
+            setTimeout(() => {
+                const modal = document.getElementById('event-stats-modal');
+                modal.classList.add('show');
+                
+                // Add keyboard support for escape key
+                const handleEscape = (event) => {
+                    if (event.key === 'Escape') {
+                        closeEventStatsModal();
+                    }
+                };
+                
+                // Store the handler so we can remove it later
+                modal._escapeHandler = handleEscape;
+                document.addEventListener('keydown', handleEscape);
+            }, 10);
+        }
+
+        function closeEventStatsModal() {
+            const modal = document.getElementById('event-stats-modal');
+            if (modal) {
+                modal.classList.remove('show');
+                
+                // Remove the keyboard event listener if it exists
+                if (modal._escapeHandler) {
+                    document.removeEventListener('keydown', modal._escapeHandler);
+                }
+                
+                setTimeout(() => {
+                    modal.remove();
+                }, 300); // Wait for animation
+            }
+        }
+
+        function navigateToRegistrations(eventId, eventTitle) {
+            try {
+                console.log('🔄 Navigating to registrations for event:', eventId, eventTitle);
+                
+                // Close the stats modal first
+                closeEventStatsModal();
+                
+                // Navigate to registrations section
+                showSection('registrations');
+                
+                // Wait a moment for the section to load, then filter by event
+                setTimeout(() => {
+                    filterRegistrationsByEvent(eventId, eventTitle);
+                }, 500);
+                
+                // Show feedback to user
+                showInfo('Navigation', `Viewing registrations for "${eventTitle}"`);
+                
+            } catch (error) {
+                console.error('❌ Error navigating to registrations:', error);
+                showError('Navigation Error', 'Failed to navigate to registrations: ' + error.message);
+            }
+        }
+
+        function filterRegistrationsByEvent(eventId, eventTitle) {
+            try {
+                // This function would filter the registrations table by the specific event
+                // For now, we'll show a message indicating the filtering
+                console.log('🔍 Filtering registrations by event ID:', eventId);
+                
+                // Add visual indication that filtering is active
+                const registrationsSection = document.getElementById('registrations-section');
+                if (registrationsSection) {
+                    const header = registrationsSection.querySelector('.section-header h2');
+                    if (header) {
+                        header.innerHTML = `Event Registrations <span style="font-size: var(--text-sm); color: var(--primary-600); background: var(--primary-50); padding: var(--space-1) var(--space-2); border-radius: var(--radius-md); margin-left: var(--space-2);">Filtered: ${eventTitle}</span>`;
+                    }
+                }
+                
+                // In a real implementation, you would filter the actual data here
+                // This would typically involve calling the API with the event filter
+                
+            } catch (error) {
+                console.error('❌ Error filtering registrations:', error);
+                showError('Filter Error', 'Failed to filter registrations');
+            }
+        }
+        
+        function toggleCalendarView() {
+            showInfo('Coming Soon', 'Calendar view functionality will be implemented in a future update!');
+        }
+        
+        function resetEventForm() {
+            document.getElementById('event-form').reset();
+            document.getElementById('event-status').value = 'upcoming';
+            // Set default date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('event-date').value = tomorrow.toISOString().split('T')[0];
+        }
+        
+        function closeEventModal() {
+            const modal = document.getElementById('event-modal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300); // Wait for animation
+            resetEventForm();
+            currentEventId = null;
+        }
+        
+        async function saveEvent() {
+            try {
+                console.log('💾 Saving event...');
+                
+                const eventData = {
+                    title: document.getElementById('event-title').value,
+                    description: document.getElementById('event-description').value,
+                    event_date: document.getElementById('event-date').value,
+                    event_time: document.getElementById('event-time').value || null,
+                    location: document.getElementById('event-location').value,
+                    capacity: (() => {
+                        const capacityInput = document.getElementById('event-capacity');
+                        const rawValue = capacityInput.value;
+                        
+                        // Handle empty or null values
+                        if (!rawValue || rawValue.trim() === '') {
+                            return null;
+                        }
+                        
+                        // Parse as number and ensure it's a valid positive integer
+                        const numValue = Number(rawValue);
+                        if (isNaN(numValue) || numValue < 0) {
+                            return null;
+                        }
+                        
+                        // Ensure it's an integer
+                        return Math.floor(numValue);
+                    })(),
+                    status: document.getElementById('event-status').value
+                };
+                
+                console.log('📋 Event data:', eventData);
+                
+                let response;
+                if (currentEventId) {
+                    // Update existing event
+                    response = await window.apiClient.updateEvent(currentEventId, eventData);
+                    console.log('✅ Event updated:', response);
+                    showSuccess('Success', 'Event updated successfully!');
+                } else {
+                    // Create new event
+                    response = await window.apiClient.createEvent(eventData);
+                    console.log('✅ Event created:', response);
+                    showSuccess('Success', 'Event created successfully!');
+                }
+                
+                // Close modal and refresh list
+                closeEventModal();
+                await loadSectionData('events');
+                
+            } catch (error) {
+                console.error('❌ Error saving event:', error);
+                showError('Error', 'Failed to save event: ' + error.message);
+            }
+        }
+        
+        // Toast Notification System
+        function showToast(type, title, message, duration = 5000) {
+            const toastContainer = document.getElementById('toast-container');
+            const toastId = 'toast-' + Date.now();
+            
+            const iconMap = {
+                success: 'fas fa-check',
+                error: 'fas fa-times',
+                info: 'fas fa-info',
+                warning: 'fas fa-exclamation'
+            };
+            
+            const toast = document.createElement('div');
+            toast.id = toastId;
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="${iconMap[type]}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    ${message ? `<div class="toast-message">${message}</div>` : ''}
+                </div>
+                <button class="toast-close" onclick="removeToast('${toastId}')">
+                    <i class="fas fa-times"></i>
+                </button>
+                ${duration > 0 ? '<div class="toast-progress"></div>' : ''}
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto-remove after duration
+            if (duration > 0) {
+                setTimeout(() => {
+                    removeToast(toastId);
+                }, duration);
+            }
+            
+            return toastId;
+        }
+        
+        function removeToast(toastId) {
+            const toast = document.getElementById(toastId);
+            if (toast) {
+                toast.classList.add('removing');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }
+        }
+        
+        function showSuccess(title, message) {
+            console.log('✅ SUCCESS:', title, message);
+            showToast('success', title, message);
+        }
+        
+        function showError(title, message) {
+            // Handle both old format (single string) and new format (title, message)
+            if (typeof title === 'string' && !message) {
+                // Old format - single string
+                console.error('❌ ERROR:', title);
+                showToast('error', 'Error', title);
+            } else {
+                // New format - title and message
+                console.error('❌ ERROR:', title, message);
+                showToast('error', title, message);
+            }
+        }
+        
+        function showInfo(title, message) {
+            console.log('ℹ️ INFO:', title, message);
+            showToast('info', title, message);
+        }
+        
+        function showWarning(title, message) {
+            console.warn('⚠️ WARNING:', title, message);
+            showToast('warning', title, message);
+        }
+        
+        function showConfirmationToast(title, message) {
+            return new Promise((resolve) => {
+                const toastContainer = document.getElementById('toast-container');
+                const toastId = 'toast-confirm-' + Date.now();
+                
+                const toast = document.createElement('div');
+                toast.id = toastId;
+                toast.className = 'toast warning confirmation-toast';
+                toast.innerHTML = `
+                    <div class="toast-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="toast-content">
+                        <div class="toast-title">${title}</div>
+                        <div class="toast-message">${message}</div>
+                        <div class="toast-actions">
+                            <button class="btn-confirm" onclick="confirmAction('${toastId}', true)">Delete</button>
+                            <button class="btn-cancel" onclick="confirmAction('${toastId}', false)">Cancel</button>
+                        </div>
+                    </div>
+                `;
+                
+                toastContainer.appendChild(toast);
+                
+                // Animate in
+                setTimeout(() => toast.classList.add('show'), 10);
+                
+                // Store resolver for this confirmation
+                window.confirmationResolvers = window.confirmationResolvers || {};
+                window.confirmationResolvers[toastId] = resolve;
+            });
+        }
+        
+        function confirmAction(toastId, confirmed) {
+            const resolver = window.confirmationResolvers[toastId];
+            if (resolver) {
+                resolver(confirmed);
+                delete window.confirmationResolvers[toastId];
+            }
+            removeToast(toastId);
         }
         
         function exportAmbassadors() {
@@ -2892,7 +3756,7 @@
                 const ambassadors = JSON.parse(localStorage.getItem('currentAmbassadors') || '[]');
                 
                 if (ambassadors.length === 0) {
-                    alert('No ambassador data to export. Please load the ambassadors section first.');
+                    showWarning('No Data', 'No ambassador data to export. Please load the ambassadors section first.');
                     return;
                 }
                 
@@ -2925,19 +3789,19 @@
                 console.log('✅ Ambassador data exported successfully');
             } catch (error) {
                 console.error('❌ Export error:', error);
-                showError('Failed to export ambassadors: ' + error.message);
+                showError('Export Error', 'Failed to export ambassadors: ' + error.message);
             }
         }
 
         // Global error handler
         window.addEventListener('unhandledrejection', function(event) {
             console.error('Unhandled promise rejection:', event.reason);
-            showError('An unexpected error occurred: ' + event.reason);
+            showError('Unexpected Error', 'An unexpected error occurred: ' + event.reason);
         });
         
         window.addEventListener('error', function(event) {
             console.error('JavaScript error:', event.error);
-            showError('Script error: ' + event.error?.message);
+            showError('Script Error', 'Script error: ' + event.error?.message);
         });
         
         // Add debug info on load
