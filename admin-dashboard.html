@@ -1129,7 +1129,59 @@
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
             border-color: var(--primary-500);
-            box-shadow: 0 0 0 3px rgba(var(--primary-500-rgb), 0.1);
+            box-shadow: 0 0 0 3px rgba(var(--primary-500-rgb), 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        /* Enhanced form element styling for better visual cohesion */
+        .form-input, .form-select, .form-textarea {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            width: 100%;
+        }
+        
+        /* Enhanced select styling for better visual integration */
+        select.form-input {
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="m0 1 2 2 2-2z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 0.65em auto;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+        
+        select.form-input:hover {
+            border-color: var(--gray-300);
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Ensure input[type="number"] styling consistency */
+        input[type="number"].form-input {
+            -moz-appearance: textfield;
+        }
+        
+        input[type="number"].form-input::-webkit-outer-spin-button,
+        input[type="number"].form-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        /* Enhanced textarea styling */
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        
+        /* Time and date input enhancements */
+        input[type="time"].form-input,
+        input[type="date"].form-input {
+            cursor: pointer;
+        }
+        
+        input[type="time"].form-input::-webkit-calendar-picker-indicator,
+        input[type="date"].form-input::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(0.6);
         }
         
         .form-textarea {

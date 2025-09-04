@@ -753,7 +753,7 @@
                         This event is open to all EMSI students and recent graduates. Don't miss this exceptional opportunity to jumpstart your career!
                     </p>
                     <div class="event-actions">
-                        <button class="btn btn-secondary register-btn" data-event-title="Annual EMSI Marrakech Career Fair 2025">Register Now</button>
+                        <button class="btn btn-secondary register-btn" data-event-title="Annual EMSI Marrakech Career Fair 2025" data-event-id="4">Register Now</button>
                         <a href="#career-fair-details" class="btn btn-outline-primary">Learn More</a>
                     </div>
                 </div>
@@ -1088,21 +1088,87 @@
         
         // Load events from database
         async function loadEventsFromDatabase() {
+            console.log('🔄 Loading events from database...');
             try {
+                console.log('📡 Fetching /api/public/events');
                 const response = await fetch('/api/public/events');
+                console.log('📊 Response status:', response.status);
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('✅ API data received:', data);
                     if (data.data) {
+                        console.log(`📅 Displaying ${data.data.length} events`);
                         displayEvents(data.data);
+                        
+                        // Reinitialize registration modal for the new buttons
+                        console.log('🔍 Checking for registration modal function:', typeof window.initializeRegistrationModal);
+                        if (window.initializeRegistrationModal) {
+                            console.log('🔄 Reinitializing registration modal');
+                            window.initializeRegistrationModal();
+                        } else {
+                            console.warn('⚠️ Registration modal function not available, manually setting up event listeners');
+                            
+                            // Fallback: manually set up event listeners for register buttons
+                            const registerBtns = document.querySelectorAll('.register-btn');
+                            console.log('🔘 Found register buttons:', registerBtns.length);
+                            
+                            registerBtns.forEach(btn => {
+                                btn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    console.log('🔔 Register button clicked!', this.dataset);
+                                    
+                                    const eventId = this.dataset.eventId;
+                                    const eventTitle = this.dataset.eventTitle;
+                                    
+                                    // Open modal manually
+                                    const modal = document.getElementById('registrationModal');
+                                    const titleEl = document.getElementById('selectedEventTitle');
+                                    
+                                    if (modal && titleEl && eventTitle) {
+                                        titleEl.textContent = eventTitle;
+                                        modal.style.display = 'block';
+                                        modal.classList.add('show');
+                                        document.body.style.overflow = 'hidden';
+                                        
+                                        // Store event ID on form
+                                        const form = document.getElementById('registrationForm');
+                                        if (form) {
+                                            form._eventId = eventId;
+                                        }
+                                        
+                                        console.log('✅ Modal opened for event:', eventTitle, 'ID:', eventId);
+                                    }
+                                });
+                            });
+                            
+                            // Also set up modal close functionality
+                            const closeButtons = document.querySelectorAll('.close-modal, .cancel-btn');
+                            closeButtons.forEach(btn => {
+                                btn.addEventListener('click', function() {
+                                    const modal = document.getElementById('registrationModal');
+                                    if (modal) {
+                                        modal.style.display = 'none';
+                                        modal.classList.remove('show');
+                                        document.body.style.overflow = 'auto';
+                                        console.log('❌ Modal closed');
+                                    }
+                                });
+                            });
+                        }
                     }
+                } else {
+                    console.error('❌ API request failed:', response.status, response.statusText);
+                    document.getElementById('events-grid').innerHTML = '<div style="text-align: center; padding: 40px; color: #d32f2f;"><p>Error loading events. Please try again later.</p></div>';
                 }
             } catch (error) {
-                console.error('Error loading events:', error);
+                console.error('❌ Error loading events:', error);
+                document.getElementById('events-grid').innerHTML = '<div style="text-align: center; padding: 40px; color: #d32f2f;"><p>Error loading events. Please try again later.</p></div>';
             }
         }
         
         // Display events in the grid
         function displayEvents(events) {
+            console.log('🎨 Displaying events:', events);
             const eventsGrid = document.getElementById('events-grid');
             eventsGrid.innerHTML = '';
             
@@ -1236,6 +1302,7 @@
         }
         
         // Load events on page load
+        console.log('🚀 Page loaded, calling loadEventsFromDatabase...');
         loadEventsFromDatabase();
     });
 </script>

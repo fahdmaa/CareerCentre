@@ -787,19 +787,29 @@ if (window.emsiCareerCenterInitialized) {
                         registrationData[key] = value.trim();
                     }
 
-                    // Basic client-side validation
+                    // Enhanced client-side validation with styled alerts
                     if (!registrationData.fullName) {
-                        alert('Please enter your full name');
+                        showStyledAlert('Please enter your full name', 'error');
                         isSubmitting = false;
                         return;
                     }
                     if (!registrationData.email || !registrationData.email.includes('@')) {
-                        alert('Please enter a valid email address');
+                        showStyledAlert('Please enter a valid email address', 'error');
                         isSubmitting = false;
                         return;
                     }
                     if (!registrationData.phoneNumber) {
-                        alert('Please enter your phone number');
+                        showStyledAlert('Please enter your phone number', 'error');
+                        isSubmitting = false;
+                        return;
+                    }
+                    if (!registrationData.yearOfStudy) {
+                        showStyledAlert('Please select your year of study', 'error');
+                        isSubmitting = false;
+                        return;
+                    }
+                    if (!registrationData.major) {
+                        showStyledAlert('Please select your major', 'error');
                         isSubmitting = false;
                         return;
                     }
@@ -811,7 +821,7 @@ if (window.emsiCareerCenterInitialized) {
                     // Get event ID from the clicked button
                     const eventId = this._eventId;
                     if (!eventId) {
-                        alert('Error: Event ID not found. Please try again.');
+                        showStyledAlert('Error: Event ID not found. Please try again.', 'error');
                         isSubmitting = false;
                         return;
                     }
@@ -850,6 +860,9 @@ if (window.emsiCareerCenterInitialized) {
                             return;
                         }
 
+                        // Show success message and reset form
+                        showStyledAlert('🎉 Registration successful! You will receive a confirmation email shortly.', 'success');
+                        
                         // Reset form on successful registration
                         this.reset();
                         closeModal(registrationModal);
@@ -874,7 +887,17 @@ if (window.emsiCareerCenterInitialized) {
 
                     } catch (error) {
                         console.error('Registration error:', error);
-                        alert(error.message || 'Registration failed. Please check your connection and try again.');
+                        
+                        // Enhanced error handling with styled alerts
+                        if (error.message && error.message.includes('already registered')) {
+                            showStyledAlert('You are already registered for this event. If this seems incorrect, please contact support.', 'warning');
+                        } else if (error.message && error.message.includes('network')) {
+                            showStyledAlert('Network error. Please check your connection and try again.', 'error');
+                        } else if (error.message && error.message.includes('Missing required fields')) {
+                            showStyledAlert('Please fill in all required fields.', 'error');
+                        } else {
+                            showStyledAlert(error.message || 'Registration failed. Please check your connection and try again.', 'error');
+                        }
                     } finally {
                         submitButton.innerHTML = originalText;
                         submitButton.disabled = false;
@@ -1044,7 +1067,127 @@ if (window.emsiCareerCenterInitialized) {
             });
         }
 
-        // --- Notification System --- //
+        // --- Enhanced Notification System --- //
+        function showStyledAlert(message, type = 'info') {
+            // Remove any existing alerts first
+            const existingAlerts = document.querySelectorAll('.styled-alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            const alert = document.createElement('div');
+            alert.className = `styled-alert styled-alert-${type}`;
+            
+            const iconMap = {
+                success: 'check-circle',
+                error: 'times-circle',
+                warning: 'exclamation-triangle',
+                info: 'info-circle'
+            };
+            
+            const colorMap = {
+                success: { bg: '#d4edda', border: '#c3e6cb', text: '#155724' },
+                error: { bg: '#f8d7da', border: '#f5c6cb', text: '#721c24' },
+                warning: { bg: '#fff3cd', border: '#ffeaa7', text: '#856404' },
+                info: { bg: '#d1ecf1', border: '#bee5eb', text: '#0c5460' }
+            };
+
+            alert.innerHTML = `
+                <div class="alert-content">
+                    <i class="fas fa-${iconMap[type]} alert-icon"></i>
+                    <span class="alert-message">${message}</span>
+                    <button class="alert-close" aria-label="Close">&times;</button>
+                </div>
+            `;
+
+            const colors = colorMap[type];
+            alert.style.cssText = `
+                position: fixed;
+                top: 80px;
+                left: 50%;
+                transform: translateX(-50%) translateY(-20px);
+                background: ${colors.bg};
+                color: ${colors.text};
+                border: 2px solid ${colors.border};
+                border-radius: 12px;
+                padding: 1rem 1.5rem;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+                z-index: 10001;
+                opacity: 0;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                max-width: 600px;
+                min-width: 300px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-size: 16px;
+                line-height: 1.4;
+            `;
+
+            // Style the content
+            const content = alert.querySelector('.alert-content');
+            content.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            `;
+
+            const icon = alert.querySelector('.alert-icon');
+            icon.style.cssText = `
+                font-size: 20px;
+                flex-shrink: 0;
+            `;
+
+            const messageSpan = alert.querySelector('.alert-message');
+            messageSpan.style.cssText = `
+                flex: 1;
+                font-weight: 500;
+            `;
+
+            const closeBtn = alert.querySelector('.alert-close');
+            closeBtn.style.cssText = `
+                background: none;
+                border: none;
+                font-size: 24px;
+                color: ${colors.text};
+                cursor: pointer;
+                padding: 0;
+                margin-left: auto;
+                opacity: 0.7;
+                transition: opacity 0.2s ease;
+                flex-shrink: 0;
+            `;
+
+            closeBtn.addEventListener('mouseenter', () => closeBtn.style.opacity = '1');
+            closeBtn.addEventListener('mouseleave', () => closeBtn.style.opacity = '0.7');
+            closeBtn.addEventListener('click', () => hideAlert(alert));
+
+            document.body.appendChild(alert);
+
+            // Animate in
+            requestAnimationFrame(() => {
+                alert.style.opacity = '1';
+                alert.style.transform = 'translateX(-50%) translateY(0)';
+            });
+
+            // Auto-hide after 5 seconds for success/info, 8 seconds for warnings/errors
+            const autoHideDelay = (type === 'success' || type === 'info') ? 5000 : 8000;
+            setTimeout(() => hideAlert(alert), autoHideDelay);
+
+            return alert;
+        }
+
+        function hideAlert(alert) {
+            if (!alert || !alert.parentNode) return;
+            
+            alert.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateX(-50%) translateY(-20px)';
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 300);
+        }
+        
+        // --- Original Notification System (for compatibility) --- //
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;

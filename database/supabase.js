@@ -209,23 +209,31 @@ const applyWhereConditions = (queryBuilder, text, params) => {
         return queryBuilder;
     }
     
+    console.log('DEBUG: Applying WHERE conditions for query:', text.substring(0, 150));
+    console.log('DEBUG: Parameters:', params);
+    
     // Handle specific WHERE patterns (check more specific patterns first)
     if (text.includes('event_id = $1 AND student_email = $2')) {
+        console.log('DEBUG: Applying event_id AND student_email filter');
         return queryBuilder.eq('event_id', params[0]).eq('student_email', params[1]);
     }
     if (text.includes('username = $1')) {
+        console.log('DEBUG: Applying username filter');
         return queryBuilder.eq('username', params[0]);
     }
     if (text.includes('status = $1')) {
+        console.log('DEBUG: Applying status filter');
         return queryBuilder.eq('status', params[0]);
     }
     // Check for exact " id = $1" pattern (with space before) to avoid matching "event_id = $1"
     if (text.includes(' id = $1')) {
+        console.log('DEBUG: Applying id filter');
         return queryBuilder.eq('id', params[0]);
     }
     
     // Log if no pattern matches to help with debugging
-    console.warn('Warning: No matching WHERE pattern found for query:', text.substring(0, 100));
+    console.warn('Warning: No matching WHERE pattern found for query:', text.substring(0, 150));
+    console.warn('Available patterns: event_id = $1 AND student_email = $2, username = $1, status = $1, id = $1');
     return queryBuilder;
 };
 

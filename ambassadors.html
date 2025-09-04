@@ -1068,8 +1068,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Use uploaded image if available, otherwise use default
             let imagePath;
-            if (ambassador.image) {
-                imagePath = ambassador.image;
+            if (ambassador.image_url) {
+                imagePath = ambassador.image_url;
             } else {
                 const imageNumber = (index % 15) + 1;
                 imagePath = `/images/Ambassadors/Ambassador (${imageNumber}).jpg`;
@@ -1077,7 +1077,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             ambassadorCard.innerHTML = `
                 <div class="ambassador-image">
-                    <img src="${imagePath}" alt="${ambassador.name} - Student Ambassador">
+                    <img src="${imagePath}" alt="${ambassador.name} - Student Ambassador" onerror="this.src='/images/Ambassadors/Ambassador (${(index % 15) + 1}).jpg'">
                 </div>
                 <div class="ambassador-info">
                     <h3>${ambassador.name}</h3>
