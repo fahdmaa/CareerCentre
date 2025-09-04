@@ -477,7 +477,7 @@ app.delete('/api/ambassadors/:id', authenticateToken, async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'Ambassador not found' });
         }
-        res.status(204).send();
+        res.json({ message: 'Ambassador deleted successfully', data: { id: req.params.id } });
     } catch (error) {
         console.error('Error deleting ambassador:', error);
         res.status(500).json({ message: 'Error deleting ambassador' });
@@ -512,10 +512,22 @@ app.post('/api/events', authenticateToken, async (req, res) => {
     try {
         const { title, description, event_date, event_time, location, capacity, status } = req.body;
         
+        // Process capacity to ensure it's a valid positive integer or null
+        const processedCapacity = (() => {
+            if (capacity === null || capacity === undefined || capacity === '') {
+                return null;
+            }
+            const numCapacity = Number(capacity);
+            if (isNaN(numCapacity) || numCapacity < 0) {
+                return null;
+            }
+            return Math.floor(numCapacity);
+        })();
+        
         const result = await query(
             `INSERT INTO events (title, description, event_date, event_time, location, capacity, status) 
              VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-            [title, description, event_date, event_time, location, capacity || 0, status || 'upcoming']
+            [title, description, event_date, event_time, location, processedCapacity, status || 'upcoming']
         );
         
         res.status(201).json({ data: result.rows[0] });
@@ -529,12 +541,24 @@ app.put('/api/events/:id', authenticateToken, async (req, res) => {
     try {
         const { title, description, event_date, event_time, location, capacity, status } = req.body;
         
+        // Process capacity to ensure it's a valid positive integer or null
+        const processedCapacity = (() => {
+            if (capacity === null || capacity === undefined || capacity === '') {
+                return null;
+            }
+            const numCapacity = Number(capacity);
+            if (isNaN(numCapacity) || numCapacity < 0) {
+                return null;
+            }
+            return Math.floor(numCapacity);
+        })();
+        
         const result = await query(
             `UPDATE events 
              SET title = $1, description = $2, event_date = $3, event_time = $4, 
                  location = $5, capacity = $6, status = $7, updated_at = CURRENT_TIMESTAMP
              WHERE id = $8 RETURNING *`,
-            [title, description, event_date, event_time, location, capacity, status, req.params.id]
+            [title, description, event_date, event_time, location, processedCapacity, status, req.params.id]
         );
         
         if (result.rows.length === 0) {
@@ -554,7 +578,7 @@ app.delete('/api/events/:id', authenticateToken, async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'Event not found' });
         }
-        res.status(204).send();
+        res.json({ message: 'Event deleted successfully', data: { id: req.params.id } });
     } catch (error) {
         console.error('Error deleting event:', error);
         res.status(500).json({ message: 'Error deleting event' });
