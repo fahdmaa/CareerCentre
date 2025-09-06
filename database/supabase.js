@@ -89,16 +89,24 @@ const handleCountQuery = async (text, params, start) => {
 
 // Handle SELECT queries
 const handleSelectQuery = async (text, params, start) => {
+    console.log('DEBUG: Processing SELECT query:', text.substring(0, 100));
+    
+    // Handle complex queries with joins first
+    if (text.includes('JOIN')) {
+        console.log('DEBUG: Detected JOIN query, routing to complex handler');
+        return await handleComplexSelectQuery(text, params, start);
+    }
+    
+    if (text.includes('event_registrations') && text.includes('registered_count')) {
+        console.log('DEBUG: Detected registered_count query, routing to complex handler');
+        return await handleComplexSelectQuery(text, params, start);
+    }
+    
     const tableMatch = text.match(/from\s+(\w+)/i);
     if (!tableMatch) {
         throw new Error('Could not parse table name from query');
     }
     const tableName = tableMatch[1];
-    
-    // Handle complex queries with joins (but NOT simple event_registrations WHERE queries)
-    if (text.includes('JOIN') || (text.includes('event_registrations') && text.includes('registered_count'))) {
-        return await handleComplexSelectQuery(text, params, start);
-    }
     
     let query_builder = supabase.from(tableName).select('*');
     
@@ -165,6 +173,49 @@ const handleComplexSelectQuery = async (text, params, start) => {
             };
         } catch (error) {
             console.error('Complex query error:', error);
+            throw error;
+        }
+    }
+    
+    // Special handling for registrations with event details JOIN
+    if (text.includes('FROM event_registrations er') && text.includes('JOIN events e')) {
+        try {
+            // Get all registrations
+            const { data: registrations, error: regError } = await supabase
+                .from('event_registrations')
+                .select('*')
+                .order('registration_date', { ascending: false });
+                
+            if (regError) throw regError;
+            
+            // Get all events
+            const { data: events, error: eventsError } = await supabase
+                .from('events')
+                .select('*');
+                
+            if (eventsError) throw eventsError;
+            
+            // Join the data manually
+            const joinedData = registrations.map(reg => {
+                const event = events.find(e => e.id === reg.event_id);
+                return {
+                    ...reg,
+                    event_title: event?.title || 'Unknown Event',
+                    event_date: event?.event_date || null,
+                    event_location: event?.location || null,
+                    event_capacity: event?.capacity || null
+                };
+            });
+            
+            const duration = Date.now() - start;
+            console.log('Executed Supabase registrations JOIN query', { text, duration, rows: joinedData.length });
+            
+            return {
+                rows: joinedData,
+                rowCount: joinedData.length
+            };
+        } catch (error) {
+            console.error('Registrations JOIN query error:', error);
             throw error;
         }
     }

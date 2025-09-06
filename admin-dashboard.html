@@ -2638,25 +2638,68 @@
             const response = await window.apiClient.getRegistrations();
             const registrations = response.data || [];
 
+            // Create unique list of events for filtering
+            const events = [...new Map(registrations.map(reg => [reg.event_id, {
+                id: reg.event_id,
+                title: reg.event_title || 'Unknown Event'
+            }])).values()];
+
             const tableHtml = `
-                <table class="data-table">
+                <div class="registrations-controls" style="margin-bottom: var(--space-4); display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: var(--space-2);">
+                        <label style="font-weight: 500; color: var(--gray-700);">Filter by Event:</label>
+                        <select id="event-filter" class="form-input" style="width: auto; min-width: 200px;">
+                            <option value="">All Events (${registrations.length})</option>
+                            ${events.map(event => {
+                                const count = registrations.filter(r => r.event_id === event.id).length;
+                                return `<option value="${event.id}">${event.title} (${count})</option>`;
+                            }).join('')}
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-2);">
+                        <button class="btn btn-secondary" onclick="exportRegistrationsCSV()">
+                            <i class="fas fa-download"></i>
+                            Export CSV
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearRegistrationFilter()">
+                            <i class="fas fa-times"></i>
+                            Clear Filter
+                        </button>
+                    </div>
+                </div>
+                
+                <table class="data-table" id="registrations-data-table">
                     <thead>
                         <tr>
+                            <th>Event</th>
                             <th>Student</th>
                             <th>Email</th>
+                            <th>Phone</th>
                             <th>Major</th>
                             <th>Year</th>
                             <th>Registration Date</th>
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="registrations-tbody">
                         ${registrations.map(reg => `
-                            <tr>
+                            <tr data-event-id="${reg.event_id}">
+                                <td>
+                                    <div style="font-weight: 500; color: var(--primary-600);">${reg.event_title || 'Unknown Event'}</div>
+                                    <div style="font-size: var(--text-sm); color: var(--gray-500);">
+                                        ${reg.event_date ? new Date(reg.event_date).toLocaleDateString() : 'Date TBD'}
+                                        ${reg.event_location ? ` • ${reg.event_location}` : ''}
+                                    </div>
+                                </td>
                                 <td>
                                     <div style="font-weight: 500;">${reg.student_name}</div>
                                 </td>
-                                <td>${reg.student_email}</td>
+                                <td>
+                                    <a href="mailto:${reg.student_email}" style="color: var(--primary-600); text-decoration: none;">
+                                        ${reg.student_email}
+                                    </a>
+                                </td>
+                                <td>${reg.student_phone || 'N/A'}</td>
                                 <td>${reg.major || 'N/A'}</td>
                                 <td>${reg.year || 'N/A'}</td>
                                 <td>${reg.registration_date ? new Date(reg.registration_date).toLocaleDateString() : 'N/A'}</td>
@@ -2672,6 +2715,15 @@
             `;
 
             container.innerHTML = tableHtml;
+
+            // Add event listener for filtering
+            const filterSelect = document.getElementById('event-filter');
+            if (filterSelect) {
+                filterSelect.addEventListener('change', function() {
+                    const selectedEventId = this.value;
+                    filterRegistrationTable(selectedEventId);
+                });
+            }
         }
 
         async function loadMessages(container) {
@@ -3579,9 +3631,14 @@
 
         function filterRegistrationsByEvent(eventId, eventTitle) {
             try {
-                // This function would filter the registrations table by the specific event
-                // For now, we'll show a message indicating the filtering
                 console.log('🔍 Filtering registrations by event ID:', eventId);
+                
+                // Set the filter dropdown value
+                const filterSelect = document.getElementById('event-filter');
+                if (filterSelect) {
+                    filterSelect.value = eventId;
+                    filterRegistrationTable(eventId);
+                }
                 
                 // Add visual indication that filtering is active
                 const registrationsSection = document.getElementById('registrations-section');
@@ -3592,12 +3649,107 @@
                     }
                 }
                 
-                // In a real implementation, you would filter the actual data here
-                // This would typically involve calling the API with the event filter
-                
             } catch (error) {
                 console.error('❌ Error filtering registrations:', error);
                 showError('Filter Error', 'Failed to filter registrations');
+            }
+        }
+
+        function filterRegistrationTable(eventId) {
+            const tbody = document.getElementById('registrations-tbody');
+            if (!tbody) return;
+            
+            const rows = tbody.querySelectorAll('tr');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const rowEventId = row.getAttribute('data-event-id');
+                if (!eventId || rowEventId === eventId) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update the filter label to show count
+            const filterSelect = document.getElementById('event-filter');
+            if (filterSelect && eventId) {
+                const eventTitle = filterSelect.options[filterSelect.selectedIndex].text.split(' (')[0];
+                const header = document.querySelector('#registrations-section .section-header h2');
+                if (header) {
+                    header.innerHTML = `Event Registrations <span style="font-size: var(--text-sm); color: var(--primary-600); background: var(--primary-50); padding: var(--space-1) var(--space-2); border-radius: var(--radius-md); margin-left: var(--space-2);">Showing ${visibleCount} for "${eventTitle}"</span>`;
+                }
+            }
+        }
+
+        function clearRegistrationFilter() {
+            const filterSelect = document.getElementById('event-filter');
+            if (filterSelect) {
+                filterSelect.value = '';
+                filterRegistrationTable('');
+            }
+            
+            // Clear the header filter indication
+            const header = document.querySelector('#registrations-section .section-header h2');
+            if (header) {
+                header.innerHTML = 'Event Registrations';
+            }
+        }
+
+        function exportRegistrationsCSV() {
+            try {
+                const table = document.getElementById('registrations-data-table');
+                if (!table) return;
+                
+                const rows = table.querySelectorAll('tbody tr:not([style*="display: none"])');
+                const headers = ['Event', 'Student Name', 'Email', 'Phone', 'Major', 'Year', 'Registration Date', 'Status'];
+                
+                let csv = headers.join(',') + '\n';
+                
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const rowData = [];
+                    
+                    cells.forEach((cell, index) => {
+                        let cellText = cell.textContent.trim();
+                        if (index === 0) {
+                            // For event column, extract just the title
+                            cellText = cell.querySelector('div').textContent.trim();
+                        }
+                        // Escape commas and quotes in CSV
+                        if (cellText.includes(',') || cellText.includes('"')) {
+                            cellText = '"' + cellText.replace(/"/g, '""') + '"';
+                        }
+                        rowData.push(cellText);
+                    });
+                    
+                    csv += rowData.join(',') + '\n';
+                });
+                
+                // Download the CSV
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                const filterSelect = document.getElementById('event-filter');
+                const isFiltered = filterSelect && filterSelect.value;
+                const filename = isFiltered 
+                    ? `registrations_${filterSelect.options[filterSelect.selectedIndex].text.split(' (')[0].replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`
+                    : `all_registrations_${new Date().toISOString().split('T')[0]}.csv`;
+                
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                showSuccess('Export Complete', 'Registration data exported successfully');
+                
+            } catch (error) {
+                console.error('❌ Error exporting CSV:', error);
+                showError('Export Error', 'Failed to export registration data');
             }
         }
         

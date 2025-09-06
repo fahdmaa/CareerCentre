@@ -985,7 +985,22 @@ app.get('/api/applications', authenticateToken, async (req, res) => {
 
 app.get('/api/registrations', authenticateToken, async (req, res) => {
     try {
-        const result = await query('SELECT * FROM event_registrations ORDER BY registration_date DESC');
+        console.log('🔍 Fetching registrations with JOIN query');
+        // Join with events table to get event title and details
+        const joinQuery = `
+            SELECT 
+                er.*,
+                e.title as event_title,
+                e.event_date,
+                e.location as event_location,
+                e.capacity as event_capacity
+            FROM event_registrations er
+            JOIN events e ON er.event_id = e.id
+            ORDER BY er.registration_date DESC
+        `;
+        console.log('📝 JOIN query:', joinQuery.trim());
+        const result = await query(joinQuery);
+        console.log('✅ Got registrations with event data:', result.rows.length);
         res.json({ data: result.rows });
     } catch (error) {
         console.error('Error fetching registrations:', error);
