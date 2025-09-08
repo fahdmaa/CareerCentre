@@ -3239,11 +3239,11 @@
                 </div>
             `;
             
-            // Initialize tab functionality
-            initializeCohortTabs();
-            
-            // Load initial data
-            await loadCohortsData();
+            // Initialize tab functionality and load data after DOM is ready
+            setTimeout(async () => {
+                initializeCohortTabs();
+                await loadCohortsData();
+            }, 10);
         }
 
         // Cohort Management Functions
@@ -3270,55 +3270,78 @@
         }
 
         async function loadCohortsData() {
-            const response = await window.apiClient.getCohorts();
-            const cohorts = response.data || [];
-            
-            const cohortsHtml = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Cohort Name</th>
-                            <th>Duration</th>
-                            <th>Applications</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${cohorts.map(cohort => `
+            try {
+                console.log('Loading cohorts data...');
+                console.log('API Client available:', !!window.apiClient);
+                console.log('getCohorts method available:', !!window.apiClient?.getCohorts);
+                
+                if (!window.apiClient || !window.apiClient.getCohorts) {
+                    throw new Error('API client or getCohorts method not available');
+                }
+                
+                const response = await window.apiClient.getCohorts();
+                console.log('Cohorts API response:', response);
+                const cohorts = response.data || [];
+                
+                const cohortsListElement = document.getElementById('cohorts-list');
+                if (!cohortsListElement) {
+                    console.error('cohorts-list element not found');
+                    return;
+                }
+                
+                const cohortsHtml = `
+                    <table class="data-table">
+                        <thead>
                             <tr>
-                                <td>
-                                    <div>
-                                        <div style="font-weight: 500;">${cohort.name}</div>
-                                        <div style="font-size: var(--text-sm); color: var(--gray-600);">${cohort.description || ''}</div>
-                                    </div>
-                                </td>
-                                <td>${formatDateRange(cohort.start_date, cohort.end_date)}</td>
-                                <td>
-                                    <span class="count-badge">${cohort.applications_count || 0}</span>
-                                </td>
-                                <td>
-                                    <span class="status-badge status-${cohort.status}">
-                                        ${cohort.status}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-secondary btn-sm" onclick="editCohort(${cohort.id})">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </button>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteCohort(${cohort.id})">
-                                        <i class="fas fa-trash"></i>
-                                        Delete
-                                    </button>
-                                </td>
+                                <th>Cohort Name</th>
+                                <th>Duration</th>
+                                <th>Applications</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            
-            document.getElementById('cohorts-list').innerHTML = cohortsHtml;
+                        </thead>
+                        <tbody>
+                            ${cohorts.map(cohort => `
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <div style="font-weight: 500;">${cohort.name}</div>
+                                            <div style="font-size: var(--text-sm); color: var(--gray-600);">${cohort.description || ''}</div>
+                                        </div>
+                                    </td>
+                                    <td>${formatDateRange(cohort.start_date, cohort.end_date)}</td>
+                                    <td>
+                                        <span class="count-badge">${cohort.applications_count || 0}</span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-${cohort.status}">
+                                            ${cohort.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-secondary btn-sm" onclick="editCohort(${cohort.id})">
+                                            <i class="fas fa-edit"></i>
+                                            Edit
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteCohort(${cohort.id})">
+                                            <i class="fas fa-trash"></i>
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                cohortsListElement.innerHTML = cohortsHtml;
+            } catch (error) {
+                console.error('Error loading cohorts data:', error);
+                const cohortsListElement = document.getElementById('cohorts-list');
+                if (cohortsListElement) {
+                    cohortsListElement.innerHTML = '<p>Error loading cohorts data. Please try again.</p>';
+                }
+            }
         }
 
         async function loadTabData(tabName) {
@@ -3336,76 +3359,96 @@
         }
 
         async function loadApplicationsData() {
-            const response = await window.apiClient.getCohortApplications();
-            const applications = response.data || [];
-            
-            const applicationsHtml = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th><input type="checkbox" id="select-all-applications"></th>
-                            <th>Applicant</th>
-                            <th>Cohort</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Score</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${applications.map(app => `
+            try {
+                const response = await window.apiClient.getCohortApplications();
+                const applications = response.data || [];
+                
+                const applicationsListElement = document.getElementById('applications-list');
+                if (!applicationsListElement) {
+                    console.error('applications-list element not found');
+                    return;
+                }
+                
+                const applicationsHtml = `
+                    <table class="data-table">
+                        <thead>
                             <tr>
-                                <td><input type="checkbox" class="application-checkbox" value="${app.id}"></td>
-                                <td>
-                                    <div>
-                                        <div style="font-weight: 500;">${app.student_name}</div>
-                                        <div style="font-size: var(--text-sm); color: var(--gray-600);">${app.student_email}</div>
-                                        <div style="font-size: var(--text-sm); color: var(--gray-600);">${app.major} - ${app.year}</div>
-                                    </div>
-                                </td>
-                                <td>${app.cohort_name}</td>
-                                <td>${new Date(app.created_at).toLocaleDateString()}</td>
-                                <td>
-                                    <span class="status-badge status-${app.status}">
-                                        ${app.status}
-                                    </span>
-                                </td>
-                                <td>
-                                    ${app.interview_score ? `<span class="score-badge">${app.interview_score}/10</span>` : '-'}
-                                </td>
-                                <td>
-                                    <button class="btn btn-secondary btn-sm" onclick="viewApplication(${app.id})">
-                                        <i class="fas fa-eye"></i>
-                                        View
-                                    </button>
-                                    <button class="btn btn-primary btn-sm" onclick="scoreApplication(${app.id})">
-                                        <i class="fas fa-star"></i>
-                                        Score
-                                    </button>
-                                    ${app.status === 'interviewed' ? `
-                                        <button class="btn btn-success btn-sm" onclick="promoteApplication(${app.id})">
-                                            <i class="fas fa-user-plus"></i>
-                                            Promote
-                                        </button>
-                                    ` : ''}
-                                </td>
+                                <th><input type="checkbox" id="select-all-applications"></th>
+                                <th>Applicant</th>
+                                <th>Cohort</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Score</th>
+                                <th>Actions</th>
                             </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            
-            document.getElementById('applications-list').innerHTML = applicationsHtml;
+                        </thead>
+                        <tbody>
+                            ${applications.map(app => `
+                                <tr>
+                                    <td><input type="checkbox" class="application-checkbox" value="${app.id}"></td>
+                                    <td>
+                                        <div>
+                                            <div style="font-weight: 500;">${app.student_name}</div>
+                                            <div style="font-size: var(--text-sm); color: var(--gray-600);">${app.student_email}</div>
+                                            <div style="font-size: var(--text-sm); color: var(--gray-600);">${app.major} - ${app.year}</div>
+                                        </div>
+                                    </td>
+                                    <td>${app.cohort_name}</td>
+                                    <td>${new Date(app.created_at).toLocaleDateString()}</td>
+                                    <td>
+                                        <span class="status-badge status-${app.status}">
+                                            ${app.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        ${app.interview_score ? `<span class="score-badge">${app.interview_score}/10</span>` : '-'}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-secondary btn-sm" onclick="viewApplication(${app.id})">
+                                            <i class="fas fa-eye"></i>
+                                            View
+                                        </button>
+                                        <button class="btn btn-primary btn-sm" onclick="scoreApplication(${app.id})">
+                                            <i class="fas fa-star"></i>
+                                            Score
+                                        </button>
+                                        ${app.status === 'interviewed' ? `
+                                            <button class="btn btn-success btn-sm" onclick="promoteApplication(${app.id})">
+                                                <i class="fas fa-user-plus"></i>
+                                                Promote
+                                            </button>
+                                        ` : ''}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                applicationsListElement.innerHTML = applicationsHtml;
+            } catch (error) {
+                console.error('Error loading applications data:', error);
+                const applicationsListElement = document.getElementById('applications-list');
+                if (applicationsListElement) {
+                    applicationsListElement.innerHTML = '<p>Error loading applications data. Please try again.</p>';
+                }
+            }
         }
 
         async function loadInterviewsData() {
             // Implementation for interviews data
-            document.getElementById('interviews-list').innerHTML = '<p>Interviews functionality coming soon...</p>';
+            const interviewsListElement = document.getElementById('interviews-list');
+            if (interviewsListElement) {
+                interviewsListElement.innerHTML = '<p>Interviews functionality coming soon...</p>';
+            }
         }
 
         async function loadSelectionData() {
             // Implementation for selection data
-            document.getElementById('selection-list').innerHTML = '<p>Selection functionality coming soon...</p>';
+            const selectionListElement = document.getElementById('selection-list');
+            if (selectionListElement) {
+                selectionListElement.innerHTML = '<p>Selection functionality coming soon...</p>';
+            }
         }
 
         function formatDateRange(startDate, endDate) {
