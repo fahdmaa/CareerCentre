@@ -620,6 +620,92 @@ app.get('/api/events/:id/stats', authenticateToken, async (req, res) => {
     }
 });
 
+// Message endpoints
+app.get('/api/messages', authenticateToken, async (req, res) => {
+    try {
+        const result = await query('SELECT * FROM messages ORDER BY created_at DESC');
+        res.json({ data: result.rows });
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        res.status(500).json({ message: 'Error fetching messages' });
+    }
+});
+
+app.get('/api/messages/:id', authenticateToken, async (req, res) => {
+    try {
+        const result = await query('SELECT * FROM messages WHERE id = $1', [req.params.id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Message not found' });
+        }
+        res.json({ data: result.rows[0] });
+    } catch (error) {
+        console.error('Error fetching message:', error);
+        res.status(500).json({ message: 'Error fetching message' });
+    }
+});
+
+app.post('/api/messages', async (req, res) => {
+    try {
+        const { name, email, subject, message, phone } = req.body;
+        
+        if (!name || !email || !message) {
+            return res.status(400).json({ message: 'Name, email, and message are required' });
+        }
+        
+        const fullName = typeof name === 'object' ? `${name.firstName} ${name.lastName}` : name;
+        const messageSubject = subject || 'Contact Form Submission';
+        
+        const result = await query(
+            `INSERT INTO messages (sender_name, sender_email, subject, message, status) 
+             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+            [fullName, email, messageSubject, message, 'unread']
+        );
+        
+        res.status(201).json({ 
+            success: true, 
+            message: 'Message sent successfully',
+            data: result.rows[0] 
+        });
+    } catch (error) {
+        console.error('Error creating message:', error);
+        res.status(500).json({ message: 'Error sending message' });
+    }
+});
+
+app.put('/api/messages/:id', authenticateToken, async (req, res) => {
+    try {
+        const { status } = req.body;
+        const result = await query(
+            'UPDATE messages SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
+            [status, req.params.id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Message not found' });
+        }
+        
+        res.json({ data: result.rows[0] });
+    } catch (error) {
+        console.error('Error updating message:', error);
+        res.status(500).json({ message: 'Error updating message' });
+    }
+});
+
+app.delete('/api/messages/:id', authenticateToken, async (req, res) => {
+    try {
+        const result = await query('DELETE FROM messages WHERE id = $1 RETURNING *', [req.params.id]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Message not found' });
+        }
+        
+        res.json({ message: 'Message deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting message:', error);
+        res.status(500).json({ message: 'Error deleting message' });
+    }
+});
+
 // Public endpoints (no auth required)
 app.get('/api/public/ambassadors', async (req, res) => {
     try {
@@ -857,100 +943,297 @@ app.get('/api/admin/activities', authenticateToken, async (req, res) => {
 
 // Cohort endpoints
 app.get('/api/cohorts', authenticateToken, async (req, res) => {
-    // Return default cohort data for now
-    res.json({
-        data: [
-            {
-                year: '2024',
-                active: true,
-                startDate: '2024-09-01',
-                endDate: '2025-06-30',
-                maxAmbassadors: 20,
-                applicationDeadline: '2024-08-15',
-                perks: ['Leadership training', 'Networking events', 'Certificate of achievement', 'Priority access to career events'],
-                trainings: [
-                    { id: 1, title: 'Leadership Fundamentals', description: 'Learn the basics of effective leadership and team management' },
-                    { id: 2, title: 'Public Speaking', description: 'Master the art of presenting and communicating with confidence' },
-                    { id: 3, title: 'Event Management', description: 'Organize successful events from planning to execution' }
-                ]
-            }
-        ]
-    });
-});
-
-app.get('/api/cohorts/:year', authenticateToken, async (req, res) => {
-    const { year } = req.params;
-    res.json({
-        data: {
-            year: year,
-            active: year === '2024',
-            startDate: `${year}-09-01`,
-            endDate: `${parseInt(year) + 1}-06-30`,
-            maxAmbassadors: 20,
-            applicationDeadline: `${year}-08-15`,
-            perks: ['Leadership training', 'Networking events', 'Certificate of achievement', 'Priority access to career events']
-        }
-    });
-});
-
-// Public cohort endpoint
-app.get('/api/public/cohorts/active', (req, res) => {
-    // Return a default cohort for now
-    res.json({
-        data: {
-            year: '2024',
-            active: true,
-            startDate: '2024-09-01',
-            endDate: '2025-06-30',
-            maxAmbassadors: 20,
-            applicationDeadline: '2024-08-15',
-            perks: ['Leadership training', 'Networking events', 'Certificate of achievement', 'Priority access to career events'],
-            trainings: [
-                { id: 1, title: 'Leadership Fundamentals', description: 'Learn the basics of effective leadership and team management' },
-                { id: 2, title: 'Public Speaking', description: 'Master the art of presenting and communicating with confidence' },
-                { id: 3, title: 'Event Management', description: 'Organize successful events from planning to execution' }
-            ]
-        }
-    });
-});
-
-// Application submission endpoint (stores in messages table for now)
-app.post('/api/public/applications', async (req, res) => {
     try {
-        const { name, email, major, year, linkedin, motivation, experience } = req.body;
+        const result = await query('SELECT * FROM cohorts ORDER BY created_at DESC');
+        res.json({ data: result.rows });
+    } catch (error) {
+        console.error('Error fetching cohorts:', error);
+        res.status(500).json({ message: 'Error fetching cohorts' });
+    }
+});
+
+app.get('/api/cohorts/:id', authenticateToken, async (req, res) => {
+    try {
+        const result = await query('SELECT * FROM cohorts WHERE id = $1', [req.params.id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Cohort not found' });
+        }
+        res.json({ data: result.rows[0] });
+    } catch (error) {
+        console.error('Error fetching cohort:', error);
+        res.status(500).json({ message: 'Error fetching cohort' });
+    }
+});
+
+app.post('/api/cohorts', authenticateToken, async (req, res) => {
+    try {
+        const { name, description, start_date, end_date, application_deadline, max_participants, status } = req.body;
+        
+        const result = await query(
+            `INSERT INTO cohorts (name, description, start_date, end_date, application_deadline, max_participants, status) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+            [name, description, start_date, end_date, application_deadline, max_participants, status || 'draft']
+        );
+        
+        res.status(201).json({ data: result.rows[0] });
+    } catch (error) {
+        console.error('Error creating cohort:', error);
+        res.status(500).json({ message: 'Error creating cohort' });
+    }
+});
+
+app.put('/api/cohorts/:id', authenticateToken, async (req, res) => {
+    try {
+        const { name, description, start_date, end_date, application_deadline, max_participants, status } = req.body;
+        
+        const result = await query(
+            `UPDATE cohorts 
+             SET name = $1, description = $2, start_date = $3, end_date = $4, 
+                 application_deadline = $5, max_participants = $6, status = $7, updated_at = CURRENT_TIMESTAMP
+             WHERE id = $8 RETURNING *`,
+            [name, description, start_date, end_date, application_deadline, max_participants, status, req.params.id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Cohort not found' });
+        }
+        
+        res.json({ data: result.rows[0] });
+    } catch (error) {
+        console.error('Error updating cohort:', error);
+        res.status(500).json({ message: 'Error updating cohort' });
+    }
+});
+
+app.delete('/api/cohorts/:id', authenticateToken, async (req, res) => {
+    try {
+        const result = await query('DELETE FROM cohorts WHERE id = $1 RETURNING id', [req.params.id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Cohort not found' });
+        }
+        res.json({ message: 'Cohort deleted successfully', data: { id: req.params.id } });
+    } catch (error) {
+        console.error('Error deleting cohort:', error);
+        res.status(500).json({ message: 'Error deleting cohort' });
+    }
+});
+
+// Cohort applications endpoints
+app.get('/api/cohort-applications', authenticateToken, async (req, res) => {
+    try {
+        const result = await query(
+            `SELECT ca.*, c.name as cohort_name, c.application_deadline
+             FROM cohort_applications ca
+             JOIN cohorts c ON ca.cohort_id = c.id
+             ORDER BY ca.created_at DESC`
+        );
+        res.json({ data: result.rows });
+    } catch (error) {
+        console.error('Error fetching cohort applications:', error);
+        res.status(500).json({ message: 'Error fetching applications' });
+    }
+});
+
+app.get('/api/cohort-applications/:id', authenticateToken, async (req, res) => {
+    try {
+        const result = await query(
+            `SELECT ca.*, c.name as cohort_name
+             FROM cohort_applications ca
+             JOIN cohorts c ON ca.cohort_id = c.id
+             WHERE ca.id = $1`,
+            [req.params.id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Application not found' });
+        }
+        
+        res.json({ data: result.rows[0] });
+    } catch (error) {
+        console.error('Error fetching cohort application:', error);
+        res.status(500).json({ message: 'Error fetching application' });
+    }
+});
+
+app.put('/api/cohort-applications/:id', authenticateToken, async (req, res) => {
+    try {
+        const { status, interview_score, interview_notes, admin_notes } = req.body;
+        
+        const result = await query(
+            `UPDATE cohort_applications 
+             SET status = $1, interview_score = $2, interview_notes = $3, admin_notes = $4, updated_at = CURRENT_TIMESTAMP
+             WHERE id = $5 RETURNING *`,
+            [status, interview_score, interview_notes, admin_notes, req.params.id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Application not found' });
+        }
+        
+        res.json({ data: result.rows[0] });
+    } catch (error) {
+        console.error('Error updating cohort application:', error);
+        res.status(500).json({ message: 'Error updating application' });
+    }
+});
+
+app.put('/api/cohort-applications/:id/promote', authenticateToken, async (req, res) => {
+    try {
+        const applicationId = req.params.id;
+        
+        // Get application details
+        const appResult = await query('SELECT * FROM cohort_applications WHERE id = $1', [applicationId]);
+        if (appResult.rows.length === 0) {
+            return res.status(404).json({ message: 'Application not found' });
+        }
+        
+        const application = appResult.rows[0];
+        
+        // Create ambassador record
+        const ambassadorResult = await query(
+            `INSERT INTO ambassadors (name, email, major, year, linkedin, status) 
+             VALUES ($1, $2, $3, $4, $5, 'active') RETURNING *`,
+            [application.student_name, application.student_email, application.major, application.year, application.linkedin]
+        );
+        
+        // Update application status
+        await query(
+            'UPDATE cohort_applications SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+            ['accepted', applicationId]
+        );
+        
+        res.json({ 
+            message: 'Application promoted to ambassador successfully',
+            ambassador: ambassadorResult.rows[0]
+        });
+    } catch (error) {
+        console.error('Error promoting application:', error);
+        res.status(500).json({ message: 'Error promoting application' });
+    }
+});
+
+app.post('/api/cohort-applications/bulk-promote', authenticateToken, async (req, res) => {
+    try {
+        const { applicationIds } = req.body;
+        
+        if (!Array.isArray(applicationIds) || applicationIds.length === 0) {
+            return res.status(400).json({ message: 'Application IDs array is required' });
+        }
+        
+        const promoted = [];
+        
+        for (const appId of applicationIds) {
+            // Get application details
+            const appResult = await query('SELECT * FROM cohort_applications WHERE id = $1', [appId]);
+            if (appResult.rows.length === 0) continue;
+            
+            const application = appResult.rows[0];
+            
+            // Create ambassador record
+            const ambassadorResult = await query(
+                `INSERT INTO ambassadors (name, email, major, year, linkedin, status) 
+                 VALUES ($1, $2, $3, $4, $5, 'active') RETURNING *`,
+                [application.student_name, application.student_email, application.major, application.year, application.linkedin]
+            );
+            
+            // Update application status
+            await query(
+                'UPDATE cohort_applications SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+                ['accepted', appId]
+            );
+            
+            promoted.push(ambassadorResult.rows[0]);
+        }
+        
+        res.json({ 
+            message: `${promoted.length} applications promoted successfully`,
+            ambassadors: promoted
+        });
+    } catch (error) {
+        console.error('Error bulk promoting applications:', error);
+        res.status(500).json({ message: 'Error bulk promoting applications' });
+    }
+});
+
+// Public cohort endpoints
+app.get('/api/public/cohorts/active', async (req, res) => {
+    try {
+        const result = await query('SELECT * FROM cohorts WHERE status = $1 ORDER BY created_at DESC LIMIT 1', ['active']);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'No active cohort found' });
+        }
+        
+        res.json({ data: result.rows[0] });
+    } catch (error) {
+        console.error('Error fetching active cohort:', error);
+        res.status(500).json({ message: 'Error fetching active cohort' });
+    }
+});
+
+// Cohort application submission endpoint
+app.post('/api/public/cohort-applications', async (req, res) => {
+    try {
+        const { cohort_id, student_name, student_email, student_phone, major, year, motivation, cv_url, linkedin } = req.body;
         
         // Validate required fields
-        if (!name || !email || !major || !year || !motivation) {
+        if (!cohort_id || !student_name || !student_email || !major || !year || !motivation) {
             return res.status(400).json({ 
                 success: false,
-                message: 'Please fill in all required fields' 
+                message: 'All required fields must be filled' 
             });
         }
         
-        // Store application as a message
-        const messageContent = `
-            Ambassador Application
-            Name: ${name}
-            Email: ${email}
-            Major: ${major}
-            Year: ${year}
-            LinkedIn: ${linkedin || 'Not provided'}
-            Motivation: ${motivation}
-            Experience: ${experience || 'Not provided'}
-        `;
+        // Check if cohort is active and accepting applications
+        const cohortResult = await query('SELECT * FROM cohorts WHERE id = $1 AND status = $2', [cohort_id, 'active']);
+        if (cohortResult.rows.length === 0) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Cohort is not available for applications' 
+            });
+        }
         
+        const cohort = cohortResult.rows[0];
+        const now = new Date();
+        const deadline = new Date(cohort.application_deadline);
+        
+        if (now > deadline) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Application deadline has passed' 
+            });
+        }
+        
+        // Normalize email to lowercase for consistent comparison
+        const normalizedEmail = student_email.toLowerCase().trim();
+        
+        // Check if already applied to this cohort
+        const existing = await query(
+            'SELECT id FROM cohort_applications WHERE cohort_id = $1 AND student_email = $2',
+            [cohort_id, normalizedEmail]
+        );
+        
+        if (existing.rows.length > 0) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'You have already applied to this cohort' 
+            });
+        }
+        
+        // Create application
         const result = await query(
-            'INSERT INTO messages (sender_name, sender_email, subject, message) VALUES ($1, $2, $3, $4) RETURNING *',
-            [name, email, 'Ambassador Application - ' + name, messageContent]
+            `INSERT INTO cohort_applications (cohort_id, student_name, student_email, student_phone, major, year, motivation, cv_url, linkedin) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+            [cohort_id, student_name, normalizedEmail, student_phone, major, year, motivation, cv_url, linkedin]
         );
         
         res.json({ 
             success: true,
             message: 'Application submitted successfully!',
-            applicationId: result.rows[0].id
+            data: result.rows[0]
         });
     } catch (error) {
-        console.error('Error submitting application:', error);
+        console.error('Error submitting cohort application:', error);
         res.status(500).json({ 
             success: false,
             message: 'Error submitting application' 

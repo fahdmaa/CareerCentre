@@ -69,6 +69,40 @@ CREATE TABLE IF NOT EXISTS messages (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 6. Cohorts table (for Ambassador program cohorts)
+CREATE TABLE IF NOT EXISTS cohorts (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    application_deadline DATE NOT NULL,
+    max_participants INTEGER DEFAULT 20,
+    status VARCHAR(20) DEFAULT 'draft',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 7. Cohort applications table
+CREATE TABLE IF NOT EXISTS cohort_applications (
+    id SERIAL PRIMARY KEY,
+    cohort_id INTEGER REFERENCES cohorts(id) ON DELETE CASCADE,
+    student_name VARCHAR(100) NOT NULL,
+    student_email VARCHAR(100) NOT NULL,
+    student_phone VARCHAR(20),
+    major VARCHAR(100),
+    year VARCHAR(10),
+    motivation TEXT,
+    cv_url VARCHAR(255),
+    linkedin VARCHAR(255),
+    status VARCHAR(20) DEFAULT 'pending',
+    interview_score INTEGER,
+    interview_notes TEXT,
+    admin_notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_ambassadors_status ON ambassadors(status);
 CREATE INDEX IF NOT EXISTS idx_events_status ON events(status);
@@ -77,6 +111,11 @@ CREATE INDEX IF NOT EXISTS idx_event_registrations_event_id ON event_registratio
 CREATE INDEX IF NOT EXISTS idx_event_registrations_email ON event_registrations(student_email);
 CREATE INDEX IF NOT EXISTS idx_messages_status ON messages(status);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+CREATE INDEX IF NOT EXISTS idx_cohorts_status ON cohorts(status);
+CREATE INDEX IF NOT EXISTS idx_cohorts_application_deadline ON cohorts(application_deadline);
+CREATE INDEX IF NOT EXISTS idx_cohort_applications_cohort_id ON cohort_applications(cohort_id);
+CREATE INDEX IF NOT EXISTS idx_cohort_applications_status ON cohort_applications(status);
+CREATE INDEX IF NOT EXISTS idx_cohort_applications_email ON cohort_applications(student_email);
 
 -- Insert default admin user
 -- Password is 'admin123' hashed with bcrypt (you should change this in production)
@@ -101,6 +140,12 @@ INSERT INTO events (title, description, event_date, event_time, location, capaci
 ('Resume Workshop', 'Interactive workshop on creating effective resumes and cover letters', '2024-09-18', '10:00:00', 'Training Room B', 30, 'upcoming')
 ON CONFLICT DO NOTHING;
 
+-- Insert sample cohorts data
+INSERT INTO cohorts (name, description, start_date, end_date, application_deadline, max_participants, status) VALUES
+('Fall 2024 Ambassadors', 'Fall semester ambassador cohort focusing on career development and student outreach', '2024-09-15', '2024-12-15', '2024-09-10', 25, 'active'),
+('Spring 2025 Ambassadors', 'Spring semester cohort with emphasis on industry partnerships and networking events', '2025-02-01', '2025-06-01', '2025-01-15', 30, 'draft')
+ON CONFLICT DO NOTHING;
+
 -- Configure Row Level Security (RLS) policies
 
 -- Enable RLS on all tables
@@ -109,6 +154,8 @@ ALTER TABLE ambassadors ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE event_registrations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE cohorts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE cohort_applications ENABLE ROW LEVEL SECURITY;
 
 -- Users table policies (admin only)
 CREATE POLICY "Users: Admin can do everything" ON users
@@ -148,6 +195,23 @@ CREATE POLICY "Messages: Admin can view all" ON messages
 CREATE POLICY "Messages: Admin can do everything" ON messages
     FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
 
+-- Cohorts policies
+CREATE POLICY "Cohorts: Public can view active" ON cohorts
+    FOR SELECT USING (status = 'active');
+
+CREATE POLICY "Cohorts: Admin can do everything" ON cohorts
+    FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+
+-- Cohort applications policies
+CREATE POLICY "Cohort applications: Public can insert" ON cohort_applications
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Cohort applications: Admin can view all" ON cohort_applications
+    FOR SELECT USING (auth.jwt() ->> 'role' = 'admin');
+
+CREATE POLICY "Cohort applications: Admin can do everything" ON cohort_applications
+    FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+
 -- Create function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -168,6 +232,12 @@ CREATE TRIGGER update_events_updated_at BEFORE UPDATE ON events
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_messages_updated_at BEFORE UPDATE ON messages
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_cohorts_updated_at BEFORE UPDATE ON cohorts
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_cohort_applications_updated_at BEFORE UPDATE ON cohort_applications
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Create a function to handle JWT token validation for server-side access

@@ -220,6 +220,47 @@ const handleComplexSelectQuery = async (text, params, start) => {
         }
     }
     
+    // Special handling for cohort applications with cohort details JOIN
+    if (text.includes('FROM cohort_applications ca') && text.includes('JOIN cohorts c')) {
+        try {
+            // Get all cohort applications
+            const { data: applications, error: appError } = await supabase
+                .from('cohort_applications')
+                .select('*')
+                .order('created_at', { ascending: false });
+                
+            if (appError) throw appError;
+            
+            // Get all cohorts
+            const { data: cohorts, error: cohortsError } = await supabase
+                .from('cohorts')
+                .select('*');
+                
+            if (cohortsError) throw cohortsError;
+            
+            // Join the data manually
+            const joinedData = applications.map(app => {
+                const cohort = cohorts.find(c => c.id === app.cohort_id);
+                return {
+                    ...app,
+                    cohort_name: cohort?.name || 'Unknown Cohort',
+                    application_deadline: cohort?.application_deadline || null
+                };
+            });
+            
+            const duration = Date.now() - start;
+            console.log('Executed Supabase cohort applications JOIN query', { text, duration, rows: joinedData.length });
+            
+            return {
+                rows: joinedData,
+                rowCount: joinedData.length
+            };
+        } catch (error) {
+            console.error('Cohort applications JOIN query error:', error);
+            throw error;
+        }
+    }
+    
     // For other complex queries, fall back to simple select without recursion
     const tableMatch = text.match(/from\s+(\w+)/i);
     if (!tableMatch) {
@@ -264,9 +305,17 @@ const applyWhereConditions = (queryBuilder, text, params) => {
     console.log('DEBUG: Parameters:', params);
     
     // Handle specific WHERE patterns (check more specific patterns first)
+    if (text.includes('cohort_id = $1 AND student_email = $2')) {
+        console.log('DEBUG: Applying cohort_id AND student_email filter');
+        return queryBuilder.eq('cohort_id', params[0]).eq('student_email', params[1]);
+    }
     if (text.includes('event_id = $1 AND student_email = $2')) {
         console.log('DEBUG: Applying event_id AND student_email filter');
         return queryBuilder.eq('event_id', params[0]).eq('student_email', params[1]);
+    }
+    if (text.includes('cohort_id = $1 AND status = $2')) {
+        console.log('DEBUG: Applying cohort_id AND status filter');
+        return queryBuilder.eq('cohort_id', params[0]).eq('status', params[1]);
     }
     if (text.includes('username = $1')) {
         console.log('DEBUG: Applying username filter');
@@ -351,6 +400,49 @@ const handleUpdateQuery = async (text, params, start) => {
         throw new Error('Invalid UPDATE query format: ' + text.substring(0, 200));
     }
     
+    // For messages table
+    if (tableName === 'messages') {
+        let updateData = {};
+        
+        // Parse UPDATE fields for messages table
+        if (text.includes('status = $1')) {
+            updateData.status = params[0];
+        }
+        
+        // Always update updated_at if it's in the query
+        if (text.includes('updated_at = CURRENT_TIMESTAMP')) {
+            updateData.updated_at = new Date().toISOString();
+        }
+        
+        let query_builder = supabase.from('messages').update(updateData);
+        
+        // Apply WHERE conditions for messages table
+        if (text.includes('id = $2')) {
+            query_builder = query_builder.eq('id', params[1]);
+        }
+        
+        query_builder = query_builder.select();
+        
+        const { data, error } = await query_builder;
+        
+        if (error) {
+            throw error;
+        }
+        
+        const duration = Date.now() - start;
+        console.log('Executed Supabase UPDATE', {
+            text: text,
+            duration: duration,
+            rows: data ? data.length : 0
+        });
+        
+        return {
+            command: 'UPDATE',
+            rows: data || [],
+            rowCount: data ? data.length : 0
+        };
+    }
+    
     // For ambassadors table
     if (tableName === 'ambassadors') {
         console.log('DEBUG: Ambassador UPDATE params:', params);
@@ -406,6 +498,65 @@ const handleUpdateQuery = async (text, params, start) => {
             .from(tableName)
             .update(updateData)
             .eq('id', params[7])
+            .select()
+            .single();
+            
+        if (error) throw error;
+        
+        const duration = Date.now() - start;
+        console.log('Executed Supabase UPDATE', { text, duration, rows: 1 });
+        
+        return {
+            rows: data ? [data] : [],
+            rowCount: data ? 1 : 0
+        };
+    }
+    
+    // For cohorts table
+    if (tableName === 'cohorts') {
+        const updateData = {
+            name: params[0],
+            description: params[1],
+            start_date: params[2],
+            end_date: params[3],
+            application_deadline: params[4],
+            max_participants: params[5],
+            status: params[6],
+            updated_at: new Date().toISOString()
+        };
+        
+        const { data, error } = await supabase
+            .from(tableName)
+            .update(updateData)
+            .eq('id', params[7])
+            .select()
+            .single();
+            
+        if (error) throw error;
+        
+        const duration = Date.now() - start;
+        console.log('Executed Supabase UPDATE', { text, duration, rows: 1 });
+        
+        return {
+            rows: data ? [data] : [],
+            rowCount: data ? 1 : 0
+        };
+    }
+    
+    // For cohort_applications table
+    if (tableName === 'cohort_applications') {
+        const updateData = {
+            status: params[0],
+            interview_score: params[1],
+            interview_notes: params[2],
+            admin_notes: params[3],
+            updated_at: new Date().toISOString()
+        };
+        
+        const { data, error } = await supabase
+            .from(tableName)
+            .update(updateData)
+            .eq('id', params[4])
             .select()
             .single();
             

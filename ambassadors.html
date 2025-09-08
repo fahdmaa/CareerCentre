@@ -1044,14 +1044,32 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load ambassadors from database
     async function loadAmbassadorsFromDatabase() {
         try {
+            // First, try to get active cohort to filter ambassadors
+            let activeCohortId = null;
+            try {
+                const cohortResponse = await fetch('/api/public/cohorts/active');
+                if (cohortResponse.ok) {
+                    const cohortResult = await cohortResponse.json();
+                    activeCohortId = cohortResult.data?.id;
+                }
+            } catch (cohortError) {
+                console.log('No active cohort found, showing all ambassadors');
+            }
+
             const response = await fetch('/api/public/ambassadors');
             if (response.ok) {
                 const result = await response.json();
                 if (result.data) {
-                    displayAmbassadors(result.data);
+                    // Filter ambassadors to show only active ones from current cohort
+                    // For now, we'll show all active ambassadors since cohort filtering needs DB updates
+                    const activeAmbassadors = result.data.filter(ambassador => 
+                        ambassador.status === 'active'
+                    );
+                    displayAmbassadors(activeAmbassadors);
                 }
             }
         } catch (error) {
+            console.error('Error loading ambassadors:', error);
         }
     }
     
