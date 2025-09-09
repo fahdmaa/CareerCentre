@@ -2617,7 +2617,23 @@
 
         async function loadSectionData(sectionName) {
             try {
+                // Special handling for cohorts section
+                if (sectionName === 'cohorts') {
+                    const cohortSection = document.querySelector('#cohorts-section .data-section');
+                    if (cohortSection) {
+                        cohortSection.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+                        await loadCohorts(cohortSection);
+                    }
+                    return;
+                }
+                
+                // Regular handling for other sections
                 const container = document.getElementById(`${sectionName}-table`);
+                if (!container) {
+                    console.error(`Container not found for section: ${sectionName}-table`);
+                    return;
+                }
+                
                 container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
 
                 switch (sectionName) {
@@ -2632,9 +2648,6 @@
                         break;
                     case 'messages':
                         await loadMessages(container);
-                        break;
-                    case 'cohorts':
-                        await loadCohorts(container);
                         break;
                 }
             } catch (error) {
