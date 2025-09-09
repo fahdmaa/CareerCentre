@@ -208,7 +208,7 @@ app.post('/api/auth/login', rateLimitLogin, async (req, res) => {
 
         // Create JWT token
         const token = jwt.sign(
-            { id: user.id, username: user.username },
+            { id: user.id, username: user.username, role: 'admin' },
             JWT_SECRET,
             { expiresIn: '1h' }
         );

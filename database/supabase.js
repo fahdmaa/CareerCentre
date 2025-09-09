@@ -3,16 +3,19 @@ require('dotenv').config();
 
 // Supabase configuration
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
+if (!supabaseUrl || !supabaseAnonKey) {
     console.error('Missing Supabase environment variables. Please set SUPABASE_URL and SUPABASE_ANON_KEY in your .env file');
     console.error('SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing');
-    console.error('SUPABASE_ANON_KEY:', supabaseKey ? 'Set (length: ' + supabaseKey.length + ')' : 'Missing');
+    console.error('SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Set (length: ' + supabaseAnonKey.length + ')' : 'Missing');
+    console.error('SUPABASE_SERVICE_KEY:', supabaseServiceKey ? 'Set (length: ' + supabaseServiceKey.length + ')' : 'Missing');
     throw new Error('Missing required Supabase environment variables');
 }
 
-// Create Supabase client
+// Create Supabase client - use service key if available (for admin operations), otherwise anon key
+const supabaseKey = supabaseServiceKey || supabaseAnonKey;
 const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: {
         autoRefreshToken: true,
@@ -22,6 +25,8 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
         schema: 'public'
     }
 });
+
+console.log('Supabase client created with:', supabaseServiceKey ? 'service key (admin access)' : 'anon key (limited access)');
 
 // Helper function to execute queries (compatible with existing PostgreSQL query function)
 const query = async (text, params = []) => {
@@ -374,7 +379,15 @@ const handleInsertQuery = async (text, params, start) => {
         .select()
         .single();
         
-    if (error) throw error;
+    if (error) {
+        // Check if it's an RLS policy error
+        if (error.code === '42501' && error.message.includes('row-level security policy')) {
+            console.error('RLS policy blocking operation. Please disable RLS for admin operations or add service key.');
+            console.error('Run this SQL in your Supabase dashboard: ALTER TABLE ' + tableName + ' DISABLE ROW LEVEL SECURITY;');
+            throw new Error('Database access restricted. Please contact administrator to configure database permissions.');
+        }
+        throw error;
+    }
     
     const duration = Date.now() - start;
     console.log('Executed Supabase INSERT', { text, duration, rows: 1 });
