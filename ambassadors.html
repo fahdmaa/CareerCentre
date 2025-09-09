@@ -519,16 +519,16 @@
                     
                     if (data && data.data) {
                         const cohort = data.data;
-                        const deadline = new Date(cohort.applicationDeadline);
+                        const deadline = new Date(cohort.application_deadline);
                         const now = new Date();
                         
                         if (now < deadline) {
                             const days = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
                             cta.innerHTML = `
-                                <h2>Applications Are Open for ${cohort.year} Cohort!</h2>
+                                <h2>Applications Are Open for ${cohort.name}!</h2>
                                 <p>Join our prestigious ambassador program. Applications close on ${deadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (${days} days left).</p>
                                 <div class="cta-buttons">
-                                    <a href="#apply" class="btn btn-primary-large" data-modal="application-modal">
+                                    <a href="about.html#cohort-section" class="btn btn-primary-large">
                                         <i class="fas fa-paper-plane"></i>
                                         Apply Now
                                     </a>
@@ -539,10 +539,9 @@
                                 </div>
                             `;
                         } else {
-                            const nextYear = parseInt(cohort.year) + 1;
                             cta.innerHTML = `
                                 <h2>Ready to Become an Ambassador?</h2>
-                                <p>Applications for the ${nextYear} cohort will open soon. Follow us to stay updated!</p>
+                                <p>Applications for ${cohort.name} have closed. Stay tuned for the next cohort!</p>
                                 <div class="cta-buttons">
                                     <a href="#" class="btn btn-primary-large" data-modal="notification-modal">
                                         <i class="fas fa-bell"></i>
@@ -973,7 +972,7 @@ window.addEventListener('load', function() {
                 
                 
                 const now = new Date();
-                const deadline = new Date(cohort.applicationDeadline);
+                const deadline = new Date(cohort.application_deadline);
                 const applicationsOpen = now < deadline;
                 
                 
@@ -981,10 +980,10 @@ window.addEventListener('load', function() {
                 if (applicationsOpen) {
                     const daysLeft = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
                     const newHTML = `
-                        <h2>Applications Are Open for ${cohort.year} Cohort!</h2>
+                        <h2>Applications Are Open for ${cohort.name}!</h2>
                         <p>Join our prestigious ambassador program. Applications close on ${deadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (${daysLeft} days left).</p>
                         <div class="cta-buttons">
-                            <a href="#apply" class="btn btn-primary-large" data-modal="application-modal">
+                            <a href="about.html#cohort-section" class="btn btn-primary-large">
                                 <i class="fas fa-paper-plane"></i>
                                 Apply Now
                             </a>
@@ -996,10 +995,9 @@ window.addEventListener('load', function() {
                     `;
                     ctaSection.innerHTML = newHTML;
                 } else {
-                    const nextYear = parseInt(cohort.year) + 1;
                     const newHTML = `
                         <h2>Ready to Become an Ambassador?</h2>
-                        <p>Applications for the ${nextYear} cohort will open soon. Follow us to stay updated!</p>
+                        <p>Applications for ${cohort.name} have closed. Stay tuned for the next cohort!</p>
                         <div class="cta-buttons">
                             <a href="#" class="btn btn-primary-large" data-modal="notification-modal">
                                 <i class="fas fa-bell"></i>
