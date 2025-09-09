@@ -3275,6 +3275,11 @@
                 console.log('API Client available:', !!window.apiClient);
                 console.log('getCohorts method available:', !!window.apiClient?.getCohorts);
                 
+                // Check if auth token exists
+                const authToken = localStorage.getItem('authToken');
+                console.log('Auth token exists:', !!authToken);
+                console.log('Auth token length:', authToken?.length || 0);
+                
                 if (!window.apiClient || !window.apiClient.getCohorts) {
                     throw new Error('API client or getCohorts method not available');
                 }
@@ -3337,9 +3342,19 @@
                 cohortsListElement.innerHTML = cohortsHtml;
             } catch (error) {
                 console.error('Error loading cohorts data:', error);
+                console.error('Error details:', error.message);
+                console.error('Error stack:', error.stack);
+                
                 const cohortsListElement = document.getElementById('cohorts-list');
                 if (cohortsListElement) {
-                    cohortsListElement.innerHTML = '<p>Error loading cohorts data. Please try again.</p>';
+                    cohortsListElement.innerHTML = `
+                        <div style="padding: 2rem; text-align: center; color: #ef4444;">
+                            <h3>Error Loading Cohorts</h3>
+                            <p><strong>Error:</strong> ${error.message}</p>
+                            <p>Check the browser console for more details.</p>
+                            <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 1rem;">Reload Page</button>
+                        </div>
+                    `;
                 }
             }
         }
