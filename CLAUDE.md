@@ -25,6 +25,7 @@ This is a career center web application for EMSI Marrakech, providing students a
 - `server.js` - Express backend with authentication routes and Supabase integration
 - `database/supabase.js` - Supabase database configuration and query handler
 - `database/supabase-schema.sql` - SQL schema for Supabase database setup
+- `database/add-test-data.sql` - Test data for cohort applications
 - `public/main.js` - Frontend JavaScript functionality
 - `public/style.css` - Complete styling system (104KB)
 - `public/style-optimized.css` - Optimized CSS variant (13KB)
@@ -72,10 +73,39 @@ curl -H "Authorization: Bearer TOKEN" http://localhost:3000/api/messages/1
 curl -X PUT -H "Authorization: Bearer TOKEN" -H "Content-Type: application/json" \
   -d '{"status":"read"}' http://localhost:3000/api/messages/1
 curl -X DELETE -H "Authorization: Bearer TOKEN" http://localhost:3000/api/messages/1
+
+# Public endpoints
+curl http://localhost:3000/api/public/ambassadors
+curl http://localhost:3000/api/public/events
+curl http://localhost:3000/api/public/cohorts/active
+curl -X POST http://localhost:3000/api/public/register \
+  -H "Content-Type: application/json" \
+  -d '{"event_id":1,"student_name":"John Doe","student_email":"john@example.com","student_major":"CS","year_of_study":"3rd year"}'
 ```
 
 ### Testing
 No test framework is currently configured. The package.json contains a placeholder test command.
+
+## Database Setup
+
+### Environment Variables Required
+Create a `.env` file based on `.env.example`:
+```bash
+NODE_ENV=development
+PORT=3000
+JWT_SECRET=your-jwt-secret-key-change-in-production
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_KEY=your-supabase-service-key
+```
+
+### Database Schema
+- Run `database/supabase-schema.sql` in Supabase SQL editor to create all tables
+- Tables: `users`, `ambassadors`, `events`, `event_registrations`, `messages`, `cohorts`, `cohort_applications`
+- Row Level Security policies are included in the schema
+
+### Test Data
+- Use `database/add-test-data.sql` to populate cohort applications for testing
 
 ## Key Features
 
@@ -102,6 +132,7 @@ No test framework is currently configured. The package.json contains a placehold
 ### Admin Dashboard Features
 - **Event Registration Management**: Collapsible filter system with event-based filtering
 - **Message Management**: Complete contact message system with unread indicators
+- **Cohort Applications**: Review and manage ambassador program applications
 - **Data Export**: CSV export functionality for event registrations
 - **Event Statistics**: Clickable stats that auto-filter registration data
 - **Interactive UI**: Toggle-based filter controls with smooth animations
@@ -157,6 +188,20 @@ No test framework is currently configured. The package.json contains a placehold
 - **updateUnreadMessagesCount()**: Updates navigation badge with unread count
 - **closeMessageModal()**: Closes message detail modal with proper cleanup
 
+#### Cohort Management
+- **openCohortModal()**: Opens modal for creating/editing cohorts with proper show/hide animations
+- **editCohort()**: Triggers edit modal with cohort data pre-populated
+- **loadCohortData()**: Fetches and populates cohort data in edit form with date formatting
+- **saveCohort()**: Handles both creation and updates of cohorts
+- **deleteCohort()**: Deletes cohort with confirmation
+- **toggleCohortStatus()**: Activates/deactivates cohorts
+
+#### Cohort Application Management
+- **viewApplication()**: Opens detailed application modal with all applicant information
+- **updateApplicationStatus()**: Changes application status (pending/interviewed/accepted/rejected)
+- **saveInterviewNotes()**: Records interview scores and notes
+- **filterApplications()**: Filters by cohort and status
+
 ### UI Components
 
 #### Registration Section
@@ -171,6 +216,12 @@ No test framework is currently configured. The package.json contains a placehold
 - **Unread Status Indicators**: Visual badges and highlighted rows for unread messages
 - **Navigation Badge**: Real-time unread count with pulsing animation
 - **Action Buttons**: View, Mark as Read, Delete with proper confirmation dialogs
+
+#### Applications Section
+- **Application Table**: Displays cohort applications with status indicators
+- **Application Detail Modal**: Complete applicant information including CV and LinkedIn
+- **Status Management**: Update application status with dropdown
+- **Interview Notes**: Record scores and notes for interviewed candidates
 
 ## Contact Form & Message System
 
@@ -217,3 +268,18 @@ Configured for Vercel deployment via `vercel.json`:
 - Serverless function support for Express.js backend
 - Automatic HTTPS and domain management
 - Clean URL routing configuration
+
+## Common Issues & Solutions
+
+### Modal Display Issues
+- **Problem**: Modals not appearing when buttons are clicked
+- **Solution**: Modals require the `show` class to be visible due to CSS opacity animation. Ensure `modal.classList.add('show')` is called after appending to DOM
+
+### Cohort Management
+- **Edit Button**: Uses modal with animation delay for smooth transitions
+- **Date Formatting**: Dates are automatically formatted to YYYY-MM-DD for input fields
+- **ID Handling**: Cohort IDs are properly passed from table rows to edit functions
+
+### Database Connection
+- **Supabase**: Ensure all environment variables are set (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY)
+- **Auth Token**: JWT tokens expire after 1 hour, requiring re-authentication

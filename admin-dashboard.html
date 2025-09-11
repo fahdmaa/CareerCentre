@@ -3316,6 +3316,12 @@
                 const response = await window.apiClient.getCohorts();
                 console.log('Cohorts API response:', response);
                 const cohorts = response.data || [];
+                console.log('Number of cohorts:', cohorts.length);
+                if (cohorts.length > 0) {
+                    console.log('First cohort data:', cohorts[0]);
+                    console.log('First cohort ID:', cohorts[0].id);
+                    console.log('Type of first cohort ID:', typeof cohorts[0].id);
+                }
                 
                 const cohortsListElement = document.getElementById('cohorts-list');
                 if (!cohortsListElement) {
@@ -3354,12 +3360,12 @@
                                     </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-secondary btn-sm" onclick="editCohort(${cohort.id})">
+                                            <button class="btn btn-secondary btn-sm" onclick="editCohort(${cohort.id || 'null'})">
                                                 <i class="fas fa-edit"></i>
                                                 Edit
                                             </button>
                                             <button class="btn ${cohort.status === 'active' ? 'btn-warning' : 'btn-success'} btn-sm" 
-                                                    onclick="toggleCohortStatus(${cohort.id}, '${cohort.status}')" 
+                                                    onclick="toggleCohortStatus(${cohort.id || 'null'}, '${cohort.status}')" 
                                                     title="${cohort.status === 'active' ? 'Deactivate' : 'Activate'} cohort">
                                                 <i class="fas fa-${cohort.status === 'active' ? 'pause' : 'play'}"></i>
                                                 ${cohort.status === 'active' ? 'Deactivate' : 'Activate'}
@@ -3553,14 +3559,21 @@
         // Modal and action functions
         function openCohortModal(cohortId = null) {
             console.log('openCohortModal called with cohortId:', cohortId);
+            console.log('Type of cohortId:', typeof cohortId);
             try {
+                // Check if modal already exists and remove it
+                const existingModal = document.getElementById('cohort-modal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+                
                 const modal = document.createElement('div');
                 modal.className = 'modal-overlay';
                 modal.id = 'cohort-modal';
-                modal.style.display = 'flex';
                 
-                const isEdit = cohortId !== null;
+                const isEdit = cohortId !== null && cohortId !== undefined;
                 const modalTitle = isEdit ? 'Edit Cohort' : 'Create New Cohort';
+                console.log('Modal mode - isEdit:', isEdit);
             
                 modal.innerHTML = `
                     <div class="modal-container" style="max-width: 600px;">
@@ -3612,12 +3625,17 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" onclick="closeCohortModal()">Cancel</button>
-                            <button type="button" class="btn btn-primary" onclick="saveCohort(${cohortId})">${isEdit ? 'Update' : 'Create'} Cohort</button>
+                            <button type="button" class="btn btn-primary" onclick="saveCohort(${cohortId ? cohortId : 'null'})">${isEdit ? 'Update' : 'Create'} Cohort</button>
                         </div>
                     </div>
                 `;
                 
                 document.body.appendChild(modal);
+                
+                // Add show class after a brief delay to trigger animation
+                setTimeout(() => {
+                    modal.classList.add('show');
+                }, 10);
                 
                 // If editing, load cohort data
                 if (isEdit) {
@@ -3632,31 +3650,54 @@
         function closeCohortModal() {
             const modal = document.getElementById('cohort-modal');
             if (modal) {
-                modal.remove();
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.remove();
+                }, 300); // Wait for animation to complete
             }
         }
 
         async function loadCohortData(cohortId) {
             try {
+                console.log('Loading cohort data for ID:', cohortId);
                 const response = await fetch(`/api/cohorts/${cohortId}`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                     }
                 });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const result = await response.json();
+                console.log('Cohort data received:', result);
                 const cohort = result.data;
+                
+                if (!cohort) {
+                    throw new Error('No cohort data returned');
+                }
+                
+                // Format dates for input fields (YYYY-MM-DD format)
+                const formatDate = (dateString) => {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    return date.toISOString().split('T')[0];
+                };
                 
                 // Populate form fields
                 document.getElementById('cohort-name').value = cohort.name || '';
                 document.getElementById('cohort-description').value = cohort.description || '';
-                document.getElementById('cohort-start').value = cohort.start_date || '';
-                document.getElementById('cohort-end').value = cohort.end_date || '';
-                document.getElementById('cohort-deadline').value = cohort.application_deadline || '';
+                document.getElementById('cohort-start').value = formatDate(cohort.start_date);
+                document.getElementById('cohort-end').value = formatDate(cohort.end_date);
+                document.getElementById('cohort-deadline').value = formatDate(cohort.application_deadline);
                 document.getElementById('cohort-max').value = cohort.max_participants || 25;
                 document.getElementById('cohort-status').value = cohort.status || 'draft';
+                
+                console.log('Form fields populated successfully');
             } catch (error) {
                 console.error('Error loading cohort data:', error);
-                showError('Error', 'Failed to load cohort data');
+                showError('Error', 'Failed to load cohort data: ' + error.message);
             }
         }
 
@@ -3693,6 +3734,12 @@
 
         function editCohort(id) {
             console.log('editCohort called with id:', id);
+            console.log('Type of id:', typeof id);
+            if (!id && id !== 0) {
+                console.error('Invalid cohort ID:', id);
+                showError('Error', 'Invalid cohort ID');
+                return;
+            }
             openCohortModal(id);
         }
 
