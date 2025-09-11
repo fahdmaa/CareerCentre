@@ -944,8 +944,20 @@ app.get('/api/admin/activities', authenticateToken, async (req, res) => {
 // Cohort endpoints
 app.get('/api/cohorts', authenticateToken, async (req, res) => {
     try {
-        const result = await query('SELECT * FROM cohorts ORDER BY created_at DESC');
-        res.json({ data: result.rows });
+        // Get all cohorts
+        const cohortsResult = await query('SELECT * FROM cohorts ORDER BY created_at DESC');
+        const cohorts = cohortsResult.rows;
+        
+        // Get application counts for each cohort
+        for (let cohort of cohorts) {
+            const countResult = await query(
+                'SELECT COUNT(*) as count FROM cohort_applications WHERE cohort_id = $1',
+                [cohort.id]
+            );
+            cohort.applications_count = parseInt(countResult.rows[0].count) || 0;
+        }
+        
+        res.json({ data: cohorts });
     } catch (error) {
         console.error('Error fetching cohorts:', error);
         res.status(500).json({ message: 'Error fetching cohorts' });
@@ -1036,19 +1048,23 @@ app.get('/api/cohort-applications', authenticateToken, async (req, res) => {
 
 app.get('/api/cohort-applications/:id', authenticateToken, async (req, res) => {
     try {
-        const result = await query(
-            `SELECT ca.*, c.name as cohort_name
-             FROM cohort_applications ca
-             JOIN cohorts c ON ca.cohort_id = c.id
-             WHERE ca.id = $1`,
-            [req.params.id]
-        );
+        // First get the application
+        const appResult = await query('SELECT * FROM cohort_applications WHERE id = $1', [req.params.id]);
         
-        if (result.rows.length === 0) {
+        if (appResult.rows.length === 0) {
             return res.status(404).json({ message: 'Application not found' });
         }
         
-        res.json({ data: result.rows[0] });
+        const application = appResult.rows[0];
+        
+        // Then get the cohort name
+        const cohortResult = await query('SELECT name FROM cohorts WHERE id = $1', [application.cohort_id]);
+        
+        if (cohortResult.rows.length > 0) {
+            application.cohort_name = cohortResult.rows[0].name;
+        }
+        
+        res.json({ data: application });
     } catch (error) {
         console.error('Error fetching cohort application:', error);
         res.status(500).json({ message: 'Error fetching application' });
@@ -1074,6 +1090,37 @@ app.put('/api/cohort-applications/:id', authenticateToken, async (req, res) => {
     } catch (error) {
         console.error('Error updating cohort application:', error);
         res.status(500).json({ message: 'Error updating application' });
+    }
+});
+
+// Delete cohort application
+app.delete('/api/cohort-applications/:id', authenticateToken, async (req, res) => {
+    try {
+        const applicationId = req.params.id;
+        
+        // Check if application exists
+        const checkResult = await query('SELECT * FROM cohort_applications WHERE id = $1', [applicationId]);
+        
+        if (checkResult.rows.length === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Application not found' 
+            });
+        }
+        
+        // Delete the application
+        await query('DELETE FROM cohort_applications WHERE id = $1', [applicationId]);
+        
+        res.json({ 
+            success: true, 
+            message: 'Application deleted successfully' 
+        });
+    } catch (error) {
+        console.error('Error deleting application:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error deleting application' 
+        });
     }
 });
 
@@ -1152,6 +1199,117 @@ app.post('/api/cohort-applications/bulk-promote', authenticateToken, async (req,
     } catch (error) {
         console.error('Error bulk promoting applications:', error);
         res.status(500).json({ message: 'Error bulk promoting applications' });
+    }
+});
+
+// Interview endpoints
+// Get all interviews
+app.get('/api/interviews', authenticateToken, async (req, res) => {
+    try {
+        const result = await query(`
+            SELECT i.*, ca.student_name, ca.student_email, ca.major, c.name as cohort_name
+            FROM interviews i
+            JOIN cohort_applications ca ON i.application_id = ca.id
+            JOIN cohorts c ON ca.cohort_id = c.id
+            ORDER BY i.interview_date DESC, i.interview_time ASC
+        `);
+        
+        res.json({ data: result.rows });
+    } catch (error) {
+        console.error('Error fetching interviews:', error);
+        res.status(500).json({ message: 'Error fetching interviews' });
+    }
+});
+
+// Create new interview
+app.post('/api/interviews', authenticateToken, async (req, res) => {
+    try {
+        const {
+            application_id,
+            interview_date,
+            interview_time,
+            interview_type = 'in-person',
+            location,
+            meeting_link,
+            interviewer_name,
+            interviewer_email,
+            notes
+        } = req.body;
+        
+        if (!application_id || !interview_date || !interview_time) {
+            return res.status(400).json({ message: 'Application ID, interview date, and time are required' });
+        }
+        
+        const result = await query(`
+            INSERT INTO interviews (
+                application_id, interview_date, interview_time, interview_type,
+                location, meeting_link, interviewer_name, interviewer_email, notes
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *
+        `, [application_id, interview_date, interview_time, interview_type, location, meeting_link, interviewer_name, interviewer_email, notes]);
+        
+        // Update application status to 'interviewed' if not already
+        await query(
+            'UPDATE cohort_applications SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 AND status = $3',
+            ['interviewed', application_id, 'pending']
+        );
+        
+        res.status(201).json({ message: 'Interview scheduled successfully', data: result.rows[0] });
+    } catch (error) {
+        console.error('Error creating interview:', error);
+        res.status(500).json({ message: 'Error creating interview' });
+    }
+});
+
+// Update interview
+app.put('/api/interviews/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {
+            interview_date,
+            interview_time,
+            interview_type,
+            location,
+            meeting_link,
+            interviewer_name,
+            interviewer_email,
+            status,
+            notes
+        } = req.body;
+        
+        const result = await query(`
+            UPDATE interviews 
+            SET interview_date = $1, interview_time = $2, interview_type = $3,
+                location = $4, meeting_link = $5, interviewer_name = $6,
+                interviewer_email = $7, status = $8, notes = $9, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $10 RETURNING *
+        `, [interview_date, interview_time, interview_type, location, meeting_link, interviewer_name, interviewer_email, status, notes, id]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Interview not found' });
+        }
+        
+        res.json({ message: 'Interview updated successfully', data: result.rows[0] });
+    } catch (error) {
+        console.error('Error updating interview:', error);
+        res.status(500).json({ message: 'Error updating interview' });
+    }
+});
+
+// Delete interview
+app.delete('/api/interviews/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const result = await query('DELETE FROM interviews WHERE id = $1 RETURNING *', [id]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Interview not found' });
+        }
+        
+        res.json({ message: 'Interview deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting interview:', error);
+        res.status(500).json({ message: 'Error deleting interview' });
     }
 });
 
@@ -1234,6 +1392,93 @@ app.post('/api/public/cohort-applications', async (req, res) => {
         });
     } catch (error) {
         console.error('Error submitting cohort application:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error submitting application' 
+        });
+    }
+});
+
+// Alias endpoint for applications (forwards to cohort-applications)
+app.post('/api/public/applications', async (req, res) => {
+    try {
+        // Get active cohort first
+        const activeCohortResult = await query('SELECT * FROM cohorts WHERE status = $1 ORDER BY created_at DESC LIMIT 1', ['active']);
+        
+        if (activeCohortResult.rows.length === 0) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'No active cohort available for applications' 
+            });
+        }
+        
+        const activeCohort = activeCohortResult.rows[0];
+        
+        // Map form fields to database fields
+        const { name, email, major, year, linkedin, motivation, experience } = req.body;
+        
+        // Prepare data for the cohort-applications endpoint
+        const applicationData = {
+            cohort_id: activeCohort.id,
+            student_name: name,
+            student_email: email,
+            student_phone: '', // Form doesn't have phone field
+            major: major,
+            year: year,
+            motivation: motivation,
+            cv_url: '', // Form doesn't have CV upload
+            linkedin: linkedin
+        };
+        
+        // Validate required fields
+        if (!applicationData.student_name || !applicationData.student_email || !applicationData.major || !applicationData.year || !applicationData.motivation) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'All required fields must be filled' 
+            });
+        }
+        
+        // Check application deadline
+        const now = new Date();
+        const deadline = new Date(activeCohort.application_deadline);
+        
+        if (now > deadline) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Application deadline has passed' 
+            });
+        }
+        
+        // Normalize email to lowercase for consistent comparison
+        const normalizedEmail = applicationData.student_email.toLowerCase().trim();
+        
+        // Check if already applied to this cohort
+        const existing = await query(
+            'SELECT id FROM cohort_applications WHERE cohort_id = $1 AND student_email = $2',
+            [applicationData.cohort_id, normalizedEmail]
+        );
+        
+        if (existing.rows.length > 0) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'You have already applied to this cohort' 
+            });
+        }
+        
+        // Create application
+        const result = await query(
+            `INSERT INTO cohort_applications (cohort_id, student_name, student_email, student_phone, major, year, motivation, cv_url, linkedin) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+            [applicationData.cohort_id, applicationData.student_name, normalizedEmail, applicationData.student_phone, applicationData.major, applicationData.year, applicationData.motivation, applicationData.cv_url, applicationData.linkedin]
+        );
+        
+        res.json({ 
+            success: true,
+            message: 'Application submitted successfully!',
+            data: result.rows[0]
+        });
+    } catch (error) {
+        console.error('Error submitting application:', error);
         res.status(500).json({ 
             success: false,
             message: 'Error submitting application' 

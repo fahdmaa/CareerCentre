@@ -103,6 +103,23 @@ CREATE TABLE IF NOT EXISTS cohort_applications (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 8. Interviews table (for scheduled interviews)
+CREATE TABLE IF NOT EXISTS interviews (
+    id SERIAL PRIMARY KEY,
+    application_id INTEGER REFERENCES cohort_applications(id) ON DELETE CASCADE,
+    interview_date DATE NOT NULL,
+    interview_time TIME NOT NULL,
+    interview_type VARCHAR(50) DEFAULT 'in-person', -- 'in-person', 'video', 'phone'
+    location VARCHAR(200),
+    meeting_link VARCHAR(500), -- For video interviews
+    interviewer_name VARCHAR(100),
+    interviewer_email VARCHAR(100),
+    status VARCHAR(20) DEFAULT 'scheduled', -- 'scheduled', 'completed', 'cancelled', 'no-show'
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_ambassadors_status ON ambassadors(status);
 CREATE INDEX IF NOT EXISTS idx_events_status ON events(status);
@@ -116,6 +133,9 @@ CREATE INDEX IF NOT EXISTS idx_cohorts_application_deadline ON cohorts(applicati
 CREATE INDEX IF NOT EXISTS idx_cohort_applications_cohort_id ON cohort_applications(cohort_id);
 CREATE INDEX IF NOT EXISTS idx_cohort_applications_status ON cohort_applications(status);
 CREATE INDEX IF NOT EXISTS idx_cohort_applications_email ON cohort_applications(student_email);
+CREATE INDEX IF NOT EXISTS idx_interviews_application_id ON interviews(application_id);
+CREATE INDEX IF NOT EXISTS idx_interviews_date ON interviews(interview_date);
+CREATE INDEX IF NOT EXISTS idx_interviews_status ON interviews(status);
 
 -- Insert default admin user
 -- Password is 'admin123' hashed with bcrypt (you should change this in production)
