@@ -21,22 +21,22 @@
   "description": "EMSI Marrakech Career Center - Connecting students and alumni with career opportunities",
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
-    "bcryptjs": "^2.4.3",
-    "js-cookie": "^3.0.5",
-    "jsonwebtoken": "^9.0.2",
-    "next": "^14.2.32",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.1.0",
+    "bcryptjs": "^2.4.3",
+    "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
+    "next": "^14.2.32",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "typescript": "^5"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0"
   },
   "engines": {
     "node": ">=18.0.0"
