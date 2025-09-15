@@ -12,14 +12,38 @@ export default function AdminDashboardPage() {
   const [registrations, setRegistrations] = useState([])
   const [applications, setApplications] = useState([])
   const [cohorts, setCohorts] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetchData()
+    checkAuth()
   }, [])
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/messages')
+      if (response.status === 401) {
+        router.push('/admin/login')
+        return
+      }
+      if (response.ok) {
+        const data = await response.json()
+        setMessages(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch data:', error)
+      router.push('/admin/login')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const fetchData = async () => {
     try {
       const messagesRes = await fetch('/api/messages')
+      if (messagesRes.status === 401) {
+        router.push('/admin/login')
+        return
+      }
       if (messagesRes.ok) {
         const data = await messagesRes.json()
         setMessages(data)
@@ -59,6 +83,15 @@ export default function AdminDashboardPage() {
   }
 
   const unreadCount = messages.filter((m: any) => m.status === 'unread').length
+
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <i className="fas fa-spinner fa-spin"></i>
+        <p>Loading dashboard...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="admin-dashboard">
