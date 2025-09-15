@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Navigation from '../components/Navigation'
 import ClientLayout from '../components/ClientLayout'
-import StatCard from '../components/StatCard'
+import KPICard from '../components/KPICard'
 import { useEffect } from 'react'
 import './modern-home.css'
 
@@ -84,27 +84,57 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section with Animated KPIs */}
-      <section className="stats-section-animated">
-        <div className="stats-container">
-          <div className="stats-grid-animated">
-            <StatCard
+      <section className="kpi-section">
+        <div className="kpi-container">
+          <div className="kpi-grid">
+            <KPICard
               value={80}
               title="Employability Rate"
-              caption="Within 6 months of graduation"
+              description="Within 6 months of graduation"
               suffix="%"
             />
-            <StatCard
+            <KPICard
               value={2000}
               title="Students Mentored"
-              caption="Career guidance provided"
+              description="Career guidance provided"
             />
-            <StatCard
+            <KPICard
               value={200}
               title="Partners in Morocco"
-              caption="Leading companies"
+              description="Leading companies"
             />
           </div>
         </div>
+        
+        <style jsx>{`
+          .kpi-section {
+            padding: 5rem 1rem;
+            background: #f9fafb;
+            position: relative;
+          }
+          
+          .kpi-container {
+            max-width: 1200px;
+            margin: 0 auto;
+          }
+          
+          .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+          }
+          
+          @media (max-width: 768px) {
+            .kpi-section {
+              padding: 3rem 1rem;
+            }
+            
+            .kpi-grid {
+              grid-template-columns: 1fr;
+              gap: 1.5rem;
+            }
+          }
+        `}</style>
       </section>
 
       {/* Services Section */}
