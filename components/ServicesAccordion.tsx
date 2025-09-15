@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 
 interface ServiceItem {
@@ -81,6 +81,7 @@ export default function ServicesAccordion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
   const modalRef = useRef<HTMLDivElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -98,20 +99,50 @@ export default function ServicesAccordion() {
     if (selectedService) {
       // Store current focus
       previousFocusRef.current = document.activeElement as HTMLElement
-      // Focus modal
-      modalRef.current?.focus()
+      
+      // Hide navigation elements
+      document.body.setAttribute('data-modal-open', 'true')
+      const nav = document.querySelector('.navigation-wrapper')
+      const header = document.querySelector('header')
+      if (nav) {
+        nav.setAttribute('aria-hidden', 'true')
+        nav.setAttribute('inert', '')
+        ;(nav as HTMLElement).style.opacity = '0'
+        ;(nav as HTMLElement).style.pointerEvents = 'none'
+      }
+      if (header) {
+        header.setAttribute('aria-hidden', 'true')
+        header.setAttribute('inert', '')
+      }
+      
       // Prevent body scroll
       document.body.style.overflow = 'hidden'
+      
+      // Focus close button for better accessibility
+      setTimeout(() => closeButtonRef.current?.focus(), 100)
     } else {
-      // Restore body scroll
+      // Restore everything
+      document.body.removeAttribute('data-modal-open')
+      const nav = document.querySelector('.navigation-wrapper')
+      const header = document.querySelector('header')
+      if (nav) {
+        nav.removeAttribute('aria-hidden')
+        nav.removeAttribute('inert')
+        ;(nav as HTMLElement).style.opacity = ''
+        ;(nav as HTMLElement).style.pointerEvents = ''
+      }
+      if (header) {
+        header.removeAttribute('aria-hidden')
+        header.removeAttribute('inert')
+      }
+      
       document.body.style.overflow = ''
-      // Restore focus
       previousFocusRef.current?.focus()
     }
 
-    // Cleanup on unmount
     return () => {
       document.body.style.overflow = ''
+      document.body.removeAttribute('data-modal-open')
     }
   }, [selectedService])
 
@@ -130,9 +161,32 @@ export default function ServicesAccordion() {
     setSelectedService(service)
   }
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setSelectedService(null)
-  }
+  }, [])
+
+  // Focus trap handler
+  const handleTabKey = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== 'Tab' || !modalRef.current) return
+    
+    const focusableElements = modalRef.current.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    const firstElement = focusableElements[0] as HTMLElement
+    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+    
+    if (e.shiftKey) {
+      if (document.activeElement === firstElement) {
+        e.preventDefault()
+        lastElement.focus()
+      }
+    } else {
+      if (document.activeElement === lastElement) {
+        e.preventDefault()
+        firstElement.focus()
+      }
+    }
+  }, [])
 
   const getIcon = (service: ServiceItem) => {
     switch (service.id) {
@@ -200,62 +254,60 @@ export default function ServicesAccordion() {
         </div>
       </section>
 
-      {/* Modal Popup */}
+      {/* Futuristic Modal Popup */}
       {selectedService && (
         <div className="modal-backdrop" onClick={handleClose}>
           <div 
-            className="modal-content"
+            className="modal-container"
             ref={modalRef}
             tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-labelledby={`modal-title-${selectedService.id}`}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={handleTabKey}
           >
-            <button
-              className="modal-close"
-              onClick={handleClose}
-              aria-label="Close modal"
-            >
-              <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            
-            <div className="modal-header">
-              <div className={`modal-icon icon-${selectedService.iconColor}`}>
-                {getIcon(selectedService)}
-              </div>
-              <h2 id={`modal-title-${selectedService.id}`} className="modal-title">
+            {/* Green Header Bar */}
+            <div className="modal-header-green">
+              <h2 id={`modal-title-${selectedService.id}`} className="modal-title-centered">
                 {selectedService.title}
               </h2>
+              <button
+                ref={closeButtonRef}
+                className="modal-close-btn"
+                onClick={handleClose}
+                aria-label="Close modal"
+              >
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
             
-            <div className="modal-body">
-              <ul className="modal-bullets">
+            {/* Scrollable Body */}
+            <div className="modal-body-futuristic">
+              <ul className="modal-bullets-clean">
                 {selectedService.expandedBullets.map((bullet, index) => (
-                  <li key={index} className="modal-bullet">
-                    <span className="bullet-marker">•</span>
-                    <span className="bullet-text">{bullet}</span>
+                  <li key={index} className="modal-bullet-item">
+                    <span className="bullet-icon">▸</span>
+                    <span className="bullet-content">{bullet}</span>
                   </li>
                 ))}
               </ul>
             </div>
             
-            <div className="modal-footer">
+            {/* Sticky Footer with Buttons */}
+            <div className="modal-footer-sticky">
               <Link 
                 href={selectedService.primaryCTA.href} 
-                className="btn-primary-modal"
+                className="btn-modal-primary"
                 onClick={handleClose}
               >
                 {selectedService.primaryCTA.text}
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
               </Link>
               <Link 
                 href={selectedService.secondaryCTA.href} 
-                className="btn-secondary-modal"
+                className="btn-modal-secondary"
                 onClick={handleClose}
               >
                 {selectedService.secondaryCTA.text}
@@ -371,155 +423,186 @@ export default function ServicesAccordion() {
           margin-top: auto;
         }
         
-        /* Modal Styles */
+        /* Futuristic Modal Styles */
         .modal-backdrop {
           position: fixed;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(0, 0, 0, 0.5);
+          background: rgba(0, 0, 0, 0.7);
+          backdrop-filter: blur(8px);
           display: flex;
           align-items: center;
           justify-content: center;
-          z-index: 1000;
+          z-index: 9999;
           padding: 1rem;
-          animation: ${prefersReducedMotion ? 'none' : 'fadeIn 200ms ease'};
+          animation: ${prefersReducedMotion ? 'none' : 'fadeIn 150ms ease'};
         }
         
-        .modal-content {
-          background: white;
-          border-radius: 1rem;
-          max-width: 600px;
+        .modal-container {
+          background: rgba(255, 255, 255, 0.98);
+          border-radius: 1.5rem;
+          max-width: 640px;
           width: 100%;
-          max-height: 90vh;
-          overflow-y: auto;
+          max-height: 85vh;
+          display: flex;
+          flex-direction: column;
           position: relative;
-          animation: ${prefersReducedMotion ? 'none' : 'slideUp 300ms ease'};
+          box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3),
+                      0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+          animation: ${prefersReducedMotion ? 'none' : 'scaleIn 180ms cubic-bezier(0.4, 0, 0.2, 1)'};
+          overflow: hidden;
         }
         
-        .modal-close {
+        /* Green Header Bar */
+        .modal-header-green {
+          background: linear-gradient(135deg, #00A651 0%, #007A3C 100%);
+          height: 72px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          flex-shrink: 0;
+          box-shadow: 0 2px 10px rgba(0, 166, 81, 0.2);
+        }
+        
+        .modal-title-centered {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: white;
+          margin: 0;
+          text-align: center;
+          letter-spacing: -0.02em;
+        }
+        
+        .modal-close-btn {
           position: absolute;
-          top: 1rem;
-          right: 1rem;
-          background: transparent;
+          top: 50%;
+          right: 1.5rem;
+          transform: translateY(-50%);
+          background: rgba(255, 255, 255, 0.2);
           border: none;
           cursor: pointer;
           padding: 0.5rem;
           border-radius: 0.5rem;
-          color: #6b7280;
+          color: white;
           transition: all 0.2s ease;
-          z-index: 10;
-        }
-        
-        .modal-close:hover {
-          background: #f3f4f6;
-          color: #111827;
-        }
-        
-        .modal-close:focus {
-          outline: 2px solid #004A99;
-          outline-offset: 2px;
-        }
-        
-        .modal-header {
-          padding: 2rem 2rem 1rem;
-          border-bottom: 1px solid #E5E7EB;
-        }
-        
-        .modal-icon {
-          width: 3.5rem;
-          height: 3.5rem;
-          border-radius: 0.75rem;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-bottom: 1rem;
         }
         
-        .modal-title {
-          font-size: 1.75rem;
-          font-weight: bold;
-          color: #111827;
-          margin: 0;
+        .modal-close-btn:hover {
+          background: rgba(255, 255, 255, 0.3);
         }
         
-        .modal-body {
+        .modal-close-btn:focus {
+          outline: 2px solid rgba(255, 255, 255, 0.5);
+          outline-offset: 2px;
+        }
+        
+        /* Scrollable Body */
+        .modal-body-futuristic {
+          flex: 1;
+          overflow-y: auto;
           padding: 2rem;
+          padding-bottom: 1rem;
         }
         
-        .modal-bullets {
+        .modal-bullets-clean {
           list-style: none;
           padding: 0;
           margin: 0;
         }
         
-        .modal-bullet {
+        .modal-bullet-item {
           display: flex;
           align-items: flex-start;
-          margin-bottom: 1rem;
+          margin-bottom: 1.25rem;
+          opacity: 0;
+          animation: ${prefersReducedMotion ? 'none' : 'slideInLeft 300ms ease forwards'};
+          animation-delay: calc(var(--index) * 50ms);
         }
         
-        .modal-bullet:last-child {
-          margin-bottom: 0;
-        }
+        .modal-bullet-item:nth-child(1) { --index: 0; }
+        .modal-bullet-item:nth-child(2) { --index: 1; }
+        .modal-bullet-item:nth-child(3) { --index: 2; }
+        .modal-bullet-item:nth-child(4) { --index: 3; }
+        .modal-bullet-item:nth-child(5) { --index: 4; }
         
-        .bullet-marker {
+        .bullet-icon {
           color: #00A651;
-          font-weight: bold;
           margin-right: 0.75rem;
           flex-shrink: 0;
-          font-size: 1.25rem;
+          font-size: 1rem;
+          margin-top: 0.125rem;
         }
         
-        .bullet-text {
+        .bullet-content {
           color: #374151;
-          font-size: 1rem;
+          font-size: 0.95rem;
           line-height: 1.6;
         }
         
-        .modal-footer {
-          padding: 1.5rem 2rem 2rem;
-          border-top: 1px solid #E5E7EB;
+        /* Sticky Footer */
+        .modal-footer-sticky {
+          padding: 1.5rem;
+          border-top: 1px solid rgba(0, 166, 81, 0.1);
+          background: rgba(249, 250, 251, 0.5);
+          backdrop-filter: blur(10px);
           display: flex;
-          flex-direction: column;
           gap: 0.75rem;
+          flex-shrink: 0;
         }
         
-        .btn-primary-modal,
-        .btn-secondary-modal {
+        .btn-modal-primary,
+        .btn-modal-secondary {
+          flex: 1;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
-          padding: 0.75rem 1.5rem;
-          font-size: 1rem;
+          padding: 0.875rem 1.5rem;
+          font-size: 0.95rem;
           font-weight: 600;
-          border-radius: 9999px;
+          border-radius: 0.75rem;
           text-decoration: none;
-          transition: all 0.2s ease;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .btn-primary-modal {
-          background: linear-gradient(135deg, #004A99, #003570);
+        .btn-modal-primary {
+          background: linear-gradient(135deg, #00A651 0%, #007A3C 100%);
           color: white;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          border: none;
+          box-shadow: 0 4px 14px rgba(0, 166, 81, 0.3);
         }
         
-        .btn-primary-modal:hover {
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-          transform: translateY(-1px);
+        .btn-modal-primary:hover {
+          box-shadow: 0 6px 20px rgba(0, 166, 81, 0.4);
+          transform: translateY(-2px);
         }
         
-        .btn-secondary-modal {
+        .btn-modal-primary:focus {
+          outline: 2px solid #00A651;
+          outline-offset: 2px;
+        }
+        
+        .btn-modal-secondary {
           background: transparent;
-          color: #004A99;
-          border: 2px solid #E5E7EB;
+          color: #00A651;
+          border: 2px solid #00A651;
         }
         
-        .btn-secondary-modal:hover {
-          border-color: #004A99;
-          background: #f9fafb;
+        .btn-modal-secondary:hover {
+          background: rgba(0, 166, 81, 0.05);
+          border-color: #007A3C;
+          color: #007A3C;
+        }
+        
+        .btn-modal-secondary:focus {
+          outline: 2px solid #00A651;
+          outline-offset: 2px;
         }
         
         @keyframes fadeIn {
@@ -531,15 +614,32 @@ export default function ServicesAccordion() {
           }
         }
         
-        @keyframes slideUp {
+        @keyframes scaleIn {
           from {
-            transform: translateY(20px);
+            transform: scale(0.98);
             opacity: 0;
           }
           to {
-            transform: translateY(0);
+            transform: scale(1);
             opacity: 1;
           }
+        }
+        
+        @keyframes slideInLeft {
+          from {
+            transform: translateX(-10px);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        
+        /* Hide navigation when modal is open */
+        body[data-modal-open="true"] .navigation-wrapper {
+          opacity: 0 !important;
+          pointer-events: none !important;
         }
         
         /* Responsive */
@@ -548,8 +648,14 @@ export default function ServicesAccordion() {
             grid-template-columns: repeat(2, 1fr);
           }
           
-          .modal-footer {
+          .modal-footer-sticky {
             flex-direction: row;
+          }
+          
+          .btn-modal-primary,
+          .btn-modal-secondary {
+            flex: 0 1 auto;
+            min-width: 140px;
           }
         }
         
@@ -558,8 +664,21 @@ export default function ServicesAccordion() {
             font-size: 2.5rem;
           }
           
-          .modal-content {
-            max-width: 700px;
+          .modal-container {
+            max-width: 720px;
+            margin: 2rem;
+          }
+          
+          .modal-header-green {
+            height: 80px;
+          }
+          
+          .modal-title-centered {
+            font-size: 1.75rem;
+          }
+          
+          .modal-body-futuristic {
+            padding: 2.5rem;
           }
         }
         
@@ -570,6 +689,23 @@ export default function ServicesAccordion() {
           
           .cards-grid {
             grid-template-columns: repeat(4, 1fr);
+          }
+          
+          .modal-container {
+            max-width: 800px;
+          }
+        }
+        
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+          .modal-backdrop,
+          .modal-container,
+          .modal-bullet-item {
+            animation: none !important;
+          }
+          
+          .modal-bullet-item {
+            opacity: 1 !important;
           }
         }
       `}</style>
