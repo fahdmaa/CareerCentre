@@ -136,6 +136,16 @@
   transform: scale(1.05);
 }
 
+/* White variant for CTA section */
+.cta-section-final .btn-primary-hero {
+  background: white;
+  color: #004A99;
+}
+
+.cta-section-final .btn-primary-hero:hover {
+  background: #f9fafb;
+}
+
 .btn-secondary-hero {
   background: white;
   color: #004A99;
@@ -396,7 +406,7 @@
 
 /* Partners Section */
 .partners-section {
-  padding: 4rem 1rem 6rem;
+  padding: 4rem 1rem;
   background: #f9fafb;
 }
 

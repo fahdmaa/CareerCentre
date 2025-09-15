@@ -259,260 +259,218 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonial Section */}
-      <section className="testimonial-section">
-        <div className="testimonial-container">
-          <div className="testimonial-card">
-            <svg className="quote-icon" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-            </svg>
-            <div className="testimonial-content">
-              <p className="testimonial-text">
-                &ldquo;Thanks to EMSI Career Center, I landed my first job at Capgemini within 3 months of graduating. The personalized guidance and networking opportunities were invaluable in shaping my career path.&rdquo;
-              </p>
-              <div className="testimonial-author">
-                <div className="author-avatar">FZ</div>
-                <div className="author-info">
-                  <p className="author-name">Fatima Z.</p>
-                  <p className="author-role">Alumni 2024, Software Engineer</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA Section - Minimal Layout */}
-      <section className="cta-section-minimal">
-        <div className="cta-container-minimal">
-          <div className="cta-grid-minimal">
+      {/* Final CTA Section - Clean and Aligned */}
+      <section className="cta-section-final">
+        <div className="cta-container-final">
+          <div className="cta-grid-final">
             {/* Text Content */}
-            <div className="cta-content-minimal">
-              <h2 className="cta-title-minimal">Ready to launch your career?</h2>
-              <p className="cta-text-minimal">
+            <div className="cta-content-final">
+              <h2 className="cta-title-final">Ready to launch your career?</h2>
+              <p className="cta-text-final">
                 Join thousands of EMSI students and alumni who have found their dream jobs through our career services.
               </p>
-              <div className="cta-buttons-minimal">
-                <Link href="/jobs" className="btn-cta-primary">
+              <div className="cta-buttons-final">
+                <Link href="/jobs" className="btn-primary-hero">
                   <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <span>Browse Jobs</span>
+                  <span>Browse jobs</span>
                 </Link>
-                <Link href="/about" className="btn-cta-secondary">
+                <Link href="/about" className="btn-secondary-hero" style={{ background: 'transparent', color: 'white', border: '2px solid white' }}>
                   <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <span>Contact Us</span>
+                  <span>Contact us</span>
                 </Link>
               </div>
             </div>
             
-            {/* Person Image - Smaller and Minimal */}
-            <div className="cta-image-minimal">
+            {/* Person Image - Bigger and Top Aligned */}
+            <div className="cta-image-final">
               <Image 
                 src="/images/person main page.png" 
                 alt="EMSI student in a high-visibility vest looking upward"
-                width={480}
-                height={640}
-                sizes="(max-width: 767px) 200px, (max-width: 1023px) 280px, (max-width: 1279px) 340px, (max-width: 1535px) 420px, 480px"
-                className="person-image-minimal"
+                width={520}
+                height={700}
+                sizes="(max-width: 767px) 280px, (max-width: 1023px) 360px, (max-width: 1279px) 420px, (max-width: 1535px) 480px, 520px"
+                className="person-image-final"
                 quality={85}
+                priority={false}
               />
             </div>
           </div>
         </div>
         
         <style jsx>{`
-          /* Minimal CTA Section */
-          .cta-section-minimal {
+          /* Final CTA Section - Clean and Aligned */
+          .cta-section-final {
             background: linear-gradient(135deg, #00A651, #007A3C);
-            padding: 3rem 1rem;
+            padding: 4rem 1rem;
             position: relative;
             overflow: hidden;
           }
           
-          .cta-container-minimal {
+          .cta-container-final {
             max-width: 1280px;
             margin: 0 auto;
             padding: 0 1rem;
           }
           
-          .cta-grid-minimal {
+          .cta-grid-final {
             display: grid;
             grid-template-columns: 1fr;
             gap: 2rem;
-            align-items: center;
+            align-items: flex-start;
           }
           
-          .cta-content-minimal {
+          .cta-content-final {
             text-align: center;
+            padding-top: 1rem;
           }
           
-          .cta-title-minimal {
-            font-size: 2rem;
+          .cta-title-final {
+            font-size: 2.5rem;
             font-weight: bold;
             color: white;
             margin-bottom: 1rem;
-            line-height: 1.2;
+            line-height: 1.1;
           }
           
-          .cta-text-minimal {
+          .cta-text-final {
             font-size: 1.125rem;
-            color: rgba(255, 255, 255, 0.95);
+            color: rgba(255, 255, 255, 0.9);
             line-height: 1.6;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             max-width: 55ch;
             margin-left: auto;
             margin-right: auto;
           }
           
-          .cta-buttons-minimal {
+          .cta-buttons-final {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
             align-items: center;
           }
           
-          .btn-cta-primary,
-          .btn-cta-secondary {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.875rem 1.75rem;
-            font-weight: 600;
-            border-radius: 9999px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            font-size: 1rem;
+          .cta-buttons-final .btn-secondary-hero:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
           }
           
-          .btn-cta-primary {
-            background: white;
-            color: #00A651;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          /* Mobile: Show smaller image below content */
+          .cta-image-final {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
           }
           
-          .btn-cta-primary:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transform: translateY(-1px);
-          }
-          
-          .btn-cta-secondary {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-          }
-          
-          .btn-cta-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-1px);
-          }
-          
-          /* Mobile: Hide image or show small */
-          .cta-image-minimal {
-            display: none;
+          .cta-image-final :global(.person-image-final) {
+            width: auto;
+            height: auto;
+            max-width: 280px;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
           }
           
           @media (min-width: 640px) {
-            .cta-section-minimal {
-              padding: 3rem 1.5rem;
+            .cta-section-final {
+              padding: 4rem 1.5rem;
             }
             
-            .cta-buttons-minimal {
+            .cta-buttons-final {
               flex-direction: row;
               justify-content: center;
             }
             
-            /* Show small image on mobile */
-            .cta-image-minimal {
-              display: block;
-              text-align: center;
-              margin-top: 2rem;
-            }
-            
-            .cta-image-minimal :global(.person-image-minimal) {
-              width: auto;
-              height: auto;
-              max-width: 200px;
-              object-fit: contain;
+            .cta-title-final {
+              font-size: 3rem;
             }
           }
           
-          /* Tablet and above: Two-column layout */
+          /* Tablet and above: Two-column layout with top alignment */
           @media (min-width: 768px) {
-            .cta-section-minimal {
-              padding: 4rem 2rem;
+            .cta-section-final {
+              padding: 5rem 2rem;
             }
             
-            .cta-grid-minimal {
-              grid-template-columns: 1fr auto;
+            .cta-grid-final {
+              grid-template-columns: 1.2fr 1fr;
               gap: 3rem;
-              align-items: flex-end;
+              align-items: flex-start; /* Top align both columns */
             }
             
-            .cta-content-minimal {
+            .cta-content-final {
               text-align: left;
+              padding-top: 0;
             }
             
-            .cta-title-minimal {
-              font-size: 2.25rem;
+            .cta-title-final {
+              font-size: 3rem;
+              margin-bottom: 1.25rem;
             }
             
-            .cta-buttons-minimal {
+            .cta-text-final {
+              font-size: 1.2rem;
+              margin-left: 0;
+              margin-right: 0;
+              margin-bottom: 2.5rem;
+            }
+            
+            .cta-buttons-final {
               justify-content: flex-start;
             }
             
-            .cta-text-minimal {
-              margin-left: 0;
-              margin-right: 0;
-            }
-            
-            .cta-image-minimal {
+            .cta-image-final {
               margin-top: 0;
-              position: relative;
-              bottom: 0;
-              right: 0;
+              text-align: right;
             }
             
-            .cta-image-minimal :global(.person-image-minimal) {
-              max-width: 280px;
-              filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            .cta-image-final :global(.person-image-final) {
+              max-width: 360px;
             }
           }
           
           @media (min-width: 1024px) {
-            .cta-section-minimal {
-              padding: 4rem 2rem;
+            .cta-section-final {
+              padding: 5rem 2rem;
             }
             
-            .cta-title-minimal {
-              font-size: 2.5rem;
+            .cta-title-final {
+              font-size: 3.5rem;
             }
             
-            .cta-text-minimal {
+            .cta-text-final {
               font-size: 1.25rem;
             }
             
-            .cta-image-minimal :global(.person-image-minimal) {
-              max-width: 340px;
-            }
-          }
-          
-          @media (min-width: 1280px) {
-            .cta-title-minimal {
-              font-size: 2.75rem;
-            }
-            
-            .cta-image-minimal :global(.person-image-minimal) {
+            .cta-image-final :global(.person-image-final) {
               max-width: 420px;
             }
           }
           
-          @media (min-width: 1536px) {
-            .cta-image-minimal :global(.person-image-minimal) {
+          @media (min-width: 1280px) {
+            .cta-section-final {
+              padding: 6rem 2rem;
+            }
+            
+            .cta-title-final {
+              font-size: 4rem;
+              margin-bottom: 1.5rem;
+            }
+            
+            .cta-text-final {
+              font-size: 1.375rem;
+              margin-bottom: 3rem;
+            }
+            
+            .cta-image-final :global(.person-image-final) {
               max-width: 480px;
+            }
+          }
+          
+          @media (min-width: 1536px) {
+            .cta-image-final :global(.person-image-final) {
+              max-width: 520px;
             }
           }
         `}</style>
