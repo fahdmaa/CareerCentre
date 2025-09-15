@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 
 export async function GET() {
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({ error: 'Database not configured' }, { status: 503 })
+  }
+
   const { data, error } = await supabase
     .from('cohorts')
     .select('*')
@@ -18,6 +22,10 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 503 })
+    }
+
     const { data, error } = await supabase
       .from('cohort_applications')
       .insert(body)

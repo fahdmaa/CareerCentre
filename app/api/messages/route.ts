@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase, supabaseAdmin } from '@/lib/supabase'
+import { supabase, supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase'
 import { verifyJWT } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
@@ -7,6 +7,10 @@ export async function GET(request: NextRequest) {
   
   if (!token || !verifyJWT(token)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({ error: 'Database not configured' }, { status: 503 })
   }
 
   const { data, error } = await supabaseAdmin
@@ -31,6 +35,10 @@ export async function POST(request: NextRequest) {
         { error: 'All fields are required' },
         { status: 400 }
       )
+    }
+
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 503 })
     }
 
     const { data, error } = await supabase

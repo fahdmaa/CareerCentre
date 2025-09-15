@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase'
+import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase'
 import { verifyJWT } from '@/lib/auth'
 
 export async function GET(
@@ -10,6 +10,10 @@ export async function GET(
   
   if (!token || !verifyJWT(token)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({ error: 'Database not configured' }, { status: 503 })
   }
 
   const { data, error } = await supabaseAdmin
@@ -33,6 +37,10 @@ export async function PUT(
   
   if (!token || !verifyJWT(token)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({ error: 'Database not configured' }, { status: 503 })
   }
 
   const body = await request.json()
@@ -60,6 +68,10 @@ export async function DELETE(
   
   if (!token || !verifyJWT(token)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({ error: 'Database not configured' }, { status: 503 })
   }
 
   const { error } = await supabaseAdmin
