@@ -35,32 +35,36 @@ export default function HomePage() {
         </div>
       </header>
 
-      <section className="hero">
-        <div className="hero-content">
-          <h1 className="hero-title">
-            Your Gateway to <br />
-            <span className="text-gradient">Career Success</span>
-          </h1>
-          <p className="hero-description">
-            The EMSI Career Center connects talented students and alumni with exciting opportunities in the professional world. Start your journey today.
-          </p>
-          <div className="hero-buttons">
-            <Link href="/jobs" className="btn btn-primary">
-              <i className="fas fa-search"></i> Explore Jobs
-            </Link>
-            <Link href="/events" className="btn btn-secondary">
-              <i className="fas fa-calendar"></i> View Events
-            </Link>
+      <section className="hero fade-in">
+        <div className="container">
+          <div className="hero-grid">
+            <div className="hero-content slide-right">
+              <h1 className="hero-title">
+                Your Gateway to <br />
+                <span className="text-gradient">Career Success</span>
+              </h1>
+              <p className="hero-description">
+                The EMSI Career Center connects talented students and alumni with exciting opportunities in the professional world. Start your journey today.
+              </p>
+              <div className="hero-buttons">
+                <Link href="/jobs" className="btn btn-primary">
+                  <i className="fas fa-search"></i> Explore Jobs
+                </Link>
+                <Link href="/events" className="btn btn-secondary">
+                  <i className="fas fa-calendar"></i> View Events
+                </Link>
+              </div>
+            </div>
+            <div className="hero-image slide-left">
+              <Image 
+                src="/images/standing-guy.png" 
+                alt="Career Success" 
+                width={600}
+                height={600}
+                priority
+              />
+            </div>
           </div>
-        </div>
-        <div className="hero-image">
-          <Image 
-            src="/images/standing-guy.png" 
-            alt="Career Success" 
-            width={600}
-            height={600}
-            priority
-          />
         </div>
       </section>
 
