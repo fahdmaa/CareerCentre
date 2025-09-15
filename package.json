@@ -1,13 +1,12 @@
 {
   "name": "emsi-career-center",
-  "version": "1.0.0",
-  "main": "server.js",
+  "version": "2.0.0",
+  "private": true,
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "build": "echo 'No build step required'",
-    "init-db": "node database/init-db.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "keywords": [
     "career",
@@ -22,15 +21,24 @@
   "description": "EMSI Marrakech Career Center - Connecting students and alumni with career opportunities",
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
-    "bcrypt": "^5.1.0",
-    "body-parser": "^1.20.2",
-    "dotenv": "^17.2.0",
-    "express": "^4.18.2",
+    "bcryptjs": "^2.4.3",
+    "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^2.0.2",
-    "pg": "^8.16.3"
+    "next": "^14.2.32",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0",
+    "typescript": "^5"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   }
 }

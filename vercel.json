@@ -1,67 +1,7 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/style.css",
-      "dest": "/public/style.css"
-    },
-    {
-      "src": "/main.js",
-      "dest": "/public/main.js"
-    },
-    {
-      "src": "/images/(.*)",
-      "dest": "/public/images/$1"
-    },
-    {
-      "src": "/videos/(.*)",
-      "dest": "/public/videos/$1"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/about(.html)?",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/jobs(.html)?",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/events(.html)?",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/ambassadors(.html)?",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/admin-login(.html)?",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/admin-dashboard(.html)?",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/server.js"
-    }
-  ]
+  "framework": "nextjs",
+  "buildCommand": "next build",
+  "devCommand": "next dev",
+  "installCommand": "npm install",
+  "outputDirectory": ".next"
 }
