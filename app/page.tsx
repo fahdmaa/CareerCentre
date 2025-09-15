@@ -282,24 +282,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="cta-section" style={{ position: 'relative', overflow: 'hidden' }}>
-        <div className="cta-overlay"></div>
-        <div className="cta-container">
-          <div className="cta-grid">
-            <div className="cta-content">
-              <h2 className="cta-title">Ready to launch your career?</h2>
-              <p className="cta-text">
+      {/* Final CTA Section - Minimal Layout */}
+      <section className="cta-section-minimal">
+        <div className="cta-container-minimal">
+          <div className="cta-grid-minimal">
+            {/* Text Content */}
+            <div className="cta-content-minimal">
+              <h2 className="cta-title-minimal">Ready to launch your career?</h2>
+              <p className="cta-text-minimal">
                 Join thousands of EMSI students and alumni who have found their dream jobs through our career services.
               </p>
-              <div className="cta-buttons">
-                <Link href="/jobs" className="btn-cta-white">
+              <div className="cta-buttons-minimal">
+                <Link href="/jobs" className="btn-cta-primary">
                   <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   <span>Browse Jobs</span>
                 </Link>
-                <Link href="/about" className="btn-cta-outline">
+                <Link href="/about" className="btn-cta-secondary">
                   <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
@@ -307,128 +307,212 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
+            
+            {/* Person Image - Smaller and Minimal */}
+            <div className="cta-image-minimal">
+              <Image 
+                src="/images/person main page.png" 
+                alt="EMSI student in a high-visibility vest looking upward"
+                width={480}
+                height={640}
+                sizes="(max-width: 767px) 200px, (max-width: 1023px) 280px, (max-width: 1279px) 340px, (max-width: 1535px) 420px, 480px"
+                className="person-image-minimal"
+                quality={85}
+              />
+            </div>
           </div>
         </div>
         
-        {/* Decorative Person Image */}
-        <div className="cta-person-image">
-          <div className="person-image-halo"></div>
-          <Image 
-            src="/images/person main page.png" 
-            alt=""
-            role="presentation"
-            width={600}
-            height={800}
-            sizes="(max-width: 640px) 240px, (max-width: 768px) 320px, (max-width: 1024px) 420px, (max-width: 1280px) 520px, 600px"
-            className="person-image"
-            priority={false}
-            quality={85}
-          />
-        </div>
-        
         <style jsx>{`
-          .cta-person-image {
-            position: absolute;
-            bottom: 0;
-            right: 2%;
-            z-index: 1;
-            pointer-events: none;
-            animation: slideUp 0.8s ease-out;
+          /* Minimal CTA Section */
+          .cta-section-minimal {
+            background: linear-gradient(135deg, #00A651, #007A3C);
+            padding: 3rem 1rem;
+            position: relative;
+            overflow: hidden;
           }
           
-          .person-image-halo {
-            position: absolute;
-            bottom: -80px;
-            right: -80px;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(0, 166, 81, 0.05) 40%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(60px);
-            z-index: -1;
-            animation: pulse 4s ease-in-out infinite;
+          .cta-container-minimal {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
           }
           
-          .cta-person-image :global(.person-image) {
-            width: auto;
-            height: auto;
-            max-height: 500px;
-            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15));
-            object-fit: contain;
-            object-position: bottom right;
+          .cta-grid-minimal {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: center;
           }
           
-          @keyframes slideUp {
-            from {
-              transform: translateY(60px);
-              opacity: 0;
+          .cta-content-minimal {
+            text-align: center;
+          }
+          
+          .cta-title-minimal {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+          }
+          
+          .cta-text-minimal {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            max-width: 55ch;
+            margin-left: auto;
+            margin-right: auto;
+          }
+          
+          .cta-buttons-minimal {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: center;
+          }
+          
+          .btn-cta-primary,
+          .btn-cta-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+          }
+          
+          .btn-cta-primary {
+            background: white;
+            color: #00A651;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          }
+          
+          .btn-cta-primary:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
+          }
+          
+          .btn-cta-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+          }
+          
+          .btn-cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+          }
+          
+          /* Mobile: Hide image or show small */
+          .cta-image-minimal {
+            display: none;
+          }
+          
+          @media (min-width: 640px) {
+            .cta-section-minimal {
+              padding: 3rem 1.5rem;
             }
-            to {
-              transform: translateY(0);
-              opacity: 1;
+            
+            .cta-buttons-minimal {
+              flex-direction: row;
+              justify-content: center;
+            }
+            
+            /* Show small image on mobile */
+            .cta-image-minimal {
+              display: block;
+              text-align: center;
+              margin-top: 2rem;
+            }
+            
+            .cta-image-minimal :global(.person-image-minimal) {
+              width: auto;
+              height: auto;
+              max-width: 200px;
+              object-fit: contain;
             }
           }
           
-          @keyframes pulse {
-            0%, 100% {
-              transform: scale(1);
-              opacity: 0.8;
+          /* Tablet and above: Two-column layout */
+          @media (min-width: 768px) {
+            .cta-section-minimal {
+              padding: 4rem 2rem;
             }
-            50% {
-              transform: scale(1.1);
-              opacity: 1;
+            
+            .cta-grid-minimal {
+              grid-template-columns: 1fr auto;
+              gap: 3rem;
+              align-items: flex-end;
             }
-          }
-          
-          /* Responsive sizing */
-          @media (max-width: 640px) {
-            .cta-person-image {
-              display: none; /* Hide on very small screens */
+            
+            .cta-content-minimal {
+              text-align: left;
             }
-          }
-          
-          @media (min-width: 640px) and (max-width: 768px) {
-            .cta-person-image {
-              right: 1%;
+            
+            .cta-title-minimal {
+              font-size: 2.25rem;
             }
-            .cta-person-image :global(.person-image) {
-              max-height: 280px;
+            
+            .cta-buttons-minimal {
+              justify-content: flex-start;
             }
-            .person-image-halo {
-              width: 250px;
-              height: 250px;
-              bottom: -40px;
-              right: -40px;
+            
+            .cta-text-minimal {
+              margin-left: 0;
+              margin-right: 0;
             }
-          }
-          
-          @media (min-width: 768px) and (max-width: 1024px) {
-            .cta-person-image :global(.person-image) {
-              max-height: 360px;
+            
+            .cta-image-minimal {
+              margin-top: 0;
+              position: relative;
+              bottom: 0;
+              right: 0;
             }
-            .person-image-halo {
-              width: 300px;
-              height: 300px;
-              bottom: -50px;
-              right: -50px;
+            
+            .cta-image-minimal :global(.person-image-minimal) {
+              max-width: 280px;
+              filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
             }
           }
           
-          @media (min-width: 1024px) and (max-width: 1280px) {
-            .cta-person-image :global(.person-image) {
-              max-height: 440px;
+          @media (min-width: 1024px) {
+            .cta-section-minimal {
+              padding: 4rem 2rem;
             }
-            .person-image-halo {
-              width: 350px;
-              height: 350px;
-              bottom: -60px;
-              right: -60px;
+            
+            .cta-title-minimal {
+              font-size: 2.5rem;
+            }
+            
+            .cta-text-minimal {
+              font-size: 1.25rem;
+            }
+            
+            .cta-image-minimal :global(.person-image-minimal) {
+              max-width: 340px;
             }
           }
           
           @media (min-width: 1280px) {
-            .cta-person-image :global(.person-image) {
-              max-height: 500px;
+            .cta-title-minimal {
+              font-size: 2.75rem;
+            }
+            
+            .cta-image-minimal :global(.person-image-minimal) {
+              max-width: 420px;
+            }
+          }
+          
+          @media (min-width: 1536px) {
+            .cta-image-minimal :global(.person-image-minimal) {
+              max-width: 480px;
             }
           }
         `}</style>

@@ -494,13 +494,12 @@
   color: #6b7280;
 }
 
-/* CTA Section */
+/* CTA Section - DEPRECATED (See inline styles in page.tsx for new minimal layout) */
 .cta-section {
   padding: 4rem 1rem 6rem;
   background: linear-gradient(135deg, #00A651, #007A3C);
   position: relative;
   overflow: hidden;
-  min-height: 400px;
 }
 
 .cta-overlay {
@@ -628,9 +627,8 @@
   .feature-row { flex-direction: row; text-align: left; }
   .feature-content { text-align: left; }
   .cta-grid { grid-template-columns: 1fr 1fr; }
-  .cta-content { text-align: left; max-width: 600px; }
+  .cta-content { text-align: left; }
   .cta-illustration { display: flex; }
-  .cta-section { min-height: 450px; }
 }
 
 @media (min-width: 1024px) {
@@ -639,7 +637,6 @@
   .services-grid { grid-template-columns: repeat(4, 1fr); }
   .help-grid { grid-template-columns: repeat(4, 1fr); }
   .cta-title { font-size: 3rem; }
-  .cta-section { min-height: 500px; padding-right: 25%; }
 }
 
 @media (min-width: 1280px) {
