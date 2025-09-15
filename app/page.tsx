@@ -78,7 +78,7 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-            <div className="hero-image animate-float">
+            <div className="hero-image">
               <Image 
                 src="/images/standing-guy.png" 
                 alt="Career Success" 

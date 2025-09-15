@@ -786,7 +786,7 @@ ul, ol {
     transform: scale(1.02);
 }
 
-/* Subtle background accent behind image */
+/* Subtle background accent behind image - no animation */
 .hero-image::before {
     content: '';
     position: absolute;
@@ -795,12 +795,6 @@ ul, ol {
     background: radial-gradient(circle, rgba(0, 166, 81, 0.1) 0%, transparent 70%);
     border-radius: 50%;
     z-index: -1;
-    animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(2deg); }
 }
 
 /* --- Modern Button Styles --- */
