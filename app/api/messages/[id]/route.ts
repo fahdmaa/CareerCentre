@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase'
-import { verifyJWT } from '@/lib/auth'
+import { supabaseAdmin, isSupabaseConfigured } from '../../../../lib/supabase'
+import { verifyJWT } from '../../../../lib/auth'
 
 export async function GET(
   request: NextRequest,

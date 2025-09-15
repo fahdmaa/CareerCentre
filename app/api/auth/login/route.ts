@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { comparePassword, signJWT } from '@/lib/auth'
+import { comparePassword, signJWT } from '../../../../lib/auth'
 import bcrypt from 'bcryptjs'
 
 const ADMIN_USERNAME = 'admin'

@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import Navigation from '@/components/Navigation'
-import ClientLayout from '@/components/ClientLayout'
+import Navigation from '../../components/Navigation'
+import ClientLayout from '../../components/ClientLayout'
 
 interface Event {
   id: number

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase, supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase'
-import { verifyJWT } from '@/lib/auth'
+import { supabase, supabaseAdmin, isSupabaseConfigured } from '../../../lib/supabase'
+import { verifyJWT } from '../../../lib/auth'
 
 export async function GET(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value
