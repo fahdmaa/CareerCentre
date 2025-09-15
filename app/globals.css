@@ -618,8 +618,8 @@ ul, ol {
         radial-gradient(circle at 80% 80%, rgba(0, 166, 81, 0.05) 0%, transparent 50%),
         radial-gradient(circle at 40% 20%, rgba(0, 74, 153, 0.03) 0%, transparent 50%);
     color: var(--text-color-dark);
-    padding: 5rem 0;
-    min-height: calc(100vh - 120px);
+    padding: 3rem 0 4rem 0;
+    min-height: auto;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -988,16 +988,25 @@ ul, ol {
 }
 
 .kpi-label {
-    font-size: 1rem;
-    color: #6c757d;
-    font-weight: 500;
-    margin: 0;
+    font-size: 1.1rem;
+    color: #495057;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
 }
 
-@media (max-width: 992px) {
+.kpi-description {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Responsive grid: 1 column mobile, 2 tablet, 3 desktop */
+@media (max-width: 576px) {
     .kpi-grid {
         grid-template-columns: 1fr;
         margin-top: -3rem;
+        gap: 1.5rem;
     }
     
     .kpi-card {
@@ -1006,6 +1015,19 @@ ul, ol {
     
     .kpi-value {
         font-size: 2rem;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 991px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        margin-top: -3rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
