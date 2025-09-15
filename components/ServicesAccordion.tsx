@@ -302,6 +302,7 @@ export default function ServicesAccordion() {
                 href={selectedService.primaryCTA.href} 
                 className="btn-modal-primary"
                 onClick={handleClose}
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 {selectedService.primaryCTA.text}
               </Link>
@@ -309,6 +310,7 @@ export default function ServicesAccordion() {
                 href={selectedService.secondaryCTA.href} 
                 className="btn-modal-secondary"
                 onClick={handleClose}
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 {selectedService.secondaryCTA.text}
               </Link>
@@ -562,24 +564,26 @@ export default function ServicesAccordion() {
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
-          padding: 1rem 2rem;
+          padding: 0.875rem 2rem;
           font-size: 1rem;
           font-weight: 600;
           border-radius: 9999px;
           text-decoration: none;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
         }
         
         .btn-modal-primary {
-          background: linear-gradient(135deg, #00A651, #007A3C);
-          color: white;
+          background: #00A651;
+          color: white !important;
           border: none;
-          box-shadow: 0 10px 25px rgba(0, 166, 81, 0.25);
+          box-shadow: 0 4px 14px rgba(0, 166, 81, 0.3);
         }
         
         .btn-modal-primary:hover {
-          box-shadow: 0 15px 35px rgba(0, 166, 81, 0.35);
-          transform: scale(1.05);
+          background: #007A3C;
+          box-shadow: 0 6px 20px rgba(0, 166, 81, 0.4);
+          transform: translateY(-2px);
         }
         
         .btn-modal-primary:focus {
@@ -588,18 +592,18 @@ export default function ServicesAccordion() {
         }
         
         .btn-modal-secondary {
-          background: white;
-          color: #00A651;
-          border: 2px solid #00A651;
-          box-shadow: 0 4px 15px rgba(0, 166, 81, 0.08);
+          background: #00A651;
+          color: white !important;
+          border: 2px solid white;
+          box-shadow: 0 4px 14px rgba(0, 166, 81, 0.2);
+          opacity: 0.9;
         }
         
         .btn-modal-secondary:hover {
-          background: #f9fafb;
-          border-color: #007A3C;
-          color: #007A3C;
-          box-shadow: 0 6px 20px rgba(0, 166, 81, 0.12);
-          transform: scale(1.05);
+          background: #007A3C;
+          opacity: 1;
+          box-shadow: 0 6px 20px rgba(0, 166, 81, 0.3);
+          transform: translateY(-2px);
         }
         
         .btn-modal-secondary:focus {
