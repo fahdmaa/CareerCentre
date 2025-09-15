@@ -77,9 +77,10 @@ const services: ServiceItem[] = [
 ]
 
 export default function ServicesAccordion() {
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [selectedService, setSelectedService] = useState<ServiceItem | null>(null)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
-  const panelRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
+  const modalRef = useRef<HTMLDivElement>(null)
+  const previousFocusRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -93,8 +94,44 @@ export default function ServicesAccordion() {
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
 
-  const handleToggle = (id: string) => {
-    setExpandedId(expandedId === id ? null : id)
+  useEffect(() => {
+    if (selectedService) {
+      // Store current focus
+      previousFocusRef.current = document.activeElement as HTMLElement
+      // Focus modal
+      modalRef.current?.focus()
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden'
+    } else {
+      // Restore body scroll
+      document.body.style.overflow = ''
+      // Restore focus
+      previousFocusRef.current?.focus()
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [selectedService])
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedService) {
+        setSelectedService(null)
+      }
+    }
+
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [selectedService])
+
+  const handleCardClick = (service: ServiceItem) => {
+    setSelectedService(service)
+  }
+
+  const handleClose = () => {
+    setSelectedService(null)
   }
 
   const getIcon = (service: ServiceItem) => {
@@ -129,180 +166,175 @@ export default function ServicesAccordion() {
   }
 
   return (
-    <section className="services-accordion-section">
-      <div className="accordion-container">
-        <div className="accordion-header">
-          <h2 className="accordion-title">Explore our services</h2>
-          <p className="accordion-subtitle">Comprehensive career support tailored for EMSI students and alumni</p>
-        </div>
-        
-        <ul className="accordion-list" role="list">
-          {services.map((service) => {
-            const isExpanded = expandedId === service.id
-            const buttonId = `accordion-button-${service.id}`
-            const panelId = `accordion-panel-${service.id}`
-            
-            return (
-              <li key={service.id} className="accordion-item">
-                <button
-                  id={buttonId}
-                  className={`accordion-trigger ${isExpanded ? 'expanded' : ''}`}
-                  aria-expanded={isExpanded}
-                  aria-controls={panelId}
-                  onClick={() => handleToggle(service.id)}
-                  type="button"
-                >
-                  <div className="trigger-content">
-                    <div className={`trigger-icon icon-${service.iconColor}`}>
-                      {getIcon(service)}
-                    </div>
-                    <div className="trigger-text">
-                      <h3 className="trigger-title">{service.title}</h3>
-                      <p className="trigger-description">{service.shortDescription}</p>
-                    </div>
-                  </div>
-                  <div className="trigger-indicator">
-                    <svg 
-                      width="20" 
-                      height="20" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                      className={`chevron ${isExpanded ? 'rotate' : ''}`}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </button>
-                
-                <div
-                  id={panelId}
-                  ref={(el) => { panelRefs.current[service.id] = el }}
-                  className={`accordion-panel ${isExpanded ? 'expanded' : ''}`}
-                  role="region"
-                  aria-labelledby={buttonId}
-                  tabIndex={isExpanded ? 0 : -1}
-                >
-                  <div className="panel-content">
-                    <ul className="panel-bullets">
-                      {service.expandedBullets.map((bullet, index) => (
-                        <li key={index} className="panel-bullet">
-                          <span className="bullet-marker">•</span>
-                          <span className="bullet-text">{bullet}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="panel-actions">
-                      <Link href={service.primaryCTA.href} className="btn-primary-accordion">
-                        {service.primaryCTA.text}
-                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </Link>
-                      <Link href={service.secondaryCTA.href} className="btn-secondary-accordion">
-                        {service.secondaryCTA.text}
-                      </Link>
-                    </div>
-                  </div>
+    <>
+      <section className="services-cards-section">
+        <div className="cards-container">
+          <div className="cards-header">
+            <h2 className="cards-title">Explore our services</h2>
+            <p className="cards-subtitle">Comprehensive career support tailored for EMSI students and alumni</p>
+          </div>
+          
+          <div className="cards-grid">
+            {services.map((service) => (
+              <button
+                key={service.id}
+                className="service-card-button"
+                onClick={() => handleCardClick(service)}
+                type="button"
+                aria-label={`Learn more about ${service.title}`}
+              >
+                <div className={`card-icon icon-${service.iconColor}`}>
+                  {getIcon(service)}
                 </div>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
+                <h3 className="card-title">{service.title}</h3>
+                <p className="card-description">{service.shortDescription}</p>
+                <span className="card-cta">
+                  Learn more
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Modal Popup */}
+      {selectedService && (
+        <div className="modal-backdrop" onClick={handleClose}>
+          <div 
+            className="modal-content"
+            ref={modalRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={`modal-title-${selectedService.id}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="modal-close"
+              onClick={handleClose}
+              aria-label="Close modal"
+            >
+              <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <div className="modal-header">
+              <div className={`modal-icon icon-${selectedService.iconColor}`}>
+                {getIcon(selectedService)}
+              </div>
+              <h2 id={`modal-title-${selectedService.id}`} className="modal-title">
+                {selectedService.title}
+              </h2>
+            </div>
+            
+            <div className="modal-body">
+              <ul className="modal-bullets">
+                {selectedService.expandedBullets.map((bullet, index) => (
+                  <li key={index} className="modal-bullet">
+                    <span className="bullet-marker">•</span>
+                    <span className="bullet-text">{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="modal-footer">
+              <Link 
+                href={selectedService.primaryCTA.href} 
+                className="btn-primary-modal"
+                onClick={handleClose}
+              >
+                {selectedService.primaryCTA.text}
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+              <Link 
+                href={selectedService.secondaryCTA.href} 
+                className="btn-secondary-modal"
+                onClick={handleClose}
+              >
+                {selectedService.secondaryCTA.text}
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
       
       <style jsx>{`
-        .services-accordion-section {
+        /* Services Cards Section */
+        .services-cards-section {
           padding: 4rem 1rem;
           background: #f9fafb;
         }
         
-        .accordion-container {
+        .cards-container {
           max-width: 1280px;
           margin: 0 auto;
         }
         
-        .accordion-header {
+        .cards-header {
           text-align: center;
           margin-bottom: 3rem;
         }
         
-        .accordion-title {
+        .cards-title {
           font-size: 2rem;
           font-weight: bold;
           color: #111827;
           margin-bottom: 0.75rem;
         }
         
-        .accordion-subtitle {
+        .cards-subtitle {
           font-size: 1.125rem;
           color: #6b7280;
           max-width: 42rem;
           margin: 0 auto;
         }
         
-        .accordion-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
+        .cards-grid {
           display: grid;
           grid-template-columns: 1fr;
           gap: 1rem;
         }
         
-        .accordion-item {
+        .service-card-button {
           background: white;
+          border: 1px solid #E5E7EB;
           border-radius: 0.75rem;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          overflow: hidden;
-          transition: box-shadow 0.2s ease;
-        }
-        
-        .accordion-item:hover {
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .accordion-trigger {
-          width: 100%;
-          padding: 1.25rem;
-          background: white;
-          border: none;
+          padding: 1.5rem;
           cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
           text-align: left;
-          transition: background-color 0.2s ease;
-        }
-        
-        .accordion-trigger:hover {
-          background-color: #f9fafb;
-        }
-        
-        .accordion-trigger:focus {
-          outline: 2px solid #004A99;
-          outline-offset: -2px;
-        }
-        
-        .accordion-trigger.expanded {
-          background-color: #f9fafb;
-        }
-        
-        .trigger-content {
+          transition: all 0.2s ease;
           display: flex;
+          flex-direction: column;
           align-items: flex-start;
-          gap: 1rem;
-          flex: 1;
+          position: relative;
         }
         
-        .trigger-icon {
-          width: 2.5rem;
-          height: 2.5rem;
+        .service-card-button:hover {
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+          transform: translateY(-2px);
+          border-color: #004A99;
+        }
+        
+        .service-card-button:focus {
+          outline: 2px solid #004A99;
+          outline-offset: 2px;
+        }
+        
+        .card-icon {
+          width: 3rem;
+          height: 3rem;
           border-radius: 0.5rem;
           display: flex;
           align-items: center;
           justify-content: center;
-          flex-shrink: 0;
+          margin-bottom: 1rem;
         }
         
         .icon-blue {
@@ -315,61 +347,121 @@ export default function ServicesAccordion() {
           color: #00A651;
         }
         
-        .trigger-text {
-          flex: 1;
-        }
-        
-        .trigger-title {
-          font-size: 1.125rem;
+        .card-title {
+          font-size: 1.25rem;
           font-weight: 600;
           color: #111827;
-          margin: 0 0 0.25rem 0;
+          margin: 0 0 0.5rem 0;
         }
         
-        .trigger-description {
+        .card-description {
           font-size: 0.875rem;
           color: #6b7280;
+          margin: 0 0 1rem 0;
+          line-height: 1.5;
+        }
+        
+        .card-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+          color: #004A99;
+          font-size: 0.875rem;
+          font-weight: 600;
+          margin-top: auto;
+        }
+        
+        /* Modal Styles */
+        .modal-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          padding: 1rem;
+          animation: ${prefersReducedMotion ? 'none' : 'fadeIn 200ms ease'};
+        }
+        
+        .modal-content {
+          background: white;
+          border-radius: 1rem;
+          max-width: 600px;
+          width: 100%;
+          max-height: 90vh;
+          overflow-y: auto;
+          position: relative;
+          animation: ${prefersReducedMotion ? 'none' : 'slideUp 300ms ease'};
+        }
+        
+        .modal-close {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          padding: 0.5rem;
+          border-radius: 0.5rem;
+          color: #6b7280;
+          transition: all 0.2s ease;
+          z-index: 10;
+        }
+        
+        .modal-close:hover {
+          background: #f3f4f6;
+          color: #111827;
+        }
+        
+        .modal-close:focus {
+          outline: 2px solid #004A99;
+          outline-offset: 2px;
+        }
+        
+        .modal-header {
+          padding: 2rem 2rem 1rem;
+          border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .modal-icon {
+          width: 3.5rem;
+          height: 3.5rem;
+          border-radius: 0.75rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1rem;
+        }
+        
+        .modal-title {
+          font-size: 1.75rem;
+          font-weight: bold;
+          color: #111827;
           margin: 0;
         }
         
-        .trigger-indicator {
-          flex-shrink: 0;
-          margin-left: 1rem;
+        .modal-body {
+          padding: 2rem;
         }
         
-        .chevron {
-          transition: transform ${prefersReducedMotion ? '0ms' : '200ms'} ease;
-          color: #6b7280;
-        }
-        
-        .chevron.rotate {
-          transform: rotate(180deg);
-        }
-        
-        .accordion-panel {
-          max-height: 0;
-          overflow: hidden;
-          transition: ${prefersReducedMotion ? 'none' : 'max-height 300ms ease'};
-        }
-        
-        .accordion-panel.expanded {
-          max-height: 800px;
-        }
-        
-        .panel-content {
-          padding: 0 1.25rem 1.25rem 3.75rem;
-        }
-        
-        .panel-bullets {
+        .modal-bullets {
           list-style: none;
           padding: 0;
-          margin: 0 0 1.5rem 0;
+          margin: 0;
         }
         
-        .panel-bullet {
+        .modal-bullet {
           display: flex;
           align-items: flex-start;
-          margin-bottom: 0.5rem;
+          margin-bottom: 1rem;
+        }
+        
+        .modal-bullet:last-child {
+          margin-bottom: 0;
         }
         
         .bullet-marker {
@@ -377,87 +469,111 @@ export default function ServicesAccordion() {
           font-weight: bold;
           margin-right: 0.75rem;
           flex-shrink: 0;
+          font-size: 1.25rem;
         }
         
         .bullet-text {
-          color: #4b5563;
-          font-size: 0.875rem;
-          line-height: 1.5;
+          color: #374151;
+          font-size: 1rem;
+          line-height: 1.6;
         }
         
-        .panel-actions {
+        .modal-footer {
+          padding: 1.5rem 2rem 2rem;
+          border-top: 1px solid #E5E7EB;
           display: flex;
           flex-direction: column;
           gap: 0.75rem;
         }
         
-        .btn-primary-accordion,
-        .btn-secondary-accordion {
+        .btn-primary-modal,
+        .btn-secondary-modal {
           display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
-          padding: 0.625rem 1.25rem;
-          font-size: 0.875rem;
+          padding: 0.75rem 1.5rem;
+          font-size: 1rem;
           font-weight: 600;
           border-radius: 9999px;
           text-decoration: none;
           transition: all 0.2s ease;
         }
         
-        .btn-primary-accordion {
+        .btn-primary-modal {
           background: linear-gradient(135deg, #004A99, #003570);
           color: white;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
-        .btn-primary-accordion:hover {
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        .btn-primary-modal:hover {
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
           transform: translateY(-1px);
         }
         
-        .btn-secondary-accordion {
+        .btn-secondary-modal {
           background: transparent;
           color: #004A99;
           border: 2px solid #E5E7EB;
         }
         
-        .btn-secondary-accordion:hover {
+        .btn-secondary-modal:hover {
           border-color: #004A99;
           background: #f9fafb;
         }
         
-        /* Tablet and above */
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        
+        @keyframes slideUp {
+          from {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        
+        /* Responsive */
         @media (min-width: 640px) {
-          .panel-actions {
+          .cards-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          
+          .modal-footer {
             flex-direction: row;
           }
         }
         
         @media (min-width: 768px) {
-          .accordion-title {
+          .cards-title {
             font-size: 2.5rem;
           }
           
-          .accordion-list {
-            grid-template-columns: repeat(2, 1fr);
-          }
-          
-          .trigger-title {
-            font-size: 1.25rem;
-          }
-          
-          .trigger-description {
-            font-size: 1rem;
+          .modal-content {
+            max-width: 700px;
           }
         }
         
         @media (min-width: 1024px) {
-          .services-accordion-section {
+          .services-cards-section {
             padding: 5rem 2rem;
+          }
+          
+          .cards-grid {
+            grid-template-columns: repeat(4, 1fr);
           }
         }
       `}</style>
-    </section>
+    </>
+  )
   )
 }
