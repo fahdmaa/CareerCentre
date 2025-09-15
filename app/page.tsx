@@ -283,7 +283,7 @@ export default function HomePage() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="cta-section">
+      <section className="cta-section" style={{ position: 'relative', overflow: 'hidden' }}>
         <div className="cta-overlay"></div>
         <div className="cta-container">
           <div className="cta-grid">
@@ -307,16 +307,131 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-            <div className="cta-illustration">
-              <div className="illustration-wrapper">
-                <div className="illustration-bg"></div>
-                <svg className="illustration-icon" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-                </svg>
-              </div>
-            </div>
           </div>
         </div>
+        
+        {/* Decorative Person Image */}
+        <div className="cta-person-image">
+          <div className="person-image-halo"></div>
+          <Image 
+            src="/images/person main page.png" 
+            alt=""
+            role="presentation"
+            width={600}
+            height={800}
+            sizes="(max-width: 640px) 240px, (max-width: 768px) 320px, (max-width: 1024px) 420px, (max-width: 1280px) 520px, 600px"
+            className="person-image"
+            priority={false}
+            quality={85}
+          />
+        </div>
+        
+        <style jsx>{`
+          .cta-person-image {
+            position: absolute;
+            bottom: 0;
+            right: 2%;
+            z-index: 1;
+            pointer-events: none;
+            animation: slideUp 0.8s ease-out;
+          }
+          
+          .person-image-halo {
+            position: absolute;
+            bottom: -80px;
+            right: -80px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(0, 166, 81, 0.05) 40%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: -1;
+            animation: pulse 4s ease-in-out infinite;
+          }
+          
+          .cta-person-image :global(.person-image) {
+            width: auto;
+            height: auto;
+            max-height: 500px;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15));
+            object-fit: contain;
+            object-position: bottom right;
+          }
+          
+          @keyframes slideUp {
+            from {
+              transform: translateY(60px);
+              opacity: 0;
+            }
+            to {
+              transform: translateY(0);
+              opacity: 1;
+            }
+          }
+          
+          @keyframes pulse {
+            0%, 100% {
+              transform: scale(1);
+              opacity: 0.8;
+            }
+            50% {
+              transform: scale(1.1);
+              opacity: 1;
+            }
+          }
+          
+          /* Responsive sizing */
+          @media (max-width: 640px) {
+            .cta-person-image {
+              display: none; /* Hide on very small screens */
+            }
+          }
+          
+          @media (min-width: 640px) and (max-width: 768px) {
+            .cta-person-image {
+              right: 1%;
+            }
+            .cta-person-image :global(.person-image) {
+              max-height: 280px;
+            }
+            .person-image-halo {
+              width: 250px;
+              height: 250px;
+              bottom: -40px;
+              right: -40px;
+            }
+          }
+          
+          @media (min-width: 768px) and (max-width: 1024px) {
+            .cta-person-image :global(.person-image) {
+              max-height: 360px;
+            }
+            .person-image-halo {
+              width: 300px;
+              height: 300px;
+              bottom: -50px;
+              right: -50px;
+            }
+          }
+          
+          @media (min-width: 1024px) and (max-width: 1280px) {
+            .cta-person-image :global(.person-image) {
+              max-height: 440px;
+            }
+            .person-image-halo {
+              width: 350px;
+              height: 350px;
+              bottom: -60px;
+              right: -60px;
+            }
+          }
+          
+          @media (min-width: 1280px) {
+            .cta-person-image :global(.person-image) {
+              max-height: 500px;
+            }
+          }
+        `}</style>
       </section>
 
       <Navigation />
