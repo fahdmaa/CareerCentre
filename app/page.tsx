@@ -257,7 +257,7 @@ export default function HomePage() {
           /* Final CTA Section - Clean and Aligned */
           .cta-section-final {
             background: linear-gradient(135deg, #00A651, #007A3C);
-            padding: 4rem 1rem;
+            padding: 4rem 1rem 0;
             position: relative;
             overflow: hidden;
           }
@@ -314,6 +314,7 @@ export default function HomePage() {
             display: block;
             text-align: center;
             margin-top: 2rem;
+            margin-bottom: -5px;
           }
           
           .cta-image-final :global(.person-image-final) {
@@ -322,11 +323,12 @@ export default function HomePage() {
             max-width: 280px;
             object-fit: contain;
             filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+            display: block;
           }
           
           @media (min-width: 640px) {
             .cta-section-final {
-              padding: 4rem 1.5rem;
+              padding: 4rem 1.5rem 0;
             }
             
             .cta-buttons-final {
@@ -342,13 +344,13 @@ export default function HomePage() {
           /* Tablet and above: Two-column layout with top alignment */
           @media (min-width: 768px) {
             .cta-section-final {
-              padding: 5rem 2rem;
+              padding: 5rem 2rem 0;
             }
             
             .cta-grid-final {
               grid-template-columns: 1.2fr 1fr;
               gap: 3rem;
-              align-items: flex-start; /* Top align both columns */
+              align-items: flex-end; /* Bottom align to stick image to bottom */
             }
             
             .cta-content-final {
@@ -375,16 +377,20 @@ export default function HomePage() {
             .cta-image-final {
               margin-top: 0;
               text-align: right;
+              align-self: flex-end;
+              margin-bottom: -5px;
             }
             
             .cta-image-final :global(.person-image-final) {
               max-width: 360px;
+              display: block;
+              margin-left: auto;
             }
           }
           
           @media (min-width: 1024px) {
             .cta-section-final {
-              padding: 5rem 2rem;
+              padding: 5rem 2rem 0;
             }
             
             .cta-title-final {
@@ -402,7 +408,7 @@ export default function HomePage() {
           
           @media (min-width: 1280px) {
             .cta-section-final {
-              padding: 6rem 2rem;
+              padding: 6rem 2rem 0;
             }
             
             .cta-title-final {
