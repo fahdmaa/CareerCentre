@@ -5329,3 +5329,50 @@ img {
     color: #065f46;
     border: 1px solid #6ee7b7;
 }
+
+/* Modern Animation Classes */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+/* Carousel Animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+  display: flex;
+  gap: 2rem;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 2rem;
+  animation: scroll 30s linear infinite;
+}
+
+/* Grayscale filter for partner logos */
+.grayscale {
+  filter: grayscale(100%);
+}
+
+.grayscale-0 {
+  filter: grayscale(0%);
+}
