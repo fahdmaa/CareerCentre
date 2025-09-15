@@ -63,7 +63,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       animateStats()
 
       // Smooth scroll for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (this: HTMLAnchorElement, e: Event) {
           e.preventDefault()
           const href = this.getAttribute('href')
@@ -77,7 +77,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       })
 
       // Add parallax effect
-      const parallaxElements = document.querySelectorAll('.parallax')
+      const parallaxElements = document.querySelectorAll<HTMLElement>('.parallax')
       window.addEventListener('scroll', () => {
         const scrolled = window.pageYOffset
         parallaxElements.forEach(el => {
