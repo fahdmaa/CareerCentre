@@ -8,26 +8,41 @@ export default function Navigation() {
   const pathname = usePathname()
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up')
 
   useEffect(() => {
-    const handleScroll = () => {
+    let ticking = false
+    
+    const updateScrollDirection = () => {
       const currentScrollY = window.scrollY
       
-      if (currentScrollY < lastScrollY || currentScrollY < 100) {
-        setIsVisible(true)
-      } else {
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down & not at top
+        setScrollDirection('down')
         setIsVisible(false)
+      } else if (currentScrollY < lastScrollY || currentScrollY < 100) {
+        // Scrolling up or at top
+        setScrollDirection('up')
+        setIsVisible(true)
       }
       
       setLastScrollY(currentScrollY)
+      ticking = false
+    }
+    
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollDirection)
+        ticking = true
+      }
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [lastScrollY])
 
   return (
-    <nav className={`pill-navbar fixed-bottom ${isVisible ? '' : 'hidden'}`}>
+    <nav className={`pill-navbar fixed-bottom hide-on-scroll ${isVisible ? '' : 'hidden'}`}>
       <div className="pill-navbar-nav">
         <Link href="/" className={`pill-navbar-item ${pathname === '/' ? 'active' : ''}`}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
