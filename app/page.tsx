@@ -46,9 +46,9 @@ export default function HomePage() {
         <div className="hero-grid">
           <div className="hero-content">
             <h1 className="hero-title">
-              Your Gateway to 
+              Your gateway to 
               <span className="title-gradient">
-                Career Success
+                career success
               </span>
             </h1>
             <p className="hero-description">
@@ -89,13 +89,13 @@ export default function HomePage() {
           <div className="kpi-grid">
             <KPICard
               value={80}
-              title="Employability Rate"
+              title="Employability rate"
               description="Within 6 months of graduation"
               suffix="%"
             />
             <KPICard
               value={2000}
-              title="Students Mentored"
+              title="Students mentored"
               description="Career guidance provided"
             />
             <KPICard
@@ -140,7 +140,7 @@ export default function HomePage() {
       {/* Services Section */}
       <section className="services-section">
         <div className="section-header">
-          <h2 className="section-title">Explore Our Services</h2>
+          <h2 className="section-title">Explore our services</h2>
           <p className="section-subtitle">Comprehensive career support tailored for EMSI students and alumni</p>
         </div>
         
@@ -151,7 +151,7 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
-            <h3 className="service-title">Career Opportunities</h3>
+            <h3 className="service-title">Career opportunities</h3>
             <p className="service-description">Find internships and jobs tailored to EMSI students.</p>
           </div>
 
@@ -163,7 +163,7 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
               </svg>
             </div>
-            <h3 className="service-title">Events & Workshops</h3>
+            <h3 className="service-title">Events & workshops</h3>
             <p className="service-description">Join skill-building sessions and career fairs.</p>
           </div>
 
@@ -173,7 +173,7 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
-            <h3 className="service-title">Alumni Network</h3>
+            <h3 className="service-title">Alumni network</h3>
             <p className="service-description">Connect with successful graduates worldwide.</p>
           </div>
 
@@ -183,7 +183,7 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <h3 className="service-title">Career Resources</h3>
+            <h3 className="service-title">Career resources</h3>
             <p className="service-description">Get CV templates, interview tips, and guidance.</p>
           </div>
         </div>
@@ -192,57 +192,49 @@ export default function HomePage() {
       {/* How We Help You Succeed */}
       <section className="help-section">
         <div className="section-header">
-          <h2 className="section-title">How We Help You Succeed</h2>
+          <h2 className="section-title">How we help you succeed</h2>
           <p className="section-subtitle">Our comprehensive approach to career development</p>
         </div>
         
-        <div className="help-features">
-          <div className="feature-row">
-            <div className="feature-icon-circle icon-circle-blue">
-              <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="help-grid">
+          <div className="help-card">
+            <div className="help-icon icon-blue-gradient">
+              <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
             </div>
-            <div className="feature-content">
-              <h3 className="feature-title">Personalized Job Matching</h3>
-              <p className="feature-text">AI-powered recommendations based on your skills and interests, ensuring you find the perfect opportunity.</p>
-            </div>
+            <h3 className="help-title">Personalized job matching</h3>
+            <p className="help-description">AI-powered recommendations based on your skills and interests, ensuring you find the perfect opportunity.</p>
           </div>
 
-          <div className="feature-row">
-            <div className="feature-icon-circle icon-circle-green">
-              <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="help-card">
+            <div className="help-icon icon-green-gradient">
+              <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
-            <div className="feature-content">
-              <h3 className="feature-title">Career Coaching & Guidance</h3>
-              <p className="feature-text">One-on-one mentoring from industry professionals who guide you through every step of your career journey.</p>
-            </div>
+            <h3 className="help-title">Career coaching & guidance</h3>
+            <p className="help-description">One-on-one mentoring from industry professionals who guide you through every step of your career journey.</p>
           </div>
 
-          <div className="feature-row">
-            <div className="feature-icon-circle icon-circle-blue">
-              <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="help-card">
+            <div className="help-icon icon-blue-gradient">
+              <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
               </svg>
             </div>
-            <div className="feature-content">
-              <h3 className="feature-title">Networking Opportunities</h3>
-              <p className="feature-text">Connect with recruiters and alumni at exclusive events designed to expand your professional network.</p>
-            </div>
+            <h3 className="help-title">Networking opportunities</h3>
+            <p className="help-description">Connect with recruiters and alumni at exclusive events designed to expand your professional network.</p>
           </div>
 
-          <div className="feature-row">
-            <div className="feature-icon-circle icon-circle-green">
-              <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="help-card">
+            <div className="help-icon icon-green-gradient">
+              <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <div className="feature-content">
-              <h3 className="feature-title">Skill Development Resources</h3>
-              <p className="feature-text">Access to online courses and certification programs to keep your skills sharp and relevant.</p>
-            </div>
+            <h3 className="help-title">Skill development resources</h3>
+            <p className="help-description">Access to online courses and certification programs to keep your skills sharp and relevant.</p>
           </div>
         </div>
       </section>
@@ -250,7 +242,7 @@ export default function HomePage() {
       {/* Partners Section */}
       <section className="partners-section">
         <div className="section-header">
-          <h2 className="section-title">Our Trusted Partners</h2>
+          <h2 className="section-title">Our trusted partners</h2>
           <p className="section-subtitle">Leading companies that hire EMSI graduates</p>
         </div>
         
@@ -296,7 +288,7 @@ export default function HomePage() {
         <div className="cta-container">
           <div className="cta-grid">
             <div className="cta-content">
-              <h2 className="cta-title">Ready to Launch Your Career?</h2>
+              <h2 className="cta-title">Ready to launch your career?</h2>
               <p className="cta-text">
                 Join thousands of EMSI students and alumni who have found their dream jobs through our career services.
               </p>
