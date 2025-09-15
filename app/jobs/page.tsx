@@ -1,246 +1,182 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navigation from '../../components/Navigation'
 import ClientLayout from '../../components/ClientLayout'
 
-interface Job {
-  id: number
-  title: string
-  company: string
-  location: string
-  type: string
-  description: string
-  requirements: string[]
-  logo: string
-  posted: string
-  saved?: boolean
-}
-
-const jobsData: Job[] = [
-  {
-    id: 1,
-    title: "Software Engineer",
-    company: "Oracle",
-    location: "Casablanca",
-    type: "Full-time",
-    description: "Join our team to develop cutting-edge cloud solutions.",
-    requirements: ["3+ years experience", "Java/Python", "Cloud technologies"],
-    logo: "/images/oracle.svg",
-    posted: "2 days ago"
-  },
-  {
-    id: 2,
-    title: "Data Analyst",
-    company: "OCP Group",
-    location: "Marrakech",
-    type: "Full-time",
-    description: "Analyze business data to drive strategic decisions.",
-    requirements: ["SQL expertise", "Python/R", "Business intelligence tools"],
-    logo: "/images/OCP.svg",
-    posted: "3 days ago"
-  },
-  {
-    id: 3,
-    title: "Marketing Specialist",
-    company: "CIH Bank",
-    location: "Rabat",
-    type: "Full-time",
-    description: "Lead digital marketing campaigns for our banking products.",
-    requirements: ["Digital marketing experience", "Content creation", "Analytics"],
-    logo: "/images/CIH.svg",
-    posted: "1 week ago"
-  },
-  {
-    id: 4,
-    title: "DevOps Engineer",
-    company: "Capgemini",
-    location: "Casablanca",
-    type: "Contract",
-    description: "Implement and maintain CI/CD pipelines for enterprise clients.",
-    requirements: ["Kubernetes", "Docker", "AWS/Azure", "Jenkins"],
-    logo: "/images/capgemini.svg",
-    posted: "4 days ago"
-  },
-  {
-    id: 5,
-    title: "Business Analyst Intern",
-    company: "Nestlé",
-    location: "Casablanca",
-    type: "Internship",
-    description: "Support business operations and process improvement initiatives.",
-    requirements: ["Business/Engineering student", "Excel proficiency", "English fluency"],
-    logo: "/images/Nestle.svg",
-    posted: "1 day ago"
-  },
-  {
-    id: 6,
-    title: "Quality Engineer",
-    company: "LEONI",
-    location: "Tanger",
-    type: "Full-time",
-    description: "Ensure product quality in automotive cable manufacturing.",
-    requirements: ["Quality management", "ISO standards", "Problem-solving skills"],
-    logo: "/images/LEONI.svg",
-    posted: "5 days ago"
-  }
-]
-
 export default function JobsPage() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [locationFilter, setLocationFilter] = useState('')
-  const [typeFilter, setTypeFilter] = useState('')
-  const [filteredJobs, setFilteredJobs] = useState(jobsData)
-  const [savedJobs, setSavedJobs] = useState<number[]>([])
+  const [countdown, setCountdown] = useState(10)
+  const router = useRouter()
+  const redirectUrl = 'https://emsicommunity.com/'
 
   useEffect(() => {
-    const saved = localStorage.getItem('savedJobs')
-    if (saved) {
-      setSavedJobs(JSON.parse(saved))
-    }
-  }, [])
+    const timer = setTimeout(() => {
+      if (countdown > 0) {
+        setCountdown(countdown - 1)
+      } else {
+        window.location.href = redirectUrl
+      }
+    }, 1000)
 
-  useEffect(() => {
-    const filtered = jobsData.filter(job => {
-      const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           job.description.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesLocation = !locationFilter || job.location === locationFilter
-      const matchesType = !typeFilter || job.type === typeFilter
-      
-      return matchesSearch && matchesLocation && matchesType
-    })
-    setFilteredJobs(filtered)
-  }, [searchTerm, locationFilter, typeFilter])
+    return () => clearTimeout(timer)
+  }, [countdown])
 
-  const toggleSaveJob = (jobId: number) => {
-    const newSavedJobs = savedJobs.includes(jobId)
-      ? savedJobs.filter(id => id !== jobId)
-      : [...savedJobs, jobId]
-    
-    setSavedJobs(newSavedJobs)
-    localStorage.setItem('savedJobs', JSON.stringify(newSavedJobs))
+  const handleGoNow = () => {
+    window.location.href = redirectUrl
   }
 
   return (
     <ClientLayout>
-    <>
-      <header className="main-header">
-        <div className="container">
-          <Link href="/" className="logo-link">
-            <Image 
-              src="/images/emsi-logo.png" 
-              alt="EMSI Logo" 
-              width={220} 
-              height={55} 
-              className="logo-img"
-              priority
-            />
+      <div className="redirect-container">
+        <div className="redirect-content">
+          <div className="redirect-icon">
+            <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          
+          <h1 className="redirect-message">
+            You&apos;re being redirected to EMSI Community to explore job opportunities.
+          </h1>
+          
+          <div className="countdown-wrapper">
+            <p className="countdown-text">
+              Redirecting in <span className="countdown-number">{countdown}</span> seconds
+            </p>
+          </div>
+          
+          <button 
+            onClick={handleGoNow}
+            className="go-now-button"
+          >
+            Go Now
+          </button>
+          
+          <Link href="/" className="back-link">
+            ← Back to Home
           </Link>
         </div>
-      </header>
-
-      <section className="jobs-hero">
-        <div className="container">
-          <h1 className="page-title">Find Your Dream Job</h1>
-          <p className="page-subtitle">Discover opportunities from leading companies</p>
-        </div>
-      </section>
-
-      <section className="jobs-section">
-        <div className="container">
-          <div className="search-filters">
-            <div className="search-bar">
-              <i className="fas fa-search"></i>
-              <input
-                type="text"
-                placeholder="Search by job title, company, or keywords..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="filter-row">
-              <select
-                className="filter-select"
-                value={locationFilter}
-                onChange={(e) => setLocationFilter(e.target.value)}
-              >
-                <option value="">All Locations</option>
-                <option value="Casablanca">Casablanca</option>
-                <option value="Marrakech">Marrakech</option>
-                <option value="Rabat">Rabat</option>
-                <option value="Tanger">Tanger</option>
-              </select>
-              <select
-                className="filter-select"
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-              >
-                <option value="">All Types</option>
-                <option value="Full-time">Full-time</option>
-                <option value="Part-time">Part-time</option>
-                <option value="Contract">Contract</option>
-                <option value="Internship">Internship</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="jobs-grid">
-            {filteredJobs.map(job => (
-              <div key={job.id} className="job-card">
-                <div className="job-header">
-                  <Image 
-                    src={job.logo} 
-                    alt={job.company} 
-                    width={60} 
-                    height={60} 
-                    className="company-logo"
-                  />
-                  <button 
-                    className={`save-btn ${savedJobs.includes(job.id) ? 'saved' : ''}`}
-                    onClick={() => toggleSaveJob(job.id)}
-                  >
-                    <i className={`${savedJobs.includes(job.id) ? 'fas' : 'far'} fa-bookmark`}></i>
-                  </button>
-                </div>
-                <h3 className="job-title">{job.title}</h3>
-                <p className="job-company">{job.company}</p>
-                <p className="job-description">{job.description}</p>
-                <div className="job-tags">
-                  <span className="job-tag">
-                    <i className="fas fa-map-marker-alt"></i> {job.location}
-                  </span>
-                  <span className="job-tag">
-                    <i className="fas fa-briefcase"></i> {job.type}
-                  </span>
-                </div>
-                <div className="job-requirements">
-                  {job.requirements.slice(0, 2).map((req, index) => (
-                    <span key={index} className="requirement-tag">{req}</span>
-                  ))}
-                </div>
-                <div className="job-footer">
-                  <span className="job-posted">{job.posted}</span>
-                  <button className="btn btn-primary btn-sm">Apply Now</button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {filteredJobs.length === 0 && (
-            <div className="no-results">
-              <i className="fas fa-search"></i>
-              <h3>No jobs found</h3>
-              <p>Try adjusting your search criteria</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <Navigation />
-    </>
+        
+        <Navigation />
+      </div>
+      
+      <style jsx>{`
+        .redirect-container {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, #ffffff 0%, rgba(0, 166, 81, 0.05) 100%);
+          padding: 2rem;
+        }
+        
+        .redirect-content {
+          text-align: center;
+          max-width: 600px;
+          animation: fadeIn 0.5s ease-out;
+        }
+        
+        .redirect-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 100px;
+          height: 100px;
+          background: linear-gradient(135deg, rgba(0, 166, 81, 0.1), rgba(0, 166, 81, 0.05));
+          border-radius: 50%;
+          margin-bottom: 2rem;
+          color: #00A651;
+        }
+        
+        .redirect-message {
+          font-size: 1.5rem;
+          line-height: 1.75;
+          color: #374151;
+          margin-bottom: 2rem;
+        }
+        
+        @media (min-width: 768px) {
+          .redirect-message {
+            font-size: 2rem;
+          }
+        }
+        
+        .countdown-wrapper {
+          margin-bottom: 2rem;
+        }
+        
+        .countdown-text {
+          font-size: 1.125rem;
+          color: #6B7280;
+        }
+        
+        .countdown-number {
+          font-weight: bold;
+          color: #00A651;
+          font-size: 1.5rem;
+          margin: 0 0.25rem;
+          display: inline-block;
+          animation: pulse 1s ease-in-out infinite;
+        }
+        
+        .go-now-button {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.75rem 2rem;
+          background: #00A651;
+          color: white;
+          font-weight: 600;
+          font-size: 1.125rem;
+          border: none;
+          border-radius: 9999px;
+          box-shadow: 0 10px 25px rgba(0, 166, 81, 0.3);
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          margin-bottom: 2rem;
+        }
+        
+        .go-now-button:hover {
+          background: #007A3C;
+          transform: scale(1.05);
+          box-shadow: 0 15px 35px rgba(0, 166, 81, 0.4);
+        }
+        
+        .back-link {
+          display: inline-flex;
+          align-items: center;
+          color: #6B7280;
+          text-decoration: none;
+          font-size: 0.875rem;
+          transition: color 0.3s ease;
+        }
+        
+        .back-link:hover {
+          color: #374151;
+        }
+        
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes pulse {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.1);
+          }
+        }
+      `}</style>
     </ClientLayout>
   )
 }
