@@ -177,6 +177,31 @@
   margin-top: -2rem;
 }
 
+/* Animated Stats Section */
+.stats-section-animated {
+  padding: 4rem 1rem;
+  background: #f9fafb;
+  position: relative;
+}
+
+.stats-container {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.stats-grid-animated {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .stats-grid-animated {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
 .stats-card {
   background: white;
   border-radius: 1rem;

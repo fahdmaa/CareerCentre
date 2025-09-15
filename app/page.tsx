@@ -105,37 +105,6 @@ export default function HomePage() {
             />
           </div>
         </div>
-        
-        <style jsx>{`
-          .stats-section-animated {
-            padding: 4rem 1rem;
-            background: #f9fafb;
-          }
-          
-          .stats-container {
-            max-width: 80rem;
-            margin: 0 auto;
-          }
-          
-          .stats-grid-animated {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-          }
-          
-          @media (min-width: 640px) {
-            .stats-grid-animated {
-              grid-template-columns: repeat(3, 1fr);
-              gap: 2rem;
-            }
-          }
-          
-          @media (min-width: 1024px) {
-            .stats-section-animated {
-              padding: 5rem 1rem;
-            }
-          }
-        `}</style>
       </section>
 
       {/* Services Section */}

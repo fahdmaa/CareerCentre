@@ -1,6 +1,6 @@
 'use client'
 
-import AnimatedStat from './AnimatedStat'
+import AnimatedStat from './AnimatedStatSimple'
 
 interface StatCardProps {
   value: number
