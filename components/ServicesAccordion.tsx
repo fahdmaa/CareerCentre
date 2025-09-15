@@ -575,5 +575,4 @@ export default function ServicesAccordion() {
       `}</style>
     </>
   )
-  )
 }
