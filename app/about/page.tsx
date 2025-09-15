@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
+import ClientLayout from '@/components/ClientLayout'
 
 export default function AboutPage() {
   const [showContactModal, setShowContactModal] = useState(false)
@@ -53,6 +54,7 @@ export default function AboutPage() {
   }
 
   return (
+    <ClientLayout>
     <>
       <header className="main-header">
         <div className="container">
@@ -259,5 +261,6 @@ export default function AboutPage() {
 
       <Navigation />
     </>
+    </ClientLayout>
   )
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
+import ClientLayout from '@/components/ClientLayout'
 import { supabase } from '@/lib/supabase'
 
 interface Ambassador {
@@ -112,6 +113,7 @@ export default function AmbassadorsPage() {
   }
 
   return (
+    <ClientLayout>
     <>
       <header className="main-header">
         <div className="container">
@@ -311,5 +313,6 @@ export default function AmbassadorsPage() {
 
       <Navigation />
     </>
+    </ClientLayout>
   )
 }

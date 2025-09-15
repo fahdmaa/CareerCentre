@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
+import ClientLayout from '@/components/ClientLayout'
 
 interface Job {
   id: number
@@ -124,6 +125,7 @@ export default function JobsPage() {
   }
 
   return (
+    <ClientLayout>
     <>
       <header className="main-header">
         <div className="container">
@@ -239,5 +241,6 @@ export default function JobsPage() {
 
       <Navigation />
     </>
+    </ClientLayout>
   )
 }

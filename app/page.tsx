@@ -1,9 +1,24 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
+import ClientLayout from '@/components/ClientLayout'
+import { useEffect } from 'react'
 
 export default function HomePage() {
+  useEffect(() => {
+    // Initialize partner slider
+    const track = document.querySelector('.partners-track') as HTMLElement
+    if (track) {
+      // Clone items for infinite scroll
+      const items = track.innerHTML
+      track.innerHTML = items + items
+    }
+  }, [])
+
   return (
+    <ClientLayout>
     <>
       <header className="main-header">
         <div className="container">
@@ -52,22 +67,22 @@ export default function HomePage() {
       <section className="stats-bar">
         <div className="container">
           <div className="stats-grid">
-            <div className="stat-item">
+            <div className="stat-item fade-in animate-on-scroll">
               <i className="fas fa-briefcase stat-icon"></i>
               <h3 className="stat-number">250+</h3>
               <p className="stat-label">Job Opportunities</p>
             </div>
-            <div className="stat-item">
+            <div className="stat-item fade-in animate-on-scroll">
               <i className="fas fa-building stat-icon"></i>
               <h3 className="stat-number">80+</h3>
               <p className="stat-label">Partner Companies</p>
             </div>
-            <div className="stat-item">
+            <div className="stat-item fade-in animate-on-scroll">
               <i className="fas fa-graduation-cap stat-icon"></i>
               <h3 className="stat-number">1500+</h3>
               <p className="stat-label">Students Placed</p>
             </div>
-            <div className="stat-item">
+            <div className="stat-item fade-in animate-on-scroll">
               <i className="fas fa-calendar-check stat-icon"></i>
               <h3 className="stat-number">30+</h3>
               <p className="stat-label">Events Yearly</p>
@@ -80,28 +95,28 @@ export default function HomePage() {
         <div className="container">
           <h2 className="section-title">How We Help You Succeed</h2>
           <div className="features-grid">
-            <div className="feature-card">
+            <div className="feature-card slide-up animate-on-scroll">
               <div className="feature-icon">
                 <i className="fas fa-search"></i>
               </div>
               <h3>Job Matching</h3>
               <p>Find opportunities that align with your skills and career goals</p>
             </div>
-            <div className="feature-card">
+            <div className="feature-card slide-up animate-on-scroll">
               <div className="feature-icon">
                 <i className="fas fa-handshake"></i>
               </div>
               <h3>Industry Connections</h3>
               <p>Connect with leading companies and professionals in your field</p>
             </div>
-            <div className="feature-card">
+            <div className="feature-card slide-up animate-on-scroll">
               <div className="feature-icon">
                 <i className="fas fa-chart-line"></i>
               </div>
               <h3>Career Development</h3>
               <p>Access workshops, mentorship, and resources to advance your career</p>
             </div>
-            <div className="feature-card">
+            <div className="feature-card slide-up animate-on-scroll">
               <div className="feature-icon">
                 <i className="fas fa-users"></i>
               </div>
@@ -151,5 +166,6 @@ export default function HomePage() {
 
       <Navigation />
     </>
+    </ClientLayout>
   )
 }
