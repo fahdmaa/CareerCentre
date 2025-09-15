@@ -59,8 +59,8 @@ export default function HomePage() {
               <Image 
                 src="/images/standing-guy.png" 
                 alt="Career Success" 
-                width={600}
-                height={600}
+                width={750}
+                height={750}
                 priority
               />
             </div>
