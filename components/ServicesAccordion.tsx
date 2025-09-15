@@ -558,29 +558,28 @@ export default function ServicesAccordion() {
         
         .btn-modal-primary,
         .btn-modal-secondary {
-          flex: 1;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
-          padding: 0.875rem 1.5rem;
-          font-size: 0.95rem;
+          padding: 1rem 2rem;
+          font-size: 1rem;
           font-weight: 600;
-          border-radius: 0.75rem;
+          border-radius: 9999px;
           text-decoration: none;
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .btn-modal-primary {
-          background: linear-gradient(135deg, #00A651 0%, #007A3C 100%);
+          background: linear-gradient(135deg, #00A651, #007A3C);
           color: white;
           border: none;
-          box-shadow: 0 4px 14px rgba(0, 166, 81, 0.3);
+          box-shadow: 0 10px 25px rgba(0, 166, 81, 0.25);
         }
         
         .btn-modal-primary:hover {
-          box-shadow: 0 6px 20px rgba(0, 166, 81, 0.4);
-          transform: translateY(-2px);
+          box-shadow: 0 15px 35px rgba(0, 166, 81, 0.35);
+          transform: scale(1.05);
         }
         
         .btn-modal-primary:focus {
@@ -589,15 +588,18 @@ export default function ServicesAccordion() {
         }
         
         .btn-modal-secondary {
-          background: transparent;
+          background: white;
           color: #00A651;
           border: 2px solid #00A651;
+          box-shadow: 0 4px 15px rgba(0, 166, 81, 0.08);
         }
         
         .btn-modal-secondary:hover {
-          background: rgba(0, 166, 81, 0.05);
+          background: #f9fafb;
           border-color: #007A3C;
           color: #007A3C;
+          box-shadow: 0 6px 20px rgba(0, 166, 81, 0.12);
+          transform: scale(1.05);
         }
         
         .btn-modal-secondary:focus {
@@ -650,12 +652,13 @@ export default function ServicesAccordion() {
           
           .modal-footer-sticky {
             flex-direction: row;
+            justify-content: center;
           }
           
           .btn-modal-primary,
           .btn-modal-secondary {
-            flex: 0 1 auto;
-            min-width: 140px;
+            flex: 0 0 auto;
+            min-width: 160px;
           }
         }
         
