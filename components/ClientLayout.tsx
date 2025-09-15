@@ -64,11 +64,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
       // Smooth scroll for anchor links
       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+        anchor.addEventListener('click', function (this: HTMLAnchorElement, e: Event) {
           e.preventDefault()
-          const target = document.querySelector(this.getAttribute('href'))
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          const href = this.getAttribute('href')
+          if (href) {
+            const target = document.querySelector(href)
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }
           }
         })
       })
