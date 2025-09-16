@@ -230,7 +230,7 @@ export default function EventsPage() {
       <style jsx>{`
         .events-hero {
           padding: 100px 0 60px;
-          background: linear-gradient(135deg, #00A651 0%, #00C853 100%);
+          background: #00A651;
           color: white;
           text-align: center;
         }
@@ -240,12 +240,14 @@ export default function EventsPage() {
           font-weight: 700;
           margin-bottom: 16px;
           text-transform: capitalize;
+          color: white;
         }
 
         .hero-subtitle {
           font-size: 20px;
-          opacity: 0.95;
           margin-bottom: 32px;
+          color: white;
+          opacity: 0.95;
         }
 
         .hero-actions {
@@ -256,7 +258,7 @@ export default function EventsPage() {
         }
 
         .btn-hero-primary, .btn-hero-secondary {
-          padding: 14px 32px;
+          padding: 14px 40px;
           border-radius: 8px;
           font-size: 16px;
           font-weight: 600;
@@ -265,6 +267,7 @@ export default function EventsPage() {
           transition: all 0.3s;
           border: none;
           cursor: pointer;
+          min-width: 180px;
         }
 
         .btn-hero-primary {
@@ -372,18 +375,32 @@ export default function EventsPage() {
         }
 
         .filter-select {
-          padding: 8px 12px;
-          border: 1px solid #d1d5db;
-          border-radius: 6px;
+          padding: 10px 16px;
+          border: 1px solid #e5e7eb;
+          border-radius: 12px;
           font-size: 14px;
           background: white;
           cursor: pointer;
           outline: none;
           transition: all 0.3s;
+          color: #374151;
+          font-weight: 500;
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+          background-position: right 10px center;
+          background-repeat: no-repeat;
+          background-size: 20px;
+          padding-right: 40px;
+        }
+
+        .filter-select:hover {
+          border-color: #00A651;
+          background-color: #f9fafb;
         }
 
         .filter-select:focus {
           border-color: #00A651;
+          box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
         }
 
         .filter-checkbox {
@@ -421,176 +438,145 @@ export default function EventsPage() {
 
         .event-card {
           background: white;
-          border-radius: 12px;
+          border-radius: 16px;
           overflow: hidden;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.08);
           transition: all 0.3s;
-          cursor: pointer;
           position: relative;
+          border: 1px solid #e5e7eb;
         }
 
         .event-card:hover {
           transform: translateY(-4px);
-          box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-        }
-
-        .event-card.featured {
-          border: 2px solid #00A651;
-        }
-
-        .featured-badge {
-          position: absolute;
-          top: 16px;
-          left: 16px;
-          background: #00A651;
-          color: white;
-          padding: 4px 12px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 600;
-          z-index: 2;
-        }
-
-        .event-image {
-          position: relative;
-          height: 200px;
-          background: #f3f4f6;
-        }
-
-        .event-image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
+          box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+          border-color: #d1d5db;
         }
 
         .event-content {
-          padding: 20px;
+          padding: 24px;
         }
 
-        .event-header {
-          margin-bottom: 12px;
-        }
-
-        .event-date-time {
-          font-size: 13px;
-          color: #00A651;
+        .event-date-badge {
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          background: #e74c8a;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 8px;
+          margin-bottom: 16px;
           font-weight: 600;
+        }
+
+        .event-date-badge.workshop {
+          background: #e74c8a;
+        }
+
+        .event-date-badge.career-fair {
+          background: #4b5563;
+        }
+
+        .event-date-badge.alumni-talk {
+          background: #7c3aed;
+        }
+
+        .event-date-badge.info-session {
+          background: #2563eb;
+        }
+
+        .event-month {
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          opacity: 0.9;
+        }
+
+        .event-day {
+          font-size: 20px;
+          font-weight: 700;
+          line-height: 1;
+          margin-top: 2px;
+        }
+
+        .event-category {
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: #9ca3af;
           margin-bottom: 8px;
+          font-weight: 600;
         }
 
         .event-title {
-          font-size: 20px;
-          font-weight: 700;
+          font-size: 18px;
+          font-weight: 600;
           color: #111827;
-          margin-bottom: 8px;
-          line-height: 1.3;
+          margin-bottom: 12px;
+          line-height: 1.4;
+          min-height: 50px;
         }
 
-        .event-host {
-          font-size: 14px;
+        .event-time-location {
+          font-size: 13px;
           color: #6b7280;
-          margin-bottom: 12px;
-        }
-
-        .event-location {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 12px;
-          font-size: 14px;
-          color: #374151;
-        }
-
-        .location-badge {
-          display: inline-block;
-          padding: 2px 8px;
-          border-radius: 4px;
-          font-size: 12px;
-          font-weight: 600;
-          margin-left: 8px;
-        }
-
-        .badge-online {
-          background: #dbeafe;
-          color: #1e40af;
-        }
-
-        .badge-hybrid {
-          background: #f3e8ff;
-          color: #7c3aed;
-        }
-
-        .badge-campus {
-          background: #d1fae5;
-          color: #065f46;
-        }
-
-        .event-capacity {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 12px 0;
-          border-top: 1px solid #e5e7eb;
-          border-bottom: 1px solid #e5e7eb;
           margin-bottom: 16px;
+          line-height: 1.6;
         }
 
-        .spots-left {
-          font-size: 14px;
-          font-weight: 600;
-        }
-
-        .spots-left.available {
-          color: #00A651;
-        }
-
-        .spots-left.limited {
-          color: #f59e0b;
-        }
-
-        .spots-left.full {
-          color: #ef4444;
-        }
-
-        .event-tags {
+        .event-location-line {
           display: flex;
-          flex-wrap: wrap;
+          align-items: center;
           gap: 6px;
-          margin-bottom: 16px;
+          margin-bottom: 4px;
         }
 
-        .event-tag {
-          background: #f3f4f6;
-          color: #374151;
-          padding: 4px 10px;
-          border-radius: 4px;
-          font-size: 12px;
-          font-weight: 500;
+        .event-divider {
+          height: 1px;
+          background: #e5e7eb;
+          margin: 16px 0;
         }
 
-        .event-footer {
+        .event-actions {
           display: flex;
+          gap: 8px;
           align-items: center;
-          justify-content: space-between;
         }
 
         .btn-rsvp {
-          background: #00A651;
+          flex: 1;
+          background: #e74c8a;
           color: white;
-          padding: 10px 24px;
+          padding: 10px 20px;
           border: none;
-          border-radius: 6px;
-          font-size: 15px;
+          border-radius: 8px;
+          font-size: 13px;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s;
-          width: 100%;
           text-align: center;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .btn-rsvp.workshop {
+          background: #e74c8a;
+        }
+
+        .btn-rsvp.career-fair {
+          background: #4b5563;
+        }
+
+        .btn-rsvp.alumni-talk {
+          background: #7c3aed;
+        }
+
+        .btn-rsvp.info-session {
+          background: #2563eb;
         }
 
         .btn-rsvp:hover:not(:disabled) {
-          background: #008a43;
           transform: translateY(-1px);
+          filter: brightness(1.1);
         }
 
         .btn-rsvp:disabled {
@@ -598,11 +584,50 @@ export default function EventsPage() {
           cursor: not-allowed;
         }
 
-        .rsvp-note {
-          font-size: 12px;
+        .btn-learn-more {
+          padding: 10px 20px;
+          border: 1px solid #e5e7eb;
+          background: white;
+          border-radius: 8px;
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
           color: #6b7280;
-          text-align: center;
-          margin-top: 8px;
+        }
+
+        .btn-learn-more:hover {
+          background: #f9fafb;
+          border-color: #d1d5db;
+        }
+
+        .spots-indicator {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          background: white;
+          padding: 6px 12px;
+          border-radius: 20px;
+          font-size: 11px;
+          font-weight: 600;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .spots-indicator.available {
+          color: #00A651;
+          border: 1px solid #d1fae5;
+        }
+
+        .spots-indicator.limited {
+          color: #f59e0b;
+          border: 1px solid #fed7aa;
+        }
+
+        .spots-indicator.full {
+          color: #ef4444;
+          border: 1px solid #fecaca;
         }
 
         .empty-state {
@@ -851,62 +876,65 @@ export default function EventsPage() {
               {filteredEvents.map(event => {
                 const spotsLeft = event.capacity - event.spots_taken
                 const spotsClass = spotsLeft <= 0 ? 'full' : spotsLeft <= 5 ? 'limited' : 'available'
+                const eventDate = new Date(event.event_date)
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                const monthName = monthNames[eventDate.getMonth()]
+                const dayNumber = eventDate.getDate()
 
                 return (
-                  <div
-                    key={event.id}
-                    className={`event-card ${event.featured ? 'featured' : ''}`}
-                  >
-                    {event.featured && <span className="featured-badge">Featured</span>}
-                    <div className="event-image">
-                      <Image
-                        src={event.image_url || '/images/career-event-students.jpg'}
-                        alt={event.title}
-                        width={400}
-                        height={200}
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </div>
+                  <div key={event.id} className="event-card">
+                    {spotsLeft <= 5 && (
+                      <div className={`spots-indicator ${spotsClass}`}>
+                        {spotsLeft <= 0 ? 'FULL' : `${spotsLeft} SPOTS LEFT`}
+                      </div>
+                    )}
                     <div className="event-content">
-                      <div className="event-header">
-                        <div className="event-date-time">
-                          {formatDate(event.event_date)} · {formatTime(event.event_time)}
+                      <div className={`event-date-badge ${event.event_type}`}>
+                        <span className="event-month">{monthName}</span>
+                        <span className="event-day">{dayNumber}</span>
+                      </div>
+
+                      <div className="event-category">
+                        {event.event_type.replace('-', ' ').toUpperCase()}
+                      </div>
+
+                      <h3 className="event-title">{event.title}</h3>
+
+                      <div className="event-time-location">
+                        <div className="event-location-line">
+                          <strong>WHEN</strong>
                         </div>
-                        <h3 className="event-title">{event.title}</h3>
-                        {event.host_org && (
-                          <div className="event-host">{event.host_org}</div>
-                        )}
-                      </div>
-                      <div className="event-location">
-                        <i className="fas fa-map-marker-alt"></i>
-                        <span>{event.location}</span>
-                        <span className={`location-badge ${getFormatBadgeClass(event.event_format)}`}>
-                          {event.event_format === 'on-campus' ? 'On-campus' :
-                           event.event_format === 'online' ? 'Online' : 'Hybrid'}
-                        </span>
-                      </div>
-                      <div className="event-capacity">
-                        <span className={`spots-left ${spotsClass}`}>
-                          {getSpotsLeftText(event)}
-                        </span>
-                      </div>
-                      {event.tags && event.tags.length > 0 && (
-                        <div className="event-tags">
-                          {event.tags.slice(0, 3).map((tag, idx) => (
-                            <span key={idx} className="event-tag">{tag}</span>
-                          ))}
+                        <div style={{ marginBottom: '8px' }}>
+                          {formatDate(event.event_date).split(',')[0]}, {formatTime(event.event_time)}
                         </div>
-                      )}
-                      <div className="event-footer">
+
+                        <div className="event-location-line">
+                          <strong>WHERE</strong>
+                        </div>
+                        <div>
+                          {event.location}
+                          {event.city && `, ${event.city}`}
+                        </div>
+                      </div>
+
+                      <div className="event-divider"></div>
+
+                      <div className="event-actions">
                         <button
-                          className="btn-rsvp"
+                          className={`btn-rsvp ${event.event_type}`}
                           onClick={() => handleRSVP(event)}
                           disabled={false}
                         >
                           {spotsLeft <= 0 ? 'Join waitlist' : 'RSVP'}
                         </button>
+                        <Link
+                          href={`/events/${event.slug || event.id}`}
+                          className="btn-learn-more"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Learn More
+                        </Link>
                       </div>
-                      <p className="rsvp-note">You'll get a calendar invite.</p>
                     </div>
                   </div>
                 )
