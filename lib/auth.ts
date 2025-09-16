@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret'
+const JWT_SECRET = process.env.JWT_SECRET || 'emsi-career-center-secret-2024'
 
 export interface JWTPayload {
   userId: string

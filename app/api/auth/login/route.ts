@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { comparePassword, signJWT } from '../../../../lib/auth'
 import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
 const ADMIN_USERNAME = 'admin'
 const ADMIN_PASSWORD_HASH = '$2a$10$8KqGkZf3cGJ7xWJZLPqPOuPxB9W.kGXQP5cGHvq5nG0M4kMkMDnW6' // admin123
+const JWT_SECRET = 'emsi-career-center-secret-2024' // Hardcoded for consistency
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,10 +33,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const token = signJWT({
-      userId: '1',
-      username: ADMIN_USERNAME
-    })
+    const token = jwt.sign(
+      {
+        userId: '1',
+        username: ADMIN_USERNAME
+      },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    )
 
     const response = NextResponse.json(
       { 
