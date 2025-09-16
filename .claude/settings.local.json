@@ -37,6 +37,9 @@
       "Bash(git log:*)",
       "Bash(fuser:*)"
     ],
-    "deny": []
+    "deny": [],
+    "additionalDirectories": [
+      "/home/ratfig/Desktop/logos"
+    ]
   }
 }

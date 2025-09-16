@@ -198,15 +198,53 @@ export default function HomePage() {
           <p className="section-subtitle">Leading companies that hire EMSI graduates</p>
         </div>
         
-        <div className="partners-carousel">
-          <div className="carousel-track">
-            <Image src="/images/oracle.svg" alt="Oracle" width={140} height={70} className="partner-logo" />
-            <Image src="/images/capgemini.svg" alt="Capgemini" width={140} height={70} className="partner-logo" />
-            <Image src="/images/OCP.svg" alt="OCP Group" width={140} height={70} className="partner-logo" />
-            <Image src="/images/CIH.svg" alt="CIH Bank" width={140} height={70} className="partner-logo" />
-            <Image src="/images/hps.svg" alt="HPS" width={140} height={70} className="partner-logo" />
-            <Image src="/images/LEONI.svg" alt="LEONI" width={140} height={70} className="partner-logo" />
-            <Image src="/images/Nestle.svg" alt="Nestle" width={140} height={70} className="partner-logo" />
+        <div className="partners-container">
+          <div className="partners-grid">
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-1.png" alt="Partner 1" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-2.png" alt="Partner 2" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-3.png" alt="Partner 3" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-4.png" alt="Partner 4" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-5.png" alt="Partner 5" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-6.png" alt="Partner 6" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-7.png" alt="Partner 7" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-8.png" alt="Partner 8" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-9.png" alt="Partner 9" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-10.png" alt="Partner 10" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-11.png" alt="Partner 11" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-12.png" alt="Partner 12" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-13.png" alt="Partner 13" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-14.png" alt="Partner 14" width={120} height={60} className="partner-logo" />
+            </div>
+            <div className="partner-logo-wrapper">
+              <Image src="/images/partner-logo-15.png" alt="Partner 15" width={120} height={60} className="partner-logo" />
+            </div>
           </div>
         </div>
       </section>
