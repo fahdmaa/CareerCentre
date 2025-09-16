@@ -34,7 +34,7 @@ export default function AmbassadorsPage() {
   const [showLeadershipModal, setShowLeadershipModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCohort, setSelectedCohort] = useState('')
-  const [isVisible, setIsVisible] = useState(false)
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set())
 
   // Form states
   const [applicationForm, setApplicationForm] = useState({
@@ -58,8 +58,47 @@ export default function AmbassadorsPage() {
   useEffect(() => {
     fetchAmbassadors()
     fetchActiveCohort()
-    // Trigger animations after a small delay
-    setTimeout(() => setIsVisible(true), 100)
+
+    // Hero elements should animate immediately
+    setTimeout(() => {
+      setVisibleSections(prev => new Set([...prev, 'hero']))
+    }, 100)
+
+    let observer: IntersectionObserver | null = null
+
+    // Set up intersection observer for scroll animations
+    const setupObserver = () => {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const sectionId = entry.target.getAttribute('data-section-id')
+              if (sectionId) {
+                setVisibleSections(prev => new Set([...prev, sectionId]))
+              }
+            }
+          })
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '0px 0px -20% 0px'
+        }
+      )
+
+      // Observe all sections
+      const sections = document.querySelectorAll('[data-section-id]')
+      sections.forEach(section => observer?.observe(section))
+    }
+
+    // Wait for DOM to be fully rendered
+    const timeoutId = setTimeout(setupObserver, 500)
+
+    return () => {
+      clearTimeout(timeoutId)
+      if (observer) {
+        observer.disconnect()
+      }
+    }
   }, [])
 
   const fetchAmbassadors = async () => {
@@ -723,11 +762,11 @@ export default function AmbassadorsPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="hero-section">
+      <section className="hero-section" data-section-id="hero">
         <div className="container">
-          <h1 className={`hero-title ${isVisible ? 'animate-fade-in-up animate-delay-1' : ''}`}>Student Ambassadors Program</h1>
-          <p className={`hero-subtitle ${isVisible ? 'animate-fade-in-up animate-delay-2' : ''}`}>Lead, connect, and represent EMSI.</p>
-          <div className={`hero-actions ${isVisible ? 'animate-fade-in-up animate-delay-3' : ''}`}>
+          <h1 className={`hero-title ${visibleSections.has('hero') ? 'animate-fade-in-up animate-delay-1' : ''}`}>Student Ambassadors Program</h1>
+          <p className={`hero-subtitle ${visibleSections.has('hero') ? 'animate-fade-in-up animate-delay-2' : ''}`}>Lead, connect, and represent EMSI.</p>
+          <div className={`hero-actions ${visibleSections.has('hero') ? 'animate-fade-in-up animate-delay-3' : ''}`}>
             {isApplicationOpen ? (
               <button className="btn btn-primary" onClick={() => setShowApplicationModal(true)}>
                 Apply Now
@@ -745,7 +784,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* About the Program */}
-      <section id="about" className={`section ${isVisible ? 'visible' : ''}`}>
+      <section id="about" className={`section ${visibleSections.has('about') ? 'visible' : ''}`} data-section-id="about">
         <div className="container">
           <h2 className="section-title">About the Program</h2>
           <p style={{ textAlign: 'center', color: '#4b5563', maxWidth: '800px', margin: '0 auto' }}>
@@ -770,7 +809,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* What You'll Do */}
-      <section className={`section ${isVisible ? 'visible' : ''}`} style={{ background: '#f9fafb' }}>
+      <section className={`section ${visibleSections.has('activities') ? 'visible' : ''}`} style={{ background: '#f9fafb' }} data-section-id="activities">
         <div className="container">
           <h2 className="section-title">What You'll Do</h2>
           <div className="activities-grid">
@@ -833,7 +872,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* Benefits & Perks */}
-      <section className={`section ${isVisible ? 'visible' : ''}`}>
+      <section className={`section ${visibleSections.has('benefits') ? 'visible' : ''}`} data-section-id="benefits">
         <div className="container">
           <h2 className="section-title">Benefits & Perks</h2>
           <div className="benefits-grid">
@@ -912,7 +951,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* Current Ambassadors */}
-      <section className={`section ${isVisible ? 'visible' : ''}`} style={{ background: '#f9fafb' }}>
+      <section className={`section ${visibleSections.has('ambassadors') ? 'visible' : ''}`} style={{ background: '#f9fafb' }} data-section-id="ambassadors">
         <div className="container">
           <h2 className="section-title">Current Ambassadors</h2>
 
@@ -1000,7 +1039,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* How to Apply */}
-      <section className={`section ${isVisible ? 'visible' : ''}`}>
+      <section className={`section ${visibleSections.has('apply') ? 'visible' : ''}`} data-section-id="apply">
         <div className="container">
           <h2 className="section-title">How to Apply</h2>
           <div className="process-steps">
@@ -1034,7 +1073,7 @@ export default function AmbassadorsPage() {
 
       {/* Cohort Status CTA */}
       {activeCohort && (
-        <section className={`section ${isVisible ? 'visible' : ''}`} style={{ background: '#f9fafb' }}>
+        <section className={`section ${visibleSections.has('cohort-cta') ? 'visible' : ''}`} style={{ background: '#f9fafb' }} data-section-id="cohort-cta">
           <div className="container">
             <div className="cohort-cta">
               {isApplicationOpen ? (
@@ -1071,7 +1110,7 @@ export default function AmbassadorsPage() {
       )}
 
       {/* FAQ */}
-      <section className={`section ${isVisible ? 'visible' : ''}`}>
+      <section className={`section ${visibleSections.has('faq') ? 'visible' : ''}`} data-section-id="faq">
         <div className="container">
           <h2 className="section-title">Frequently Asked Questions</h2>
           <div className="faq-list">
@@ -1122,7 +1161,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* Contact */}
-      <section className={`contact-section ${isVisible ? 'visible' : ''}`}>
+      <section className={`contact-section ${visibleSections.has('contact') ? 'visible' : ''}`} data-section-id="contact">
         <div className="container">
           <p className="contact-info">
             Questions? Contact the Career Centre at{' '}
