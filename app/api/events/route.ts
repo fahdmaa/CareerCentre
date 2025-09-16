@@ -12,19 +12,16 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('events')
-      .select(`
-        id, title, slug, description, event_date, event_time, location,
-        capacity, spots_taken, status, event_type, event_format,
-        city, campus, tags, host_org, image_url, featured,
-        agenda, speakers, what_to_bring, meeting_link,
-        created_at, updated_at
-      `)
-      .eq('status', 'upcoming')
+      .select('*')
       .order('event_date', { ascending: true })
 
+    // Only filter by upcoming status if specifically requested
     if (upcoming) {
       query = query.gte('event_date', new Date().toISOString().split('T')[0])
     }
+
+    // Only filter by status if the column exists and has upcoming events
+    // Note: removing the hardcoded status filter to show all events
 
     if (type && type !== '') {
       query = query.eq('event_type', type)

@@ -57,6 +57,39 @@ export default function EventsPage() {
   const fetchEvents = async () => {
     setLoading(true)
     try {
+      // First try to get events from API
+      const response = await fetch(`/api/events${showPastEvents ? '' : '?upcoming=true'}`)
+
+      if (response.ok) {
+        const { events } = await response.json()
+
+        // Process events to ensure all fields have default values
+        const processedEvents = (events || []).map((event: any) => ({
+          id: event.id,
+          title: event.title || 'Untitled Event',
+          slug: event.slug || event.id?.toString(),
+          description: event.description || 'No description available',
+          event_date: event.event_date,
+          event_time: event.event_time || '09:00:00',
+          location: event.location || 'TBD',
+          event_type: event.event_type || 'workshop',
+          event_format: event.event_format || 'on-campus',
+          city: event.city || 'Marrakech',
+          campus: event.campus,
+          tags: event.tags || [],
+          host_org: event.host_org || 'EMSI Career Center',
+          capacity: event.capacity || 50,
+          spots_taken: event.spots_taken || 0,
+          image_url: event.image_url || '/images/career-event-students.jpg',
+          featured: event.featured || false
+        }))
+
+        setEvents(processedEvents)
+        setFilteredEvents(processedEvents)
+        return
+      }
+
+      // Fallback to direct database query if API fails
       let query = supabase
         .from('events')
         .select('*')
@@ -70,8 +103,29 @@ export default function EventsPage() {
 
       if (error) throw error
 
-      setEvents(data || [])
-      setFilteredEvents(data || [])
+      // Process events from direct query too
+      const processedEvents = (data || []).map((event: any) => ({
+        id: event.id,
+        title: event.title || 'Untitled Event',
+        slug: event.slug || event.id?.toString(),
+        description: event.description || 'No description available',
+        event_date: event.event_date,
+        event_time: event.event_time || '09:00:00',
+        location: event.location || 'TBD',
+        event_type: event.event_type || 'workshop',
+        event_format: event.event_format || 'on-campus',
+        city: event.city || 'Marrakech',
+        campus: event.campus,
+        tags: event.tags || [],
+        host_org: event.host_org || 'EMSI Career Center',
+        capacity: event.capacity || 50,
+        spots_taken: event.spots_taken || 0,
+        image_url: event.image_url || '/images/career-event-students.jpg',
+        featured: event.featured || false
+      }))
+
+      setEvents(processedEvents)
+      setFilteredEvents(processedEvents)
     } catch (error) {
       console.error('Error fetching events:', error)
       // Fallback to sample data if database not available
