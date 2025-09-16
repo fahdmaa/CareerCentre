@@ -730,15 +730,6 @@ export default function EventsPage() {
         <div className="container">
           <h1 className="hero-title">Career Events</h1>
           <p className="hero-subtitle">Workshops, seminars, and networking opportunities</p>
-          <div className="hero-actions">
-            <Link href="#events" className="btn-hero-primary">
-              Browse Events
-            </Link>
-            <button className="btn-hero-secondary" onClick={() => setViewMode('calendar')}>
-              <i className="fas fa-calendar-alt" style={{ marginRight: '8px' }}></i>
-              Calendar View
-            </button>
-          </div>
         </div>
       </section>
 
