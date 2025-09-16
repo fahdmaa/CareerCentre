@@ -34,6 +34,7 @@ export default function AmbassadorsPage() {
   const [showLeadershipModal, setShowLeadershipModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCohort, setSelectedCohort] = useState('')
+  const [isVisible, setIsVisible] = useState(false)
 
   // Form states
   const [applicationForm, setApplicationForm] = useState({
@@ -57,6 +58,8 @@ export default function AmbassadorsPage() {
   useEffect(() => {
     fetchAmbassadors()
     fetchActiveCohort()
+    // Trigger animations after a small delay
+    setTimeout(() => setIsVisible(true), 100)
   }, [])
 
   const fetchAmbassadors = async () => {
@@ -183,11 +186,13 @@ export default function AmbassadorsPage() {
           font-size: 48px;
           font-weight: 700;
           margin-bottom: 16px;
+          color: white;
         }
 
         .hero-subtitle {
           font-size: 20px;
           margin-bottom: 32px;
+          color: white;
           opacity: 0.95;
         }
 
@@ -212,22 +217,29 @@ export default function AmbassadorsPage() {
         .btn-primary {
           background: white;
           color: #00A651;
+          border: 2px solid white;
+          font-weight: 600;
         }
 
         .btn-primary:hover {
+          background: #00A651;
+          color: white;
           transform: translateY(-2px);
-          box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .btn-secondary {
           background: transparent;
           color: white;
           border: 2px solid white;
+          font-weight: 600;
         }
 
         .btn-secondary:hover {
           background: white;
           color: #00A651;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         .section {
@@ -603,6 +615,83 @@ export default function AmbassadorsPage() {
           100% { background-position: -200% 0; }
         }
 
+        @keyframes fadeInUp {
+          0% {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeInLeft {
+          0% {
+            opacity: 0;
+            transform: translateX(-30px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes fadeInRight {
+          0% {
+            opacity: 0;
+            transform: translateX(30px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out;
+        }
+
+        .animate-fade-in-left {
+          animation: fadeInLeft 0.8s ease-out;
+        }
+
+        .animate-fade-in-right {
+          animation: fadeInRight 0.8s ease-out;
+        }
+
+        .animate-delay-1 {
+          animation-delay: 0.1s;
+          animation-fill-mode: both;
+        }
+
+        .animate-delay-2 {
+          animation-delay: 0.2s;
+          animation-fill-mode: both;
+        }
+
+        .animate-delay-3 {
+          animation-delay: 0.3s;
+          animation-fill-mode: both;
+        }
+
+        .animate-delay-4 {
+          animation-delay: 0.4s;
+          animation-fill-mode: both;
+        }
+
+        /* Initial hidden state */
+        .section:not(.visible), .contact-section:not(.visible) {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+
+        .section.visible, .contact-section.visible {
+          opacity: 1;
+          transform: translateY(0);
+          transition: all 0.8s ease-out;
+        }
+
         .empty-state {
           text-align: center;
           padding: 60px 20px;
@@ -636,9 +725,9 @@ export default function AmbassadorsPage() {
       {/* Hero Section */}
       <section className="hero-section">
         <div className="container">
-          <h1 className="hero-title">Student Ambassadors Program</h1>
-          <p className="hero-subtitle">Lead, connect, and represent EMSI.</p>
-          <div className="hero-actions">
+          <h1 className={`hero-title ${isVisible ? 'animate-fade-in-up animate-delay-1' : ''}`}>Student Ambassadors Program</h1>
+          <p className={`hero-subtitle ${isVisible ? 'animate-fade-in-up animate-delay-2' : ''}`}>Lead, connect, and represent EMSI.</p>
+          <div className={`hero-actions ${isVisible ? 'animate-fade-in-up animate-delay-3' : ''}`}>
             {isApplicationOpen ? (
               <button className="btn btn-primary" onClick={() => setShowApplicationModal(true)}>
                 Apply Now
@@ -656,7 +745,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* About the Program */}
-      <section id="about" className="section">
+      <section id="about" className={`section ${isVisible ? 'visible' : ''}`}>
         <div className="container">
           <h2 className="section-title">About the Program</h2>
           <p style={{ textAlign: 'center', color: '#4b5563', maxWidth: '800px', margin: '0 auto' }}>
@@ -681,7 +770,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* What You'll Do */}
-      <section className="section" style={{ background: '#f9fafb' }}>
+      <section className={`section ${isVisible ? 'visible' : ''}`} style={{ background: '#f9fafb' }}>
         <div className="container">
           <h2 className="section-title">What You'll Do</h2>
           <div className="activities-grid">
@@ -744,7 +833,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* Benefits & Perks */}
-      <section className="section">
+      <section className={`section ${isVisible ? 'visible' : ''}`}>
         <div className="container">
           <h2 className="section-title">Benefits & Perks</h2>
           <div className="benefits-grid">
@@ -823,7 +912,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* Current Ambassadors */}
-      <section className="section" style={{ background: '#f9fafb' }}>
+      <section className={`section ${isVisible ? 'visible' : ''}`} style={{ background: '#f9fafb' }}>
         <div className="container">
           <h2 className="section-title">Current Ambassadors</h2>
 
@@ -911,7 +1000,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* How to Apply */}
-      <section className="section">
+      <section className={`section ${isVisible ? 'visible' : ''}`}>
         <div className="container">
           <h2 className="section-title">How to Apply</h2>
           <div className="process-steps">
@@ -945,7 +1034,7 @@ export default function AmbassadorsPage() {
 
       {/* Cohort Status CTA */}
       {activeCohort && (
-        <section className="section" style={{ background: '#f9fafb' }}>
+        <section className={`section ${isVisible ? 'visible' : ''}`} style={{ background: '#f9fafb' }}>
           <div className="container">
             <div className="cohort-cta">
               {isApplicationOpen ? (
@@ -982,7 +1071,7 @@ export default function AmbassadorsPage() {
       )}
 
       {/* FAQ */}
-      <section className="section">
+      <section className={`section ${isVisible ? 'visible' : ''}`}>
         <div className="container">
           <h2 className="section-title">Frequently Asked Questions</h2>
           <div className="faq-list">
@@ -1033,7 +1122,7 @@ export default function AmbassadorsPage() {
       </section>
 
       {/* Contact */}
-      <section className="contact-section">
+      <section className={`contact-section ${isVisible ? 'visible' : ''}`}>
         <div className="container">
           <p className="contact-info">
             Questions? Contact the Career Centre at{' '}
