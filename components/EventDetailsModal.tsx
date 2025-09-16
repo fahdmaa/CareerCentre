@@ -25,6 +25,11 @@ interface Event {
   speakers?: string[]
   what_to_bring?: string
   meeting_link?: string
+  guest_speaker_name?: string
+  guest_speaker_occupation?: string
+  guest_speaker_bio?: string
+  guest_speaker_photo?: string
+  guest_speaker_linkedin?: string
 }
 
 interface EventDetailsModalProps {
@@ -445,6 +450,112 @@ export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetai
                 About this event
               </h3>
               <p style={styles.description}>{event.description}</p>
+            </div>
+          )}
+
+          {event.guest_speaker_name && (
+            <div style={styles.section}>
+              <h3 style={styles.sectionTitle}>
+                <i className="fas fa-user-tie"></i>
+                Guest Speaker
+              </h3>
+              <div style={{
+                display: 'flex',
+                gap: '20px',
+                alignItems: 'flex-start',
+                background: '#f9fafb',
+                padding: '20px',
+                borderRadius: '12px'
+              }}>
+                {event.guest_speaker_photo && (
+                  <div style={{
+                    width: '100px',
+                    height: '100px',
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                    background: '#e5e7eb'
+                  }}>
+                    <Image
+                      src={event.guest_speaker_photo}
+                      alt={event.guest_speaker_name}
+                      width={100}
+                      height={100}
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
+                )}
+                {!event.guest_speaker_photo && (
+                  <div style={{
+                    width: '100px',
+                    height: '100px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #00A651, #00C853)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '32px',
+                    fontWeight: 'bold',
+                    flexShrink: 0
+                  }}>
+                    {event.guest_speaker_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                  </div>
+                )}
+                <div style={{ flex: 1 }}>
+                  <h4 style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: '#1f2937',
+                    marginBottom: '4px'
+                  }}>
+                    {event.guest_speaker_name}
+                  </h4>
+                  <p style={{
+                    fontSize: '16px',
+                    color: '#00A651',
+                    fontWeight: '500',
+                    marginBottom: '12px'
+                  }}>
+                    {event.guest_speaker_occupation}
+                  </p>
+                  {event.guest_speaker_bio && (
+                    <p style={{
+                      fontSize: '14px',
+                      color: '#4b5563',
+                      lineHeight: '1.5',
+                      marginBottom: '12px'
+                    }}>
+                      {event.guest_speaker_bio}
+                    </p>
+                  )}
+                  {event.guest_speaker_linkedin && (
+                    <a
+                      href={event.guest_speaker_linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '6px 14px',
+                        background: '#0077b5',
+                        color: 'white',
+                        borderRadius: '6px',
+                        textDecoration: 'none',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        transition: 'background 0.3s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#005885'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = '#0077b5'}
+                    >
+                      <i className="fab fa-linkedin"></i>
+                      Connect on LinkedIn
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 

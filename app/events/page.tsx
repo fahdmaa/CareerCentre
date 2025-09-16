@@ -26,6 +26,11 @@ interface Event {
   spots_taken: number
   image_url?: string
   featured?: boolean
+  guest_speaker_name?: string
+  guest_speaker_occupation?: string
+  guest_speaker_bio?: string
+  guest_speaker_photo?: string
+  guest_speaker_linkedin?: string
 }
 
 export default function EventsPage() {
