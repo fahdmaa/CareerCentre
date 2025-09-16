@@ -85,16 +85,20 @@ export default function AmbassadorsPage() {
     }
 
     try {
-      const { error } = await supabase
-        .from('cohort_applications')
-        .insert({
+      const response = await fetch('/api/public/cohorts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           cohort_id: activeCohort.id,
           ...formData,
           cv_url: formData.cv ? 'uploaded' : null,
           status: 'pending'
         })
+      })
 
-      if (!error) {
+      if (response.ok) {
         alert('Application submitted successfully!')
         setShowApplicationModal(false)
         setFormData({
@@ -109,6 +113,8 @@ export default function AmbassadorsPage() {
           linkedin: '',
           cv: null
         })
+      } else {
+        alert('Failed to submit application. Please try again.')
       }
     } catch (error) {
       alert('Failed to submit application. Please try again.')
