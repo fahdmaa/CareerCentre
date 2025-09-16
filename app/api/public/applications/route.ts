@@ -1,34 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase, isSupabaseConfigured } from '../../../../lib/supabase'
 
-export async function GET() {
-  if (!isSupabaseConfigured()) {
-    return NextResponse.json({ error: 'Database not configured' }, { status: 503 })
-  }
-
-  const { data, error } = await supabase
-    .from('cohorts')
-    .select('*')
-    .order('start_date', { ascending: false })
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
-
-  return NextResponse.json({ cohorts: data || [] })
-}
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    
+
     if (!isSupabaseConfigured()) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 503 })
     }
 
+    // Validate required fields
+    const { name, email, major, year, motivation, cohort_id } = body
+
+    if (!name || !email || !major || !year || !motivation) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+
+    if (motivation.length < 100) {
+      return NextResponse.json(
+        { error: 'Motivation must be at least 100 characters' },
+        { status: 400 }
+      )
+    }
+
     const { data, error } = await supabase
       .from('cohort_applications')
-      .insert(body)
+      .insert({
+        ...body,
+        status: 'pending',
+        submitted_at: new Date().toISOString()
+      })
       .select()
       .single()
 
