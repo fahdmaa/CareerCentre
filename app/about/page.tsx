@@ -34,6 +34,10 @@ export default function AdminLoginPage() {
       const data = await response.json()
 
       if (response.ok) {
+        // Store token in localStorage as a fallback
+        if (data.token) {
+          localStorage.setItem('admin-token', data.token)
+        }
         router.push('/admin/dashboard')
       } else {
         setError(data.error || 'Invalid credentials')

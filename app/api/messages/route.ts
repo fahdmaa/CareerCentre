@@ -3,7 +3,14 @@ import { supabase, supabaseAdmin, isSupabaseConfigured } from '../../../lib/supa
 import { verifyJWT } from '../../../lib/auth'
 
 export async function GET(request: NextRequest) {
-  const token = request.cookies.get('admin-token')?.value
+  // Check for token in cookie first
+  const cookieToken = request.cookies.get('admin-token')?.value
+
+  // Also check Authorization header as fallback
+  const authHeader = request.headers.get('authorization')
+  const headerToken = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null
+
+  const token = cookieToken || headerToken
 
   if (!token || !verifyJWT(token)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

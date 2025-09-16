@@ -103,19 +103,28 @@ export default function AdminDashboardPage() {
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
+    // Check if token exists in localStorage
+    const token = localStorage.getItem('admin-token')
+    if (!token) {
+      router.push('/about')
+      return
+    }
     checkAuth()
     fetchAllData()
   }, [])
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/api/messages', {
+      const token = localStorage.getItem('admin-token')
+      const response = await fetch('/api/auth/verify', {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
         }
       })
       if (response.status === 401) {
+        localStorage.removeItem('admin-token')
         router.push('/about')
         return false
       }
@@ -132,13 +141,19 @@ export default function AdminDashboardPage() {
     if (!isAuthenticated) return
 
     try {
+      const token = localStorage.getItem('admin-token')
+      const authHeaders = {
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` })
+      }
+
       // Fetch all data in parallel
       const [messagesRes, registrationsRes, applicationsRes, interviewsRes, activitiesRes] = await Promise.all([
-        fetch('/api/messages', { credentials: 'include' }),
-        fetch('/api/admin/registrations', { credentials: 'include' }).catch(() => null),
-        fetch('/api/admin/applications', { credentials: 'include' }).catch(() => null),
-        fetch('/api/admin/interviews', { credentials: 'include' }).catch(() => null),
-        fetch('/api/admin/activities', { credentials: 'include' }).catch(() => null)
+        fetch('/api/messages', { credentials: 'include', headers: authHeaders }),
+        fetch('/api/admin/registrations', { credentials: 'include', headers: authHeaders }).catch(() => null),
+        fetch('/api/admin/applications', { credentials: 'include', headers: authHeaders }).catch(() => null),
+        fetch('/api/admin/interviews', { credentials: 'include', headers: authHeaders }).catch(() => null),
+        fetch('/api/admin/activities', { credentials: 'include', headers: authHeaders }).catch(() => null)
       ])
 
       if (messagesRes?.ok) {
@@ -192,6 +207,7 @@ export default function AdminDashboardPage() {
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
+    localStorage.removeItem('admin-token')
     router.push('/about')
   }
 
