@@ -7,7 +7,6 @@ import Link from 'next/link'
 import Navigation from '../../../components/Navigation'
 import ClientLayout from '../../../components/ClientLayout'
 import RSVPModal from '../../../components/RSVPModal'
-import { supabase } from '../../../lib/supabase'
 
 interface Event {
   id: number
