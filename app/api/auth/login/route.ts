@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { supabase, isSupabaseConfigured } from '../../../../lib/supabase'
 
-const ADMIN_USERNAME = 'admin'
-const ADMIN_PASSWORD_HASH = '$2a$10$8KqGkZf3cGJ7xWJZLPqPOuPxB9W.kGXQP5cGHvq5nG0M4kMkMDnW6' // admin123
 const JWT_SECRET = 'emsi-career-center-secret-2024' // Hardcoded for consistency
+
+// Fallback admin credentials when Supabase is not configured
+const FALLBACK_ADMIN_USERNAME = 'admin'
+const FALLBACK_ADMIN_PASSWORD_HASH = '$2a$10$8KqGkZf3cGJ7xWJZLPqPOuPxB9W.kGXQP5cGHvq5nG0M4kMkMDnW6' // admin123
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,36 +20,69 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (username !== ADMIN_USERNAME) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      )
+    let isValidPassword = false
+    let userId = '1'
+
+    // Check if Supabase is configured
+    if (isSupabaseConfigured()) {
+      // Fetch user from Supabase
+      const { data: user, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', username)
+        .single()
+
+      if (error || !user) {
+        return NextResponse.json(
+          { error: 'Invalid credentials' },
+          { status: 401 }
+        )
+      }
+
+      // Verify password against the hash from database
+      isValidPassword = await bcrypt.compare(password, user.password_hash)
+      userId = user.id.toString()
+
+      if (!isValidPassword) {
+        return NextResponse.json(
+          { error: 'Invalid credentials' },
+          { status: 401 }
+        )
+      }
+    } else {
+      // Fallback to hardcoded credentials when Supabase is not configured
+      if (username !== FALLBACK_ADMIN_USERNAME) {
+        return NextResponse.json(
+          { error: 'Invalid credentials' },
+          { status: 401 }
+        )
+      }
+
+      isValidPassword = await bcrypt.compare(password, FALLBACK_ADMIN_PASSWORD_HASH)
+
+      if (!isValidPassword) {
+        return NextResponse.json(
+          { error: 'Invalid credentials' },
+          { status: 401 }
+        )
+      }
     }
 
-    const isValidPassword = await bcrypt.compare(password, ADMIN_PASSWORD_HASH)
-    
-    if (!isValidPassword) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      )
-    }
-
+    // Create JWT token
     const token = jwt.sign(
       {
-        userId: '1',
-        username: ADMIN_USERNAME
+        userId: userId,
+        username: username
       },
       JWT_SECRET,
       { expiresIn: '1h' }
     )
 
     const response = NextResponse.json(
-      { 
+      {
         message: 'Login successful',
         token,
-        user: { username: ADMIN_USERNAME }
+        user: { username: username }
       },
       { status: 200 }
     )
@@ -60,6 +96,7 @@ export async function POST(request: NextRequest) {
 
     return response
   } catch (error) {
+    console.error('Login error:', error)
     return NextResponse.json(
       { error: 'Login failed' },
       { status: 500 }
