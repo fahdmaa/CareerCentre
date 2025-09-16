@@ -1,25 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase, isSupabaseConfigured } from '../../../../../lib/supabase'
-import { verify } from 'jsonwebtoken'
-import { cookies } from 'next/headers'
+import { verifyJWT } from '../../../../../lib/auth'
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Check auth
-    const cookieStore = cookies()
-    const token = cookieStore.get('admin-token')
+    // Check for token in cookie first
+    const cookieToken = request.cookies.get('admin-token')?.value
 
-    if (!token) {
+    // Also check Authorization header as fallback
+    const authHeader = request.headers.get('authorization')
+    const headerToken = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null
+
+    const token = cookieToken || headerToken
+
+    if (!token || !verifyJWT(token)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    try {
-      verify(token.value, process.env.JWT_SECRET!)
-    } catch {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
 
     const body = await request.json()
