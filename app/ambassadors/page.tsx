@@ -390,6 +390,9 @@ export default function AmbassadorsPage() {
           overflow: hidden;
           box-shadow: 0 1px 3px rgba(0,0,0,0.1);
           transition: all 0.3s;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
         }
 
         .ambassador-card:hover {
@@ -411,6 +414,14 @@ export default function AmbassadorsPage() {
 
         .ambassador-info {
           padding: 14px;
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
+        }
+
+        .ambassador-content {
+          flex-grow: 1;
+          margin-bottom: 12px;
         }
 
         .ambassador-name {
@@ -424,35 +435,84 @@ export default function AmbassadorsPage() {
           color: #00A651;
           font-size: 12px;
           margin-bottom: 6px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .ambassador-details {
           color: #6b7280;
           font-size: 12px;
-          margin-bottom: 10px;
           line-height: 1.3;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
-        .ambassador-social {
+        .ambassador-actions {
+          padding-top: 12px;
+          border-top: 1px solid #f3f4f6;
+          margin-top: auto;
+          min-height: 44px;
           display: flex;
-          gap: 6px;
+          align-items: center;
+          gap: 8px;
           flex-wrap: wrap;
         }
 
         .social-link {
-          padding: 4px 8px;
-          background: #f3f4f6;
-          border-radius: 4px;
+          display: inline-flex;
+          align-items: center;
+          padding: 6px 10px;
+          background: #f9fafb;
+          border: 1px solid #e5e7eb;
+          border-radius: 6px;
           color: #4b5563;
           text-decoration: none;
           font-size: 11px;
-          transition: all 0.3s;
+          font-weight: 500;
+          transition: all 0.2s ease;
           white-space: nowrap;
+          min-height: 32px;
+          flex-shrink: 0;
         }
 
         .social-link:hover {
           background: #00A651;
+          border-color: #00A651;
           color: white;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 4px rgba(0, 166, 81, 0.2);
+        }
+
+        .social-link:focus {
+          outline: 2px solid #00A651;
+          outline-offset: 2px;
+          background: #00A651;
+          border-color: #00A651;
+          color: white;
+        }
+
+        .social-link:active {
+          transform: translateY(0);
+        }
+
+        .social-link i {
+          margin-right: 4px;
+          font-size: 10px;
+        }
+
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
         }
 
         .process-steps {
@@ -750,6 +810,20 @@ export default function AmbassadorsPage() {
           }
           .hero-actions { flex-direction: column; align-items: center; }
         }
+
+        @media (max-width: 240px) {
+          .social-link span:not(.sr-only) {
+            display: none;
+          }
+          .social-link i {
+            margin-right: 0;
+          }
+          .social-link {
+            padding: 8px;
+            min-width: 36px;
+            justify-content: center;
+          }
+        }
       `}</style>
 
       <header className="main-header">
@@ -1016,23 +1090,35 @@ export default function AmbassadorsPage() {
                     )}
                   </div>
                   <div className="ambassador-info">
-                    <h3 className="ambassador-name">{ambassador.name}</h3>
-                    {ambassador.role && <p className="ambassador-role">{ambassador.role}</p>}
-                    <p className="ambassador-details">
-                      {ambassador.major} {ambassador.year && `• ${ambassador.year}`}
-                      {ambassador.cohort && <span style={{ display: 'block', marginTop: '4px' }}>Cohort {ambassador.cohort}</span>}
-                    </p>
-                    <div className="ambassador-social">
+                    <div className="ambassador-content">
+                      <h3 className="ambassador-name">{ambassador.name}</h3>
+                      {ambassador.role && <p className="ambassador-role">{ambassador.role}</p>}
+                      <p className="ambassador-details">
+                        {ambassador.major} {ambassador.year && `• ${ambassador.year}`}
+                        {ambassador.cohort && <span style={{ display: 'block', marginTop: '4px' }}>Cohort {ambassador.cohort}</span>}
+                      </p>
+                    </div>
+                    <div className="ambassador-actions">
                       {ambassador.linkedin && (
-                        <a href={ambassador.linkedin} target="_blank" rel="noopener noreferrer" className="social-link">
-                          <i className="fab fa-linkedin" style={{ marginRight: '4px' }}></i>
-                          LinkedIn
+                        <a
+                          href={ambassador.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="social-link"
+                          aria-label={`Open LinkedIn profile for ${ambassador.name}`}
+                        >
+                          <i className="fab fa-linkedin" aria-hidden="true"></i>
+                          <span>LinkedIn</span>
                         </a>
                       )}
                       {ambassador.email && (
-                        <a href={`mailto:${ambassador.email}`} className="social-link">
-                          <i className="fas fa-envelope" style={{ marginRight: '4px' }}></i>
-                          Email
+                        <a
+                          href={`mailto:${ambassador.email}`}
+                          className="social-link"
+                          aria-label={`Email ${ambassador.name}`}
+                        >
+                          <i className="fas fa-envelope" aria-hidden="true"></i>
+                          <span>Email</span>
                         </a>
                       )}
                     </div>
