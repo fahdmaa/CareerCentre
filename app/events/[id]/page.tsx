@@ -51,30 +51,27 @@ export default function EventDetailPage() {
   const fetchEventDetail = async () => {
     setLoading(true)
     try {
-      // Fetch event by slug
-      const { data: eventData, error: eventError } = await supabase
-        .from('events')
-        .select('*')
-        .eq('slug', slug)
-        .single()
+      // Fetch event by ID/slug using API
+      const response = await fetch(`/api/events/${slug}`)
 
-      if (eventError) throw eventError
+      if (response.ok) {
+        const { event: eventData } = await response.json()
 
-      if (eventData) {
-        setEvent(eventData)
+        if (eventData) {
+          setEvent(eventData)
 
-        // Fetch related events (same type or tags)
-        const { data: relatedData, error: relatedError } = await supabase
-          .from('events')
-          .select('*')
-          .neq('id', eventData.id)
-          .eq('event_type', eventData.event_type)
-          .gte('event_date', new Date().toISOString().split('T')[0])
-          .limit(3)
-
-        if (!relatedError && relatedData) {
-          setRelatedEvents(relatedData)
+          // Fetch all events and filter for related ones
+          const relatedResponse = await fetch('/api/events?upcoming=true')
+          if (relatedResponse.ok) {
+            const { events } = await relatedResponse.json()
+            const related = events
+              ?.filter((e: any) => e.id !== eventData.id && e.event_type === eventData.event_type)
+              ?.slice(0, 3) || []
+            setRelatedEvents(related)
+          }
         }
+      } else {
+        throw new Error('Event not found')
       }
     } catch (error) {
       console.error('Error fetching event:', error)

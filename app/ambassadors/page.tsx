@@ -49,26 +49,30 @@ export default function AmbassadorsPage() {
   }, [])
 
   const fetchAmbassadors = async () => {
-    const { data, error } = await supabase
-      .from('ambassadors')
-      .select('*')
-      .order('name')
-
-    if (data) {
-      setAmbassadors(data)
+    try {
+      const response = await fetch('/api/public/ambassadors')
+      if (response.ok) {
+        const data = await response.json()
+        setAmbassadors(data.ambassadors || [])
+      }
+    } catch (error) {
+      console.error('Error fetching ambassadors:', error)
+      setAmbassadors([])
     }
   }
 
   const fetchCohorts = async () => {
-    const { data, error } = await supabase
-      .from('cohorts')
-      .select('*')
-      .order('start_date', { ascending: false })
-
-    if (data) {
-      setCohorts(data)
-      const active = data.find(c => c.is_active)
-      setActiveCohort(active || null)
+    try {
+      const response = await fetch('/api/public/cohorts')
+      if (response.ok) {
+        const data = await response.json()
+        setCohorts(data.cohorts || [])
+        const active = data.cohorts?.find((c: any) => c.is_active)
+        setActiveCohort(active || null)
+      }
+    } catch (error) {
+      console.error('Error fetching cohorts:', error)
+      setCohorts([])
     }
   }
 
