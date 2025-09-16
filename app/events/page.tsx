@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Navigation from '../../components/Navigation'
 import EventCalendar from '../../components/EventCalendar'
 import RSVPModal from '../../components/RSVPModal'
+import EventDetailsModal from '../../components/EventDetailsModal'
 
 interface Event {
   id: number
@@ -34,6 +35,7 @@ export default function EventsPage() {
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list')
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [showRSVPModal, setShowRSVPModal] = useState(false)
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
   // Filters
@@ -170,15 +172,22 @@ export default function EventsPage() {
     setFilteredEvents(filtered)
   }
 
-  const handleRSVP = (event: Event) => {
-    console.log('handleRSVP:', event)
+  const handleEventClick = (event: Event) => {
+    console.log('Event clicked:', event)
     setSelectedEvent(event)
+    setShowDetailsModal(true)
+  }
+
+  const handleRSVP = () => {
+    console.log('RSVP clicked')
+    setShowDetailsModal(false)
     setShowRSVPModal(true)
   }
 
   const handleRSVPSuccess = () => {
     console.log('RSVP success')
     setShowRSVPModal(false)
+    setSelectedEvent(null)
     fetchEvents() // Refresh events to update spots
   }
 
@@ -819,7 +828,7 @@ export default function EventsPage() {
               <p>Loading events...</p>
             </div>
           ) : viewMode === 'calendar' ? (
-            <EventCalendar events={filteredEvents} onEventClick={handleRSVP} />
+            <EventCalendar events={filteredEvents} onEventClick={handleEventClick} />
           ) : filteredEvents.length === 0 ? (
             <div className="no-results">
               <i className="fas fa-calendar-times no-results-icon"></i>
@@ -833,7 +842,7 @@ export default function EventsPage() {
           ) : (
             <div className="events-grid">
               {filteredEvents.map(event => (
-                <div key={event.id} className="event-card" onClick={() => handleRSVP(event)}>
+                <div key={event.id} className="event-card" onClick={() => handleEventClick(event)}>
                   <div className="event-image">
                     {event.image_url && (
                       <Image
@@ -892,10 +901,24 @@ export default function EventsPage() {
         </div>
       </section>
 
+      {showDetailsModal && selectedEvent && (
+        <EventDetailsModal
+          event={selectedEvent}
+          onClose={() => {
+            setShowDetailsModal(false)
+            setSelectedEvent(null)
+          }}
+          onRSVP={handleRSVP}
+        />
+      )}
+
       {showRSVPModal && selectedEvent && (
         <RSVPModal
           event={selectedEvent}
-          onClose={() => setShowRSVPModal(false)}
+          onClose={() => {
+            setShowRSVPModal(false)
+            setSelectedEvent(null)
+          }}
           onSuccess={handleRSVPSuccess}
         />
       )}
