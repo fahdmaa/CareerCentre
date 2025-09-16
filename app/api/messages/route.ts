@@ -3,14 +3,34 @@ import { supabase, supabaseAdmin, isSupabaseConfigured } from '../../../lib/supa
 import { verifyJWT } from '../../../lib/auth'
 
 export async function GET(request: NextRequest) {
-  const token = request.cookies.get('auth-token')?.value
-  
+  const token = request.cookies.get('admin-token')?.value
+
   if (!token || !verifyJWT(token)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   if (!isSupabaseConfigured()) {
-    return NextResponse.json({ error: 'Database not configured' }, { status: 503 })
+    // Return mock data when database is not configured
+    return NextResponse.json([
+      {
+        id: 1,
+        sender_name: 'John Doe',
+        sender_email: 'john@example.com',
+        subject: 'Career Guidance Request',
+        message: 'I would like to schedule a career counseling session to discuss my options for internships.',
+        status: 'unread',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 2,
+        sender_name: 'Sarah Smith',
+        sender_email: 'sarah@example.com',
+        subject: 'Resume Review',
+        message: 'Could you please review my resume? I am applying for software engineering positions.',
+        status: 'read',
+        created_at: new Date(Date.now() - 86400000).toISOString()
+      }
+    ])
   }
 
   const { data, error } = await supabaseAdmin

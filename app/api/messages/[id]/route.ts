@@ -6,7 +6,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const token = request.cookies.get('auth-token')?.value
+  const token = request.cookies.get('admin-token')?.value
   
   if (!token || !verifyJWT(token)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -33,7 +33,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const token = request.cookies.get('auth-token')?.value
+  const token = request.cookies.get('admin-token')?.value
   
   if (!token || !verifyJWT(token)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -64,7 +64,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const token = request.cookies.get('auth-token')?.value
+  const token = request.cookies.get('admin-token')?.value
   
   if (!token || !verifyJWT(token)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
