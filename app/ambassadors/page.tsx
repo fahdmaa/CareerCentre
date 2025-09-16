@@ -380,8 +380,8 @@ export default function AmbassadorsPage() {
 
         .ambassadors-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 24px;
+          grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+          gap: 16px;
         }
 
         .ambassador-card {
@@ -399,52 +399,55 @@ export default function AmbassadorsPage() {
 
         .ambassador-image {
           width: 100%;
-          height: 200px;
+          height: 120px;
           background: linear-gradient(135deg, #00A651, #00C853);
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
-          font-size: 48px;
+          font-size: 28px;
           font-weight: 600;
         }
 
         .ambassador-info {
-          padding: 20px;
+          padding: 14px;
         }
 
         .ambassador-name {
-          font-size: 20px;
+          font-size: 16px;
           font-weight: 600;
           color: #1f2937;
-          margin-bottom: 4px;
+          margin-bottom: 2px;
         }
 
         .ambassador-role {
           color: #00A651;
-          font-size: 14px;
-          margin-bottom: 8px;
+          font-size: 12px;
+          margin-bottom: 6px;
         }
 
         .ambassador-details {
           color: #6b7280;
-          font-size: 14px;
-          margin-bottom: 16px;
+          font-size: 12px;
+          margin-bottom: 10px;
+          line-height: 1.3;
         }
 
         .ambassador-social {
           display: flex;
-          gap: 12px;
+          gap: 6px;
+          flex-wrap: wrap;
         }
 
         .social-link {
-          padding: 8px 16px;
+          padding: 4px 8px;
           background: #f3f4f6;
-          border-radius: 6px;
+          border-radius: 4px;
           color: #4b5563;
           text-decoration: none;
-          font-size: 14px;
+          font-size: 11px;
           transition: all 0.3s;
+          white-space: nowrap;
         }
 
         .social-link:hover {
@@ -741,7 +744,10 @@ export default function AmbassadorsPage() {
           .hero-title { font-size: 32px; }
           .about-grid, .activities-grid, .benefits-grid { grid-template-columns: 1fr; }
           .process-steps { grid-template-columns: 1fr; gap: 32px; }
-          .ambassadors-grid { grid-template-columns: 1fr; }
+          .ambassadors-grid {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+          }
           .hero-actions { flex-direction: column; align-items: center; }
         }
       `}</style>
@@ -1001,8 +1007,8 @@ export default function AmbassadorsPage() {
                       <Image
                         src={ambassador.image_url}
                         alt={ambassador.name}
-                        width={280}
-                        height={200}
+                        width={180}
+                        height={120}
                         style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                       />
                     ) : (
