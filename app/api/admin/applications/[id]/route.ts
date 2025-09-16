@@ -50,14 +50,18 @@ export async function PUT(
     }
 
     // Log the activity
-    await supabase
-      .from('recent_activities')
-      .insert({
-        activity_type: 'application',
-        description: `Application #${params.id} status changed to ${status}`,
-        activity_data: { application_id: params.id, new_status: status }
-      })
-      .catch(console.error) // Don't fail if activity log fails
+    try {
+      await supabase
+        .from('recent_activities')
+        .insert({
+          activity_type: 'application',
+          description: `Application #${params.id} status changed to ${status}`,
+          activity_data: { application_id: params.id, new_status: status }
+        })
+    } catch (activityError) {
+      console.error('Failed to log activity:', activityError)
+      // Don't fail if activity log fails
+    }
 
     return NextResponse.json(data)
   } catch (error) {
