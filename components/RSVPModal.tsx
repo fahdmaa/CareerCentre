@@ -37,21 +37,29 @@ export default function RSVPModal({ event, onClose, onSuccess }: RSVPModalProps)
     setError('')
 
     try {
-      // Call the database function to handle RSVP
-      const { data, error: rsvpError } = await supabase
-        .rpc('handle_event_rsvp', {
-          p_event_id: event.id,
-          p_student_name: formData.studentName,
-          p_student_email: formData.studentEmail,
-          p_student_phone: '',
-          p_student_year: formData.studentYear,
-          p_student_program: formData.studentProgram,
-          p_consent_updates: formData.consentUpdates
+      // Call our API endpoint instead of direct database access
+      const response = await fetch(`/api/events/${event.id}/rsvp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          student_name: formData.studentName,
+          student_email: formData.studentEmail,
+          student_phone: '',
+          student_year: formData.studentYear,
+          student_program: formData.studentProgram,
+          consent_updates: formData.consentUpdates
         })
+      })
 
-      if (rsvpError) throw rsvpError
+      const data = await response.json()
 
-      if (data?.success) {
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed')
+      }
+
+      if (data.success) {
         if (data.on_waitlist) {
           alert(`You're on the waitlist! Position #${data.waitlist_position}. We'll notify you if a spot opens.`)
         } else {
@@ -59,34 +67,38 @@ export default function RSVPModal({ event, onClose, onSuccess }: RSVPModalProps)
         }
         onSuccess()
       } else {
-        setError(data?.message || 'Registration failed. Please try again.')
+        setError(data.error || 'Registration failed. Please try again.')
       }
     } catch (error: any) {
       console.error('RSVP error:', error)
-      // Fallback: Direct insert to event_registrations table
+
+      // If API fails, try direct database fallback
       try {
+        const spotsLeft = event.capacity - event.spots_taken
+        const onWaitlist = spotsLeft <= 0
+
         const { error: insertError } = await supabase
           .from('event_registrations')
           .insert({
             event_id: event.id,
             student_name: formData.studentName,
             student_email: formData.studentEmail,
-            student_year: formData.studentYear,
-            student_program: formData.studentProgram,
+            major: formData.studentProgram || null,
+            year: formData.studentYear || null,
+            on_waitlist: onWaitlist,
             consent_updates: formData.consentUpdates,
-            on_waitlist: event.spots_taken >= event.capacity,
             status: 'confirmed'
           })
 
         if (insertError) {
-          if (insertError.message.includes('already registered')) {
+          console.error('Direct insert error:', insertError)
+          if (insertError.message.includes('duplicate') || insertError.code === '23505') {
             setError('You have already registered for this event.')
           } else {
             setError('Registration failed. Please try again.')
           }
         } else {
-          const isWaitlist = event.spots_taken >= event.capacity
-          if (isWaitlist) {
+          if (onWaitlist) {
             alert("You're on the waitlist. We'll notify you if a spot opens.")
           } else {
             alert("You're in! We've emailed your ticket and added it to your calendar.")
@@ -94,7 +106,8 @@ export default function RSVPModal({ event, onClose, onSuccess }: RSVPModalProps)
           onSuccess()
         }
       } catch (fallbackError) {
-        setError('Something went wrong. Please try again in a moment.')
+        console.error('Fallback error:', fallbackError)
+        setError(error.message || 'Something went wrong. Please try again in a moment.')
       }
     } finally {
       setLoading(false)

@@ -25,17 +25,54 @@ export async function POST(
       )
     }
 
+    // Validate email format (basic)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(student_email)) {
+      return NextResponse.json(
+        { error: 'Please provide a valid email address' },
+        { status: 400 }
+      )
+    }
+
+    // Try to use the database function first
+    try {
+      const { data: result, error: rpcError } = await supabase
+        .rpc('handle_event_rsvp', {
+          p_event_id: eventId,
+          p_student_name: student_name,
+          p_student_email: student_email,
+          p_student_phone: student_phone || null,
+          p_student_year: student_year || null,
+          p_student_program: student_program || null,
+          p_consent_updates: consent_updates || false
+        })
+
+      if (!rpcError && result?.success) {
+        return NextResponse.json(result, { status: 201 })
+      }
+
+      // If RPC function doesn't exist, fall back to manual implementation
+      if (rpcError && rpcError.message.includes('function') && rpcError.message.includes('does not exist')) {
+        console.log('Database function not found, using manual implementation')
+      } else if (rpcError) {
+        throw rpcError
+      }
+    } catch (rpcError) {
+      console.log('RPC failed, falling back to manual implementation:', rpcError)
+    }
+
+    // Manual implementation fallback
     // Check if already registered
     const { data: existingReg } = await supabase
       .from('event_registrations')
       .select('id')
       .eq('event_id', eventId)
       .eq('student_email', student_email)
-      .single()
+      .maybeSingle()
 
     if (existingReg) {
       return NextResponse.json(
-        { error: 'You have already registered for this event' },
+        { success: false, error: 'You have already registered for this event' },
         { status: 400 }
       )
     }
@@ -43,19 +80,19 @@ export async function POST(
     // Get event details
     const { data: event, error: eventError } = await supabase
       .from('events')
-      .select('capacity, spots_taken')
+      .select('id, title, capacity, spots_taken')
       .eq('id', eventId)
       .single()
 
     if (eventError || !event) {
       return NextResponse.json(
-        { error: 'Event not found' },
+        { success: false, error: 'Event not found' },
         { status: 404 }
       )
     }
 
     // Determine if should be on waitlist
-    const spotsLeft = event.capacity - event.spots_taken
+    const spotsLeft = event.capacity - (event.spots_taken || 0)
     const onWaitlist = spotsLeft <= 0
 
     let waitlistPosition = null
@@ -70,7 +107,7 @@ export async function POST(
       waitlistPosition = (count || 0) + 1
     }
 
-    // Start a transaction-like operation
+    // Insert registration
     const { data: registration, error: regError } = await supabase
       .from('event_registrations')
       .insert({
@@ -78,8 +115,8 @@ export async function POST(
         student_name,
         student_email,
         student_phone: student_phone || null,
-        student_year: student_year || null,
-        student_program: student_program || null,
+        major: student_program || null, // Map to existing field
+        year: student_year || null,     // Map to existing field
         on_waitlist: onWaitlist,
         waitlist_position: waitlistPosition,
         consent_updates: consent_updates || false,
@@ -89,22 +126,27 @@ export async function POST(
       .single()
 
     if (regError) {
+      console.error('Registration insert error:', regError)
       throw regError
     }
 
     // Update spots taken if not on waitlist
     if (!onWaitlist) {
-      await supabase
+      const { error: updateError } = await supabase
         .from('events')
-        .update({ spots_taken: event.spots_taken + 1 })
+        .update({ spots_taken: (event.spots_taken || 0) + 1 })
         .eq('id', eventId)
+
+      if (updateError) {
+        console.error('Failed to update spots_taken:', updateError)
+      }
     }
 
     return NextResponse.json({
       success: true,
       registration,
-      onWaitlist,
-      waitlistPosition,
+      on_waitlist: onWaitlist,
+      waitlist_position: waitlistPosition,
       message: onWaitlist
         ? `You're on the waitlist (position #${waitlistPosition})`
         : 'Registration confirmed successfully'
@@ -113,7 +155,7 @@ export async function POST(
   } catch (error: any) {
     console.error('RSVP error:', error)
     return NextResponse.json(
-      { error: 'Failed to process RSVP' },
+      { success: false, error: 'Failed to process RSVP', details: error.message },
       { status: 500 }
     )
   }
