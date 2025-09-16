@@ -70,44 +70,7 @@ export default function RSVPModal({ event, onClose, onSuccess }: RSVPModalProps)
       }
     } catch (error: any) {
       console.error('RSVP error:', error)
-
-      // If API fails, try direct database fallback
-      try {
-        const spotsLeft = event.capacity - event.spots_taken
-        const onWaitlist = spotsLeft <= 0
-
-        const { error: insertError } = await supabase
-          .from('event_registrations')
-          .insert({
-            event_id: event.id,
-            student_name: formData.studentName,
-            student_email: formData.studentEmail,
-            major: formData.studentProgram || null,
-            year: formData.studentYear || null,
-            on_waitlist: onWaitlist,
-            consent_updates: formData.consentUpdates,
-            status: 'confirmed'
-          })
-
-        if (insertError) {
-          console.error('Direct insert error:', insertError)
-          if (insertError.message.includes('duplicate') || insertError.code === '23505') {
-            setError('You have already registered for this event.')
-          } else {
-            setError('Registration failed. Please try again.')
-          }
-        } else {
-          if (onWaitlist) {
-            alert("You're on the waitlist. We'll notify you if a spot opens.")
-          } else {
-            alert("You're in! We've emailed your ticket and added it to your calendar.")
-          }
-          onSuccess()
-        }
-      } catch (fallbackError) {
-        console.error('Fallback error:', fallbackError)
-        setError(error.message || 'Something went wrong. Please try again in a moment.')
-      }
+      setError(error.message || 'Something went wrong. Please try again in a moment.')
     } finally {
       setLoading(false)
     }
