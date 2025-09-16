@@ -109,7 +109,12 @@ export default function AdminDashboardPage() {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/api/messages')
+      const response = await fetch('/api/messages', {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
       if (response.status === 401) {
         router.push('/about')
         return false
@@ -129,11 +134,11 @@ export default function AdminDashboardPage() {
     try {
       // Fetch all data in parallel
       const [messagesRes, registrationsRes, applicationsRes, interviewsRes, activitiesRes] = await Promise.all([
-        fetch('/api/messages'),
-        fetch('/api/admin/registrations').catch(() => null),
-        fetch('/api/admin/applications').catch(() => null),
-        fetch('/api/admin/interviews').catch(() => null),
-        fetch('/api/admin/activities').catch(() => null)
+        fetch('/api/messages', { credentials: 'include' }),
+        fetch('/api/admin/registrations', { credentials: 'include' }).catch(() => null),
+        fetch('/api/admin/applications', { credentials: 'include' }).catch(() => null),
+        fetch('/api/admin/interviews', { credentials: 'include' }).catch(() => null),
+        fetch('/api/admin/activities', { credentials: 'include' }).catch(() => null)
       ])
 
       if (messagesRes?.ok) {
@@ -186,7 +191,7 @@ export default function AdminDashboardPage() {
   }
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' })
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
     router.push('/about')
   }
 
@@ -195,6 +200,7 @@ export default function AdminDashboardPage() {
       await fetch(`/api/messages/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ status: 'read' })
       })
       fetchAllData()
@@ -206,7 +212,7 @@ export default function AdminDashboardPage() {
   const deleteMessage = async (id: number) => {
     if (confirm('Are you sure you want to delete this message?')) {
       try {
-        await fetch(`/api/messages/${id}`, { method: 'DELETE' })
+        await fetch(`/api/messages/${id}`, { method: 'DELETE', credentials: 'include' })
         setSelectedMessage(null)
         fetchAllData()
       } catch (error) {
@@ -220,6 +226,7 @@ export default function AdminDashboardPage() {
       await fetch(`/api/admin/applications/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ status })
       })
       fetchAllData()

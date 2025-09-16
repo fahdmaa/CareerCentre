@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     { status: 200 }
   )
 
-  response.cookies.delete('auth-token')
+  response.cookies.delete('admin-token')
 
   return response
 }
