@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Navigation from '../../components/Navigation'
-import ClientLayout from '../../components/ClientLayout'
 import EventCalendar from '../../components/EventCalendar'
 import RSVPModal from '../../components/RSVPModal'
 
@@ -48,158 +47,59 @@ export default function EventsPage() {
 
   const [showPastEvents, setShowPastEvents] = useState(false)
 
-  // Fetch events from Supabase
   useEffect(() => {
-    console.log('useEffect triggered, showPastEvents:', showPastEvents)
-    console.log('About to call fetchEvents')
-    fetchEvents().then(() => {
-      console.log('fetchEvents completed')
-    }).catch(err => {
-      console.error('fetchEvents failed:', err)
-    })
+    console.log('useEffect triggered')
+    fetchEvents()
   }, [showPastEvents])
 
+  // Test if client-side JS is working
+  useEffect(() => {
+    console.log('Client-side mounted!')
+    // Force fetch events after mount
+    const timer = setTimeout(() => {
+      console.log('Timer triggered, fetching events...')
+      fetchEvents()
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    console.log('Events changed:', events.length, 'events')
+    console.log('Events data:', events)
+    filterEvents()
+  }, [events, searchTerm, filters])
+
   const fetchEvents = async () => {
+    console.log('fetchEvents called, showPastEvents:', showPastEvents)
     setLoading(true)
+
     try {
-      console.log('Fetching events...')
+      const url = showPastEvents ? '/api/events' : '/api/events?upcoming=true'
+      console.log('Fetching from:', url)
 
-      // First try to get events from API
-      try {
-        const response = await fetch(`/api/events${showPastEvents ? '' : '?upcoming=true'}`)
-        console.log('API response status:', response.status)
+      const response = await fetch(url)
+      console.log('Response status:', response.status)
 
-        if (response.ok) {
-          const { events } = await response.json()
-          console.log('API returned events:', events?.length || 0)
+      const data = await response.json()
+      console.log('Response data:', data)
 
-          if (events && events.length > 0) {
-            // Process events to ensure all fields have default values
-            const processedEvents = events.map((event: any) => ({
-              id: event.id,
-              title: event.title || 'Untitled Event',
-              slug: event.slug || event.id?.toString(),
-              description: event.description || 'No description available',
-              event_date: event.event_date,
-              event_time: event.event_time || '09:00:00',
-              location: event.location || 'TBD',
-              event_type: event.event_type || 'workshop',
-              event_format: event.event_format || 'on-campus',
-              city: event.city || 'Marrakech',
-              campus: event.campus,
-              tags: event.tags || [],
-              host_org: event.host_org || 'EMSI Career Center',
-              capacity: event.capacity || 50,
-              spots_taken: event.spots_taken || 0,
-              image_url: event.image_url || '/images/career-event-students.jpg',
-              featured: event.featured || false
-            }))
-
-            setEvents(processedEvents)
-            setFilteredEvents(processedEvents)
-            setLoading(false)
-            return
-          }
-        } else {
-          console.log('API failed with status:', response.status)
-        }
-      } catch (apiError) {
-        console.log('API call failed:', apiError)
+      if (!response.ok) {
+        console.error('API error:', data.error)
+        throw new Error(data.error || 'Failed to fetch events')
       }
 
-      console.log('API failed, will use fallback data')
-
-      // If both API and database fail, show sample events
-      console.log('Using sample data fallback')
-      throw new Error('No events found, using fallback')
-
+      console.log('Setting events:', data.events)
+      setEvents(data.events || [])
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching events:', error)
-      // Fallback to sample data if database not available - including your specific events
-      const sampleEvents: Event[] = [
-        {
-          id: 4,
-          title: "Career Fair 2025",
-          slug: "career-fair-2025",
-          description: "Connect with top employers and explore exciting career opportunities across various industries. Network with professionals and discover your next career move.",
-          event_date: "2025-09-30",
-          event_time: "10:00:00",
-          location: "Palm Plaza",
-          event_type: "career-fair",
-          event_format: "on-campus",
-          city: "Marrakech",
-          campus: "Palm Plaza",
-          tags: ["career", "networking", "job-opportunities"],
-          host_org: "EMSI Career Center",
-          capacity: 10,
-          spots_taken: 0,
-          image_url: "/images/career-fair.jpg",
-          featured: true
-        },
-        {
-          id: 11,
-          title: "Tech Workshop 2024",
-          slug: "tech-workshop-2024",
-          description: "Learn cutting-edge technologies and programming skills from industry experts. Get hands-on experience with the latest development tools and frameworks.",
-          event_date: "2025-09-15",
-          event_time: "14:00:00",
-          location: "EMSI Campus - Room A101",
-          event_type: "workshop",
-          event_format: "on-campus",
-          city: "Marrakech",
-          campus: "EMSI Campus",
-          tags: ["technology", "programming", "skills"],
-          host_org: "EMSI IT Department",
-          capacity: 10,
-          spots_taken: 0,
-          image_url: "/images/career-event-students.jpg"
-        },
-        {
-          id: 1,
-          title: "Cloud Computing Essentials",
-          slug: "cloud-computing-essentials",
-          description: "Master the fundamentals of cloud computing with AWS and Azure. Build scalable applications in the cloud.",
-          event_date: "2025-12-20",
-          event_time: "14:00:00",
-          location: "Computer Lab 3",
-          event_type: "workshop",
-          event_format: "on-campus",
-          city: "Marrakech",
-          campus: "EMSI Main Campus",
-          tags: ["cloud", "aws", "azure"],
-          host_org: "EMSI IT Department",
-          capacity: 40,
-          spots_taken: 12,
-          image_url: "/images/career-event-students.jpg"
-        },
-        {
-          id: 2,
-          title: "Alumni Success Stories",
-          slug: "alumni-success-stories",
-          description: "Be inspired by successful EMSI alumni who built their own tech startups and transformed their careers.",
-          event_date: "2025-12-22",
-          event_time: "16:00:00",
-          location: "Conference Room A",
-          event_type: "alumni-talk",
-          event_format: "hybrid",
-          city: "Marrakech",
-          campus: "EMSI Main Campus",
-          tags: ["entrepreneurship", "startup", "inspiration"],
-          host_org: "EMSI Alumni Association",
-          capacity: 100,
-          spots_taken: 45,
-          image_url: "/images/career-fair.jpg"
-        }
-      ]
-      setEvents(sampleEvents)
-      setFilteredEvents(sampleEvents)
-    } finally {
+      setEvents([])
       setLoading(false)
     }
   }
 
-  // Apply filters
-  useEffect(() => {
+  const filterEvents = () => {
+    console.log('filterEvents called')
     let filtered = [...events]
 
     // Search filter
@@ -207,35 +107,8 @@ export default function EventsPage() {
       filtered = filtered.filter(event =>
         event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         event.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+        event.location?.toLowerCase().includes(searchTerm.toLowerCase())
       )
-    }
-
-    // When filter
-    if (filters.when) {
-      const today = new Date()
-      const eventDate = (event: Event) => new Date(event.event_date)
-
-      switch (filters.when) {
-        case 'today':
-          filtered = filtered.filter(event =>
-            eventDate(event).toDateString() === today.toDateString()
-          )
-          break
-        case 'this-week':
-          const weekEnd = new Date(today)
-          weekEnd.setDate(today.getDate() + 7)
-          filtered = filtered.filter(event =>
-            eventDate(event) >= today && eventDate(event) <= weekEnd
-          )
-          break
-        case 'this-month':
-          filtered = filtered.filter(event =>
-            eventDate(event).getMonth() === today.getMonth() &&
-            eventDate(event).getFullYear() === today.getFullYear()
-          )
-          break
-      }
     }
 
     // Type filter
@@ -251,48 +124,96 @@ export default function EventsPage() {
     // Location filter
     if (filters.location) {
       filtered = filtered.filter(event =>
-        event.city === filters.location || event.campus === filters.location
+        event.location?.toLowerCase().includes(filters.location.toLowerCase()) ||
+        event.city?.toLowerCase().includes(filters.location.toLowerCase()) ||
+        event.campus?.toLowerCase().includes(filters.location.toLowerCase())
       )
     }
 
     // Available spots filter
     if (filters.availableOnly) {
-      filtered = filtered.filter(event =>
-        event.capacity - event.spots_taken > 0
-      )
+      filtered = filtered.filter(event => {
+        const spotsLeft = event.capacity - event.spots_taken
+        return spotsLeft > 0
+      })
     }
 
+    // When filter
+    if (filters.when) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      filtered = filtered.filter(event => {
+        const eventDate = new Date(event.event_date)
+
+        switch(filters.when) {
+          case 'today':
+            return eventDate.toDateString() === today.toDateString()
+          case 'tomorrow':
+            const tomorrow = new Date(today)
+            tomorrow.setDate(tomorrow.getDate() + 1)
+            return eventDate.toDateString() === tomorrow.toDateString()
+          case 'this_week':
+            const endOfWeek = new Date(today)
+            endOfWeek.setDate(endOfWeek.getDate() + 7)
+            return eventDate >= today && eventDate <= endOfWeek
+          case 'this_month':
+            return eventDate.getMonth() === today.getMonth() &&
+                   eventDate.getFullYear() === today.getFullYear()
+          default:
+            return true
+        }
+      })
+    }
+
+    console.log('Filtered events:', filtered.length)
     setFilteredEvents(filtered)
-  }, [events, filters, searchTerm])
+  }
 
   const handleRSVP = (event: Event) => {
+    console.log('handleRSVP:', event)
     setSelectedEvent(event)
     setShowRSVPModal(true)
   }
 
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }
-    return new Date(dateString).toLocaleDateString('en-US', options)
+  const handleRSVPSuccess = () => {
+    console.log('RSVP success')
+    setShowRSVPModal(false)
+    fetchEvents() // Refresh events to update spots
   }
 
-  const formatTime = (timeString: string) => {
-    const [hours, minutes] = timeString.split(':')
+  const getTypeIcon = (type: string) => {
+    switch(type) {
+      case 'Workshop': return 'fa-chalkboard-teacher'
+      case 'Seminar': return 'fa-microphone-alt'
+      case 'Networking': return 'fa-users'
+      case 'Career Fair': return 'fa-building'
+      case 'Info Session': return 'fa-info-circle'
+      default: return 'fa-calendar'
+    }
+  }
+
+  const formatTimeRange = (time: string) => {
+    if (!time) return ''
+    const [hours, minutes] = time.split(':')
     const hour = parseInt(hours)
     const period = hour >= 12 ? 'PM' : 'AM'
-    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
+    const displayHour = hour > 12 ? hour - 12 : hour
     return `${displayHour}:${minutes} ${period}`
   }
 
   const getSpotsLeftText = (event: Event) => {
     const spotsLeft = event.capacity - event.spots_taken
-    if (spotsLeft <= 0) return 'Full · Join waitlist'
-    if (spotsLeft === 1) return '1 spot left'
-    return `${spotsLeft} spots left`
+    if (spotsLeft <= 0) return 'Waitlist'
+    if (spotsLeft <= 5) return `${spotsLeft} spots left`
+    return `${spotsLeft} spots available`
+  }
+
+  const getSpotsLeftClass = (event: Event) => {
+    const spotsLeft = event.capacity - event.spots_taken
+    if (spotsLeft <= 0) return 'spots-none'
+    if (spotsLeft <= 5) return 'spots-low'
+    return 'spots-available'
   }
 
   const getFormatBadgeClass = (format: string) => {
@@ -303,8 +224,9 @@ export default function EventsPage() {
     }
   }
 
+  console.log('Render: loading:', loading, 'events:', events.length, 'filtered:', filteredEvents.length)
+
   return (
-    <ClientLayout>
     <>
       <style jsx>{`
         .events-hero {
@@ -346,7 +268,6 @@ export default function EventsPage() {
           transition: all 0.3s;
           border: none;
           cursor: pointer;
-          min-width: 180px;
         }
 
         .btn-hero-primary {
@@ -356,7 +277,7 @@ export default function EventsPage() {
 
         .btn-hero-primary:hover {
           transform: translateY(-2px);
-          box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         .btn-hero-secondary {
@@ -370,52 +291,51 @@ export default function EventsPage() {
           color: #00A651;
         }
 
-        .events-controls {
+        .events-toolbar {
+          padding: 32px 0;
           background: white;
-          padding: 24px 0;
           border-bottom: 1px solid #e5e7eb;
-          position: sticky;
-          top: 0;
-          z-index: 40;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        .controls-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 20px;
-        }
-
-        .controls-top {
+        .toolbar-row {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 20px;
+          gap: 24px;
+          flex-wrap: wrap;
+        }
+
+        .toolbar-left {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+          flex: 1;
         }
 
         .search-box {
           position: relative;
-          width: 400px;
+          flex: 1;
+          max-width: 400px;
         }
 
         .search-input {
           width: 100%;
-          padding: 10px 16px 10px 40px;
+          padding: 12px 16px 12px 44px;
           border: 1px solid #d1d5db;
           border-radius: 8px;
           font-size: 15px;
-          outline: none;
           transition: all 0.3s;
         }
 
         .search-input:focus {
+          outline: none;
           border-color: #00A651;
           box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
         }
 
         .search-icon {
           position: absolute;
-          left: 12px;
+          left: 16px;
           top: 50%;
           transform: translateY(-50%);
           color: #6b7280;
@@ -428,396 +348,346 @@ export default function EventsPage() {
           padding: 4px;
         }
 
-        .toggle-btn {
+        .view-btn {
           padding: 8px 16px;
           border: none;
           background: transparent;
           color: #6b7280;
-          cursor: pointer;
-          border-radius: 6px;
           font-size: 14px;
           font-weight: 500;
+          cursor: pointer;
+          border-radius: 6px;
           transition: all 0.3s;
         }
 
-        .toggle-btn.active {
+        .view-btn.active {
           background: white;
           color: #00A651;
           box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .filters-row {
+        .toolbar-right {
           display: flex;
           gap: 12px;
           align-items: center;
+        }
+
+        .past-events-toggle {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          color: #4b5563;
+        }
+
+        .toggle-switch {
+          position: relative;
+          width: 44px;
+          height: 24px;
+          background: #d1d5db;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+          background: #00A651;
+        }
+
+        .toggle-slider {
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          width: 20px;
+          height: 20px;
+          background: white;
+          border-radius: 50%;
+          transition: transform 0.3s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+          transform: translateX(20px);
+        }
+
+        .filter-chips {
+          padding: 24px 0 0;
+          display: flex;
+          gap: 12px;
           flex-wrap: wrap;
         }
 
-        .filter-select {
-          padding: 10px 16px;
-          border: 1px solid #e5e7eb;
-          border-radius: 12px;
-          font-size: 14px;
-          background: white;
-          cursor: pointer;
-          outline: none;
-          transition: all 0.3s;
-          color: #374151;
-          font-weight: 500;
-          appearance: none;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-          background-position: right 10px center;
-          background-repeat: no-repeat;
-          background-size: 20px;
-          padding-right: 40px;
-        }
-
-        .filter-select:hover {
-          border-color: #00A651;
-          background-color: #f9fafb;
-        }
-
-        .filter-select:focus {
-          border-color: #00A651;
-          box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
-        }
-
-        .filter-checkbox {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 14px;
-          color: #374151;
-        }
-
-        .filter-checkbox input {
-          width: 18px;
-          height: 18px;
-          accent-color: #00A651;
-          cursor: pointer;
-        }
-
-        .events-content {
-          max-width: 1200px;
-          margin: 40px auto;
-          padding: 0 20px;
-        }
-
-        .events-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-          gap: 24px;
-          animation: fadeIn 0.5s ease-in;
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        .event-card {
-          background: white;
-          border-radius: 16px;
-          overflow: hidden;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-          transition: all 0.3s;
-          position: relative;
-          border: 1px solid #e5e7eb;
-        }
-
-        .event-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 24px rgba(0,0,0,0.1);
-          border-color: #d1d5db;
-        }
-
-        .event-content {
-          padding: 24px;
-        }
-
-        .event-date-badge {
-          display: inline-flex;
-          flex-direction: column;
-          align-items: center;
-          background: #e74c8a;
-          color: white;
+        .filter-chip {
           padding: 8px 16px;
-          border-radius: 8px;
-          margin-bottom: 16px;
-          font-weight: 600;
-        }
-
-        .event-date-badge.workshop {
-          background: #e74c8a;
-        }
-
-        .event-date-badge.career-fair {
-          background: #4b5563;
-        }
-
-        .event-date-badge.alumni-talk {
-          background: #7c3aed;
-        }
-
-        .event-date-badge.info-session {
-          background: #2563eb;
-        }
-
-        .event-month {
-          font-size: 11px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          opacity: 0.9;
-        }
-
-        .event-day {
-          font-size: 20px;
-          font-weight: 700;
-          line-height: 1;
-          margin-top: 2px;
-        }
-
-        .event-category {
-          font-size: 11px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          color: #9ca3af;
-          margin-bottom: 8px;
-          font-weight: 600;
-        }
-
-        .event-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: #111827;
-          margin-bottom: 12px;
-          line-height: 1.4;
-          min-height: 50px;
-        }
-
-        .event-time-location {
-          font-size: 13px;
-          color: #6b7280;
-          margin-bottom: 16px;
-          line-height: 1.6;
-        }
-
-        .event-location-line {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          margin-bottom: 4px;
-        }
-
-        .event-divider {
-          height: 1px;
-          background: #e5e7eb;
-          margin: 16px 0;
-        }
-
-        .event-actions {
-          display: flex;
-          gap: 8px;
-          align-items: center;
-        }
-
-        .btn-rsvp {
-          flex: 1;
-          background: #e74c8a;
-          color: white;
-          padding: 10px 20px;
-          border: none;
-          border-radius: 8px;
-          font-size: 13px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s;
-          text-align: center;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        .btn-rsvp.workshop {
-          background: #e74c8a;
-        }
-
-        .btn-rsvp.career-fair {
-          background: #4b5563;
-        }
-
-        .btn-rsvp.alumni-talk {
-          background: #7c3aed;
-        }
-
-        .btn-rsvp.info-session {
-          background: #2563eb;
-        }
-
-        .btn-rsvp:hover:not(:disabled) {
-          transform: translateY(-1px);
-          filter: brightness(1.1);
-        }
-
-        .btn-rsvp:disabled {
-          background: #9ca3af;
-          cursor: not-allowed;
-        }
-
-        .btn-learn-more {
-          padding: 10px 20px;
-          border: 1px solid #e5e7eb;
-          background: white;
-          border-radius: 8px;
-          font-size: 13px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.3s;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          color: #6b7280;
-        }
-
-        .btn-learn-more:hover {
-          background: #f9fafb;
-          border-color: #d1d5db;
-        }
-
-        .spots-indicator {
-          position: absolute;
-          top: 20px;
-          right: 20px;
-          background: white;
-          padding: 6px 12px;
+          background: #f3f4f6;
+          border: 1px solid #d1d5db;
           border-radius: 20px;
-          font-size: 11px;
-          font-weight: 600;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .spots-indicator.available {
-          color: #00A651;
-          border: 1px solid #d1fae5;
-        }
-
-        .spots-indicator.limited {
-          color: #f59e0b;
-          border: 1px solid #fed7aa;
-        }
-
-        .spots-indicator.full {
-          color: #ef4444;
-          border: 1px solid #fecaca;
-        }
-
-        .empty-state {
-          text-align: center;
-          padding: 60px 20px;
-        }
-
-        .empty-icon {
-          font-size: 48px;
-          color: #d1d5db;
-          margin-bottom: 16px;
-        }
-
-        .empty-title {
-          font-size: 20px;
-          color: #374151;
-          margin-bottom: 8px;
-        }
-
-        .empty-text {
-          font-size: 16px;
-          color: #6b7280;
-          margin-bottom: 24px;
-        }
-
-        .btn-clear-filters {
-          background: #00A651;
-          color: white;
-          padding: 10px 24px;
-          border: none;
-          border-radius: 6px;
-          font-size: 15px;
-          font-weight: 600;
+          font-size: 14px;
+          color: #4b5563;
           cursor: pointer;
-          text-decoration: none;
-          display: inline-block;
           transition: all 0.3s;
         }
 
-        .btn-clear-filters:hover {
-          background: #008a43;
-        }
-
-        .past-events-link {
+        .filter-chip:hover {
+          border-color: #00A651;
           color: #00A651;
-          text-decoration: none;
-          font-weight: 600;
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          margin-top: 12px;
         }
 
-        .past-events-link:hover {
-          text-decoration: underline;
+        .filter-chip.active {
+          background: #00A651;
+          border-color: #00A651;
+          color: white;
         }
 
-        .loading-state {
+        .events-section {
+          padding: 48px 0;
+          min-height: 400px;
+        }
+
+        .loading-state, .empty-state {
           text-align: center;
-          padding: 60px 20px;
+          padding: 80px 20px;
         }
 
         .loading-spinner {
-          width: 40px;
-          height: 40px;
-          border: 4px solid #f3f4f6;
+          width: 48px;
+          height: 48px;
+          border: 3px solid #f3f4f6;
           border-top-color: #00A651;
           border-radius: 50%;
           animation: spin 1s linear infinite;
-          margin: 0 auto 16px;
+          margin: 0 auto 24px;
         }
 
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
 
-        @media (max-width: 768px) {
+        .events-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+          gap: 24px;
+          margin-bottom: 48px;
+        }
+
+        .event-card {
+          background: white;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          transition: all 0.3s;
+          cursor: pointer;
+        }
+
+        .event-card:hover {
+          box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+          transform: translateY(-4px);
+        }
+
+        .event-image {
+          position: relative;
+          height: 180px;
+          background: linear-gradient(135deg, #00A651, #00C853);
+        }
+
+        .event-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .event-badges {
+          position: absolute;
+          top: 12px;
+          left: 12px;
+          display: flex;
+          gap: 8px;
+        }
+
+        .event-badge {
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 12px;
+          font-weight: 600;
+          backdrop-filter: blur(8px);
+        }
+
+        .badge-online {
+          background: rgba(59, 130, 246, 0.9);
+          color: white;
+        }
+
+        .badge-hybrid {
+          background: rgba(168, 85, 247, 0.9);
+          color: white;
+        }
+
+        .badge-campus {
+          background: rgba(34, 197, 94, 0.9);
+          color: white;
+        }
+
+        .event-date-badge {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          background: white;
+          border-radius: 8px;
+          padding: 8px;
+          text-align: center;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .date-month {
+          font-size: 11px;
+          font-weight: 600;
+          color: #00A651;
+          text-transform: uppercase;
+        }
+
+        .date-day {
+          font-size: 20px;
+          font-weight: 700;
+          color: #1f2937;
+          line-height: 1;
+        }
+
+        .event-content {
+          padding: 20px;
+        }
+
+        .event-type {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
+          color: #6b7280;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 8px;
+        }
+
+        .event-title {
+          font-size: 18px;
+          font-weight: 600;
+          color: #1f2937;
+          margin-bottom: 12px;
+          line-height: 1.4;
+        }
+
+        .event-details {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-bottom: 16px;
+        }
+
+        .detail-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          color: #4b5563;
+        }
+
+        .detail-row i {
+          width: 16px;
+          color: #9ca3af;
+        }
+
+        .event-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-top: 16px;
+          border-top: 1px solid #f3f4f6;
+        }
+
+        .spots-indicator {
+          font-size: 14px;
+          font-weight: 500;
+        }
+
+        .spots-available {
+          color: #10b981;
+        }
+
+        .spots-low {
+          color: #f59e0b;
+        }
+
+        .spots-none {
+          color: #ef4444;
+        }
+
+        .btn-rsvp {
+          padding: 8px 20px;
+          background: #00A651;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        .btn-rsvp:hover {
+          background: #008a43;
+        }
+
+        .btn-rsvp:disabled {
+          background: #d1d5db;
+          cursor: not-allowed;
+        }
+
+        .no-results {
+          text-align: center;
+          padding: 60px 20px;
+        }
+
+        .no-results-icon {
+          font-size: 48px;
+          color: #d1d5db;
+          margin-bottom: 16px;
+        }
+
+        .no-results-title {
+          font-size: 20px;
+          font-weight: 600;
+          color: #4b5563;
+          margin-bottom: 8px;
+        }
+
+        .no-results-text {
+          color: #6b7280;
+        }
+
+        @media (max-width: 992px) {
+          .events-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          }
+
+          .toolbar-row {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .toolbar-left {
+            width: 100%;
+          }
+
+          .search-box {
+            max-width: none;
+          }
+        }
+
+        @media (max-width: 576px) {
           .hero-title {
             font-size: 32px;
           }
 
           .hero-subtitle {
             font-size: 16px;
-          }
-
-          .hero-actions {
-            flex-direction: column;
-            width: 100%;
-            padding: 0 20px;
-          }
-
-          .btn-hero-primary, .btn-hero-secondary {
-            width: 100%;
-          }
-
-          .controls-top {
-            flex-direction: column;
-            gap: 16px;
-          }
-
-          .search-box {
-            width: 100%;
-          }
-
-          .filters-row {
-            flex-direction: column;
-            align-items: stretch;
-          }
-
-          .filter-select {
-            width: 100%;
           }
 
           .events-grid {
@@ -843,241 +713,194 @@ export default function EventsPage() {
 
       <section className="events-hero">
         <div className="container">
-          <h1 className="hero-title">Upcoming events & workshops</h1>
-          <p className="hero-subtitle">Grow your skills with weekly workshops, alumni talks, and career fairs.</p>
+          <h1 className="hero-title">Career Events</h1>
+          <p className="hero-subtitle">Workshops, seminars, and networking opportunities</p>
           <div className="hero-actions">
-            {filteredEvents.length > 0 && filteredEvents[0] && (
-              <button
-                className="btn-hero-primary"
-                onClick={() => handleRSVP(filteredEvents[0])}
-              >
-                See next event
-              </button>
-            )}
-            <a href="#events-list" className="btn-hero-secondary">
-              Browse all events
-            </a>
+            <Link href="#events" className="btn-hero-primary">
+              Browse Events
+            </Link>
+            <button className="btn-hero-secondary" onClick={() => setViewMode('calendar')}>
+              <i className="fas fa-calendar-alt" style={{ marginRight: '8px' }}></i>
+              Calendar View
+            </button>
           </div>
         </div>
       </section>
 
-      <div className="events-controls">
-        <div className="controls-container">
-          <div className="controls-top">
-            <div className="search-box">
-              <i className="fas fa-search search-icon"></i>
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search events"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+      <section className="events-toolbar">
+        <div className="container">
+          <div className="toolbar-row">
+            <div className="toolbar-left">
+              <div className="search-box">
+                <i className="fas fa-search search-icon"></i>
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Search events by title, location, or description..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <div className="view-toggle">
+                <button
+                  className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                  onClick={() => setViewMode('list')}
+                >
+                  <i className="fas fa-th-large" style={{ marginRight: '6px' }}></i>
+                  Grid
+                </button>
+                <button
+                  className={`view-btn ${viewMode === 'calendar' ? 'active' : ''}`}
+                  onClick={() => setViewMode('calendar')}
+                >
+                  <i className="fas fa-calendar" style={{ marginRight: '6px' }}></i>
+                  Calendar
+                </button>
+              </div>
             </div>
-            <div className="view-toggle">
-              <button
-                className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
-                onClick={() => setViewMode('list')}
-              >
-                <i className="fas fa-list"></i> List
-              </button>
-              <button
-                className={`toggle-btn ${viewMode === 'calendar' ? 'active' : ''}`}
-                onClick={() => setViewMode('calendar')}
-              >
-                <i className="fas fa-calendar"></i> Calendar
-              </button>
+            <div className="toolbar-right">
+              <div className="past-events-toggle">
+                <span>Show past events</span>
+                <div
+                  className={`toggle-switch ${showPastEvents ? 'active' : ''}`}
+                  onClick={() => setShowPastEvents(!showPastEvents)}
+                >
+                  <div className="toggle-slider"></div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="filters-row">
-            <select
-              className="filter-select"
-              value={filters.when}
-              onChange={(e) => setFilters({...filters, when: e.target.value})}
+          <div className="filter-chips">
+            <div
+              className={`filter-chip ${filters.when === 'today' ? 'active' : ''}`}
+              onClick={() => setFilters({...filters, when: filters.when === 'today' ? '' : 'today'})}
             >
-              <option value="">When: All</option>
-              <option value="today">Today</option>
-              <option value="this-week">This week</option>
-              <option value="this-month">This month</option>
-            </select>
-            <select
-              className="filter-select"
-              value={filters.type}
-              onChange={(e) => setFilters({...filters, type: e.target.value})}
+              Today
+            </div>
+            <div
+              className={`filter-chip ${filters.when === 'this_week' ? 'active' : ''}`}
+              onClick={() => setFilters({...filters, when: filters.when === 'this_week' ? '' : 'this_week'})}
             >
-              <option value="">Type: All</option>
-              <option value="workshop">Workshop</option>
-              <option value="alumni-talk">Alumni talk</option>
-              <option value="career-fair">Career fair</option>
-              <option value="info-session">Info session</option>
-            </select>
-            <select
-              className="filter-select"
-              value={filters.format}
-              onChange={(e) => setFilters({...filters, format: e.target.value})}
+              This Week
+            </div>
+            <div
+              className={`filter-chip ${filters.type === 'Workshop' ? 'active' : ''}`}
+              onClick={() => setFilters({...filters, type: filters.type === 'Workshop' ? '' : 'Workshop'})}
             >
-              <option value="">Format: All</option>
-              <option value="on-campus">On-campus</option>
-              <option value="online">Online</option>
-              <option value="hybrid">Hybrid</option>
-            </select>
-            <select
-              className="filter-select"
-              value={filters.location}
-              onChange={(e) => setFilters({...filters, location: e.target.value})}
+              Workshops
+            </div>
+            <div
+              className={`filter-chip ${filters.type === 'Career Fair' ? 'active' : ''}`}
+              onClick={() => setFilters({...filters, type: filters.type === 'Career Fair' ? '' : 'Career Fair'})}
             >
-              <option value="">Location: All</option>
-              <option value="Marrakech">Marrakech</option>
-              <option value="Casablanca">Casablanca</option>
-              <option value="EMSI Main Campus">EMSI Main Campus</option>
-            </select>
-            <label className="filter-checkbox">
-              <input
-                type="checkbox"
-                checked={filters.availableOnly}
-                onChange={(e) => setFilters({...filters, availableOnly: e.target.checked})}
-              />
-              Spots available only
-            </label>
+              Career Fairs
+            </div>
+            <div
+              className={`filter-chip ${filters.format === 'online' ? 'active' : ''}`}
+              onClick={() => setFilters({...filters, format: filters.format === 'online' ? '' : 'online'})}
+            >
+              Online
+            </div>
+            <div
+              className={`filter-chip ${filters.availableOnly ? 'active' : ''}`}
+              onClick={() => setFilters({...filters, availableOnly: !filters.availableOnly})}
+            >
+              Available Only
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <section id="events-list" className="events-content">
-        {loading ? (
-          <div className="loading-state">
-            <div className="loading-spinner"></div>
-            <p>Loading events...</p>
-          </div>
-        ) : viewMode === 'list' ? (
-          filteredEvents.length > 0 ? (
+      <section className="events-section" id="events">
+        <div className="container">
+          {loading ? (
+            <div className="loading-state">
+              <div className="loading-spinner"></div>
+              <p>Loading events...</p>
+            </div>
+          ) : viewMode === 'calendar' ? (
+            <EventCalendar events={filteredEvents} onEventClick={handleRSVP} />
+          ) : filteredEvents.length === 0 ? (
+            <div className="no-results">
+              <i className="fas fa-calendar-times no-results-icon"></i>
+              <h3 className="no-results-title">No events found</h3>
+              <p className="no-results-text">
+                {searchTerm || Object.values(filters).some(f => f)
+                  ? 'Try adjusting your filters or search terms'
+                  : 'Check back soon for upcoming events'}
+              </p>
+            </div>
+          ) : (
             <div className="events-grid">
-              {filteredEvents.map(event => {
-                const spotsLeft = event.capacity - event.spots_taken
-                const spotsClass = spotsLeft <= 0 ? 'full' : spotsLeft <= 5 ? 'limited' : 'available'
-                const eventDate = new Date(event.event_date)
-                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                const monthName = monthNames[eventDate.getMonth()]
-                const dayNumber = eventDate.getDate()
-
-                return (
-                  <div key={event.id} className="event-card">
-                    {spotsLeft <= 5 && (
-                      <div className={`spots-indicator ${spotsClass}`}>
-                        {spotsLeft <= 0 ? 'FULL' : `${spotsLeft} SPOTS LEFT`}
-                      </div>
+              {filteredEvents.map(event => (
+                <div key={event.id} className="event-card" onClick={() => handleRSVP(event)}>
+                  <div className="event-image">
+                    {event.image_url && (
+                      <Image
+                        src={event.image_url}
+                        alt={event.title}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
                     )}
-                    <div className="event-content">
-                      <div className={`event-date-badge ${event.event_type}`}>
-                        <span className="event-month">{monthName}</span>
-                        <span className="event-day">{dayNumber}</span>
+                    <div className="event-badges">
+                      <span className={`event-badge ${getFormatBadgeClass(event.event_format)}`}>
+                        {event.event_format}
+                      </span>
+                    </div>
+                    <div className="event-date-badge">
+                      <div className="date-month">
+                        {new Date(event.event_date).toLocaleDateString('en', { month: 'short' })}
                       </div>
-
-                      <div className="event-category">
-                        {event.event_type.replace('-', ' ').toUpperCase()}
-                      </div>
-
-                      <h3 className="event-title">{event.title}</h3>
-
-                      <div className="event-time-location">
-                        <div className="event-location-line">
-                          <strong>WHEN</strong>
-                        </div>
-                        <div style={{ marginBottom: '8px' }}>
-                          {formatDate(event.event_date).split(',')[0]}, {formatTime(event.event_time)}
-                        </div>
-
-                        <div className="event-location-line">
-                          <strong>WHERE</strong>
-                        </div>
-                        <div>
-                          {event.location}
-                          {event.city && `, ${event.city}`}
-                        </div>
-                      </div>
-
-                      <div className="event-divider"></div>
-
-                      <div className="event-actions">
-                        <button
-                          className={`btn-rsvp ${event.event_type}`}
-                          onClick={() => handleRSVP(event)}
-                          disabled={false}
-                        >
-                          {spotsLeft <= 0 ? 'Join waitlist' : 'RSVP'}
-                        </button>
-                        <Link
-                          href={`/events/${event.slug || event.id}`}
-                          className="btn-learn-more"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Learn More
-                        </Link>
+                      <div className="date-day">
+                        {new Date(event.event_date).getDate()}
                       </div>
                     </div>
                   </div>
-                )
-              })}
-            </div>
-          ) : (
-            <div className="empty-state">
-              <i className="fas fa-calendar-times empty-icon"></i>
-              <h3 className="empty-title">No events match your filters</h3>
-              <p className="empty-text">
-                Clear a filter or check past events.
-              </p>
-              <button
-                className="btn-clear-filters"
-                onClick={() => {
-                  setFilters({
-                    when: '',
-                    type: '',
-                    format: '',
-                    location: '',
-                    availableOnly: false
-                  })
-                  setSearchTerm('')
-                }}
-              >
-                Clear all filters
-              </button>
-              {!showPastEvents && (
-                <div>
-                  <a
-                    href="#"
-                    className="past-events-link"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      setShowPastEvents(true)
-                    }}
-                  >
-                    See past events <i className="fas fa-arrow-right"></i>
-                  </a>
+                  <div className="event-content">
+                    <div className="event-type">
+                      <i className={`fas ${getTypeIcon(event.event_type)}`}></i>
+                      <span>{event.event_type}</span>
+                    </div>
+                    <h3 className="event-title">{event.title}</h3>
+                    <div className="event-details">
+                      <div className="detail-row">
+                        <i className="far fa-clock"></i>
+                        <span>{formatTimeRange(event.event_time)}</span>
+                      </div>
+                      <div className="detail-row">
+                        <i className="fas fa-map-marker-alt"></i>
+                        <span>{event.location}</span>
+                      </div>
+                    </div>
+                    <div className="event-footer">
+                      <span className={`spots-indicator ${getSpotsLeftClass(event)}`}>
+                        {getSpotsLeftText(event)}
+                      </span>
+                      <button
+                        className="btn-rsvp"
+                        disabled={event.capacity - event.spots_taken <= 0 && false}
+                      >
+                        {event.capacity - event.spots_taken <= 0 ? 'Join Waitlist' : 'RSVP'}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              )}
+              ))}
             </div>
-          )
-        ) : (
-          <EventCalendar
-            events={filteredEvents}
-            onEventClick={handleRSVP}
-          />
-        )}
+          )}
+        </div>
       </section>
 
       {showRSVPModal && selectedEvent && (
         <RSVPModal
           event={selectedEvent}
           onClose={() => setShowRSVPModal(false)}
-          onSuccess={() => {
-            setShowRSVPModal(false)
-            fetchEvents() // Refresh events after RSVP
-          }}
+          onSuccess={handleRSVPSuccess}
         />
       )}
 
       <Navigation />
     </>
-    </ClientLayout>
   )
 }
