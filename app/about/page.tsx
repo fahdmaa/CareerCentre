@@ -24,10 +24,24 @@ export default function AdminLoginPage() {
     setError('')
     setIsLoading(true)
 
+    // Debug mode - hold Shift while clicking login to see debug info
+    if (e.nativeEvent && (e.nativeEvent as any).shiftKey) {
+      try {
+        const debugRes = await fetch('/api/auth/debug')
+        const debugData = await debugRes.json()
+        console.log('=== AUTH DEBUG INFO ===')
+        console.log(debugData)
+        alert('Debug info logged to console. Check browser DevTools.')
+      } catch (err) {
+        console.error('Debug failed:', err)
+      }
+    }
+
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(formData)
       })
 
@@ -37,13 +51,24 @@ export default function AdminLoginPage() {
         // Store token in localStorage as a fallback
         if (data.token) {
           localStorage.setItem('admin-token', data.token)
+          console.log('Token saved to localStorage')
+        } else {
+          console.warn('No token received from login')
         }
         router.push('/admin/dashboard')
       } else {
         setError(data.error || 'Invalid credentials')
+
+        // Log detailed error for debugging
+        console.error('Login failed:', {
+          status: response.status,
+          error: data.error,
+          username: formData.username
+        })
       }
-    } catch (error) {
-      setError('An error occurred. Please try again.')
+    } catch (error: any) {
+      setError(`Connection error: ${error.message}`)
+      console.error('Login exception:', error)
     } finally {
       setIsLoading(false)
     }

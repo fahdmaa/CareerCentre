@@ -105,10 +105,14 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     // Check if token exists in localStorage
     const token = localStorage.getItem('admin-token')
+    console.log('Dashboard loaded. Token exists:', !!token)
+
     if (!token) {
+      console.warn('No admin token found, redirecting to login')
       router.push('/about')
       return
     }
+
     checkAuth()
     fetchAllData()
   }, [])
