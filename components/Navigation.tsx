@@ -78,11 +78,11 @@ export default function Navigation() {
         </Link>
         <Link href="/about" className={`pill-navbar-item ${pathname === '/about' ? 'active' : ''}`}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="16" x2="12" y2="12"/>
-            <line x1="12" y1="8" x2="12.01" y2="8"/>
+            <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+            <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 14v7"/>
           </svg>
-          <span>About</span>
+          <span>Admin</span>
         </Link>
       </div>
     </nav>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import Navigation from '../../components/Navigation'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -374,6 +375,8 @@ export default function AdminLoginPage() {
           }
         }
       `}</style>
+
+      <Navigation />
     </div>
   )
 }
