@@ -82,6 +82,7 @@ interface Stats {
 export default function AdminDashboardPage() {
   const router = useRouter()
   const [activeSection, setActiveSection] = useState('overview')
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [registrations, setRegistrations] = useState<EventRegistration[]>([])
   const [applications, setApplications] = useState<CohortApplication[]>([])
@@ -324,7 +325,7 @@ export default function AdminDashboardPage() {
     }}>
       {/* Sidebar */}
       <div style={{
-        width: '280px',
+        width: isSidebarCollapsed ? '80px' : '280px',
         background: 'white',
         borderRight: '1px solid #e5e7eb',
         display: 'flex',
@@ -332,12 +333,58 @@ export default function AdminDashboardPage() {
         position: 'fixed',
         height: '100vh',
         left: 0,
-        top: 0
+        top: 0,
+        transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        zIndex: 100
       }}>
+        {/* Toggle Button */}
+        <button
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          style={{
+            position: 'absolute',
+            right: '-15px',
+            top: '30px',
+            width: '30px',
+            height: '30px',
+            borderRadius: '50%',
+            background: 'white',
+            border: '1px solid #e5e7eb',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            zIndex: 101,
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)'
+            e.currentTarget.style.transform = 'scale(1.1)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)'
+            e.currentTarget.style.transform = 'scale(1)'
+          }}
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            style={{
+              transform: isSidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.3s ease'
+            }}
+          >
+            <path d="M15 18L9 12L15 6" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+
         <div style={{
-          padding: '30px 20px',
+          padding: isSidebarCollapsed ? '30px 10px' : '30px 20px',
           borderBottom: '1px solid #e5e7eb',
-          textAlign: 'center'
+          textAlign: 'center',
+          transition: 'padding 0.3s ease'
         }}>
           <div style={{
             width: '60px',
@@ -356,11 +403,32 @@ export default function AdminDashboardPage() {
               <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Admin Dashboard</h2>
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>EMSI Career Center</p>
+          <h2 style={{
+            fontSize: '18px',
+            fontWeight: 600,
+            color: '#1a1a1a',
+            opacity: isSidebarCollapsed ? 0 : 1,
+            height: isSidebarCollapsed ? 0 : 'auto',
+            overflow: 'hidden',
+            transition: 'opacity 0.3s ease, height 0.3s ease'
+          }}>Admin Dashboard</h2>
+          <p style={{
+            fontSize: '12px',
+            color: '#666',
+            marginTop: '5px',
+            opacity: isSidebarCollapsed ? 0 : 1,
+            height: isSidebarCollapsed ? 0 : 'auto',
+            overflow: 'hidden',
+            transition: 'opacity 0.3s ease, height 0.3s ease'
+          }}>EMSI Career Center</p>
         </div>
 
-        <nav style={{ flex: 1, padding: '20px 15px', overflowY: 'auto' }}>
+        <nav style={{
+          flex: 1,
+          padding: isSidebarCollapsed ? '20px 8px' : '20px 15px',
+          overflowY: 'auto',
+          transition: 'padding 0.3s ease'
+        }}>
           {[
             { id: 'overview', label: 'Overview', icon: '📊', badge: null },
             { id: 'messages', label: 'Messages', icon: '✉️', badge: stats.unreadMessages },
@@ -369,61 +437,91 @@ export default function AdminDashboardPage() {
             { id: 'interviews', label: 'Interviews', icon: '🎓', badge: stats.scheduledInterviews },
             { id: 'activities', label: 'Recent Activities', icon: '📋', badge: null }
           ].map(item => (
-            <button
-              key={item.id}
-              onClick={() => setActiveSection(item.id)}
-              style={{
-                width: '100%',
-                padding: '12px 15px',
-                background: activeSection === item.id ? '#00A651' : 'transparent',
-                color: activeSection === item.id ? 'white' : '#4b5563',
-                border: 'none',
-                borderRadius: '10px',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: 500,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                transition: 'all 0.3s'
-              }}
-              onMouseEnter={(e) => {
-                if (activeSection !== item.id) {
-                  e.currentTarget.style.background = '#f3f4f6'
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activeSection !== item.id) {
-                  e.currentTarget.style.background = 'transparent'
-                }
-              }}
-            >
-              <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span>{item.icon}</span>
-                {item.label}
-              </span>
-              {item.badge ? (
+            <div key={item.id} style={{ position: 'relative' }}>
+              <button
+                onClick={() => setActiveSection(item.id)}
+                title={isSidebarCollapsed ? item.label : ''}
+                style={{
+                  width: '100%',
+                  padding: isSidebarCollapsed ? '12px' : '12px 15px',
+                  background: activeSection === item.id ? '#00A651' : 'transparent',
+                  color: activeSection === item.id ? 'white' : '#4b5563',
+                  border: 'none',
+                  borderRadius: '10px',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: isSidebarCollapsed ? 'center' : 'space-between',
+                  transition: 'all 0.3s',
+                  position: 'relative'
+                }}
+                onMouseEnter={(e) => {
+                  if (activeSection !== item.id) {
+                    e.currentTarget.style.background = '#f3f4f6'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeSection !== item.id) {
+                    e.currentTarget.style.background = 'transparent'
+                  }
+                }}
+              >
                 <span style={{
-                  background: activeSection === item.id ? 'white' : '#ef4444',
-                  color: activeSection === item.id ? '#00A651' : 'white',
-                  padding: '2px 8px',
-                  borderRadius: '12px',
-                  fontSize: '12px',
-                  fontWeight: 600
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: isSidebarCollapsed ? '0' : '10px',
+                  justifyContent: isSidebarCollapsed ? 'center' : 'flex-start'
                 }}>
-                  {item.badge}
+                  <span style={{ fontSize: isSidebarCollapsed ? '20px' : '16px' }}>{item.icon}</span>
+                  {!isSidebarCollapsed && <span>{item.label}</span>}
+                </span>
+                {!isSidebarCollapsed && item.badge ? (
+                  <span style={{
+                    background: activeSection === item.id ? 'white' : '#ef4444',
+                    color: activeSection === item.id ? '#00A651' : 'white',
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    fontWeight: 600
+                  }}>
+                    {item.badge}
+                  </span>
+                ) : null}
+              </button>
+              {/* Badge for collapsed state */}
+              {isSidebarCollapsed && item.badge ? (
+                <span style={{
+                  position: 'absolute',
+                  top: '8px',
+                  right: '8px',
+                  background: '#ef4444',
+                  color: 'white',
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '50%',
+                  fontSize: '10px',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                }}>
+                  {item.badge > 9 ? '9+' : item.badge}
                 </span>
               ) : null}
-            </button>
+            </div>
           ))}
         </nav>
 
         <button
           onClick={handleLogout}
+          title={isSidebarCollapsed ? 'Logout' : ''}
           style={{
-            margin: '15px',
-            padding: '12px',
+            margin: isSidebarCollapsed ? '15px 8px' : '15px',
+            padding: isSidebarCollapsed ? '12px' : '12px',
             background: '#fff',
             color: '#ef4444',
             border: '2px solid #ef4444',
@@ -449,15 +547,16 @@ export default function AdminDashboardPage() {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          Logout
+          {!isSidebarCollapsed && <span>Logout</span>}
         </button>
       </div>
 
       {/* Main Content */}
       <div style={{
         flex: 1,
-        marginLeft: '280px',
-        minHeight: '100vh'
+        marginLeft: isSidebarCollapsed ? '80px' : '280px',
+        minHeight: '100vh',
+        transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
       }}>
         {/* Header */}
         <div style={{
