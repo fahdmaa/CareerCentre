@@ -84,18 +84,74 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { data, error } = await supabase
-      .from('messages')
-      .insert({
-        sender_name,
-        sender_email,
-        sender_phone: sender_phone || null,
-        subject,
-        message,
-        status: 'unread'
-      })
-      .select()
-      .single()
+    // Try to insert with phone first, fall back to without if column doesn't exist
+    let data, error;
+
+    try {
+      const result = await supabase
+        .from('messages')
+        .insert({
+          sender_name,
+          sender_email,
+          sender_phone: sender_phone || null,
+          subject,
+          message,
+          status: 'unread'
+        })
+        .select()
+        .single()
+
+      data = result.data
+      error = result.error
+    } catch (e: any) {
+      // If phone column doesn't exist, try without it
+      if (e?.message?.includes('sender_phone')) {
+        const result = await supabase
+          .from('messages')
+          .insert({
+            sender_name,
+            sender_email,
+            subject,
+            message,
+            status: 'unread'
+          })
+          .select()
+          .single()
+
+        data = result.data
+        error = result.error
+
+        // Store phone in message text as temporary solution
+        if (data && sender_phone) {
+          await supabase
+            .from('messages')
+            .update({
+              message: `${message}\n\n[Phone: ${sender_phone}]`
+            })
+            .eq('id', data.id)
+        }
+      } else {
+        error = e
+      }
+    }
+
+    // If still error, try without phone as final fallback
+    if (error?.message?.includes('sender_phone')) {
+      const result = await supabase
+        .from('messages')
+        .insert({
+          sender_name,
+          sender_email,
+          subject,
+          message: sender_phone ? `${message}\n\n[Phone: ${sender_phone}]` : message,
+          status: 'unread'
+        })
+        .select()
+        .single()
+
+      data = result.data
+      error = result.error
+    }
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
