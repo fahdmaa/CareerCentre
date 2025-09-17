@@ -6,6 +6,7 @@ export async function GET(request: NextRequest) {
   const debugInfo: any = {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
+    requestUrl: request.url,
     supabase: {
       configured: isSupabaseConfigured(),
       url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'NOT SET',
@@ -14,6 +15,7 @@ export async function GET(request: NextRequest) {
     },
     jwt: {
       secret: process.env.JWT_SECRET ? 'ENV VAR SET' : 'USING DEFAULT',
+      hardcodedSecret: 'emsi-career-center-secret-2024'
     },
     cookies: {},
     headers: {},

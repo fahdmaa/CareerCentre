@@ -120,6 +120,8 @@ export default function AdminDashboardPage() {
   const checkAuth = async () => {
     try {
       const token = localStorage.getItem('admin-token')
+      console.log('Checking auth with token:', token ? `${token.substring(0, 20)}...` : 'NO TOKEN')
+
       const response = await fetch('/api/auth/verify', {
         credentials: 'include',
         headers: {
@@ -127,7 +129,12 @@ export default function AdminDashboardPage() {
           ...(token && { 'Authorization': `Bearer ${token}` })
         }
       })
+
+      console.log('Auth verify response status:', response.status)
+
       if (response.status === 401) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Auth failed:', errorData)
         localStorage.removeItem('admin-token')
         router.push('/about')
         return false
