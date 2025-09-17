@@ -79,6 +79,46 @@ interface Stats {
   totalAmbassadors: number
 }
 
+// Animated Counter Component
+const AnimatedCounter = ({ value, duration = 1500 }: { value: number; duration?: number }) => {
+  const [displayValue, setDisplayValue] = useState(0)
+  const [hasAnimated, setHasAnimated] = useState(false)
+
+  useEffect(() => {
+    // Only animate once when component mounts or value changes
+    if (!hasAnimated && value > 0) {
+      const startTime = Date.now()
+      const endValue = value
+
+      const updateCounter = () => {
+        const now = Date.now()
+        const elapsed = now - startTime
+        const progress = Math.min(elapsed / duration, 1)
+
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4)
+        const currentValue = Math.floor(easeOutQuart * endValue)
+
+        setDisplayValue(currentValue)
+
+        if (progress < 1) {
+          requestAnimationFrame(updateCounter)
+        } else {
+          setDisplayValue(endValue)
+          setHasAnimated(true)
+        }
+      }
+
+      requestAnimationFrame(updateCounter)
+    } else {
+      // If already animated, just show the value
+      setDisplayValue(value)
+    }
+  }, [value, duration, hasAnimated])
+
+  return <span>{displayValue}</span>
+}
+
 export default function AdminDashboardPage() {
   const router = useRouter()
   const [activeSection, setActiveSection] = useState('overview')
@@ -829,7 +869,9 @@ export default function AdminDashboardPage() {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div>
                         <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '8px' }}>{stat.label}</p>
-                        <h3 style={{ fontSize: '32px', fontWeight: 700, color: '#1a1a1a' }}>{stat.value}</h3>
+                        <h3 style={{ fontSize: '32px', fontWeight: 700, color: '#1a1a1a' }}>
+                          <AnimatedCounter value={stat.value} duration={1200} />
+                        </h3>
                       </div>
                       <div style={{
                         width: '50px',
