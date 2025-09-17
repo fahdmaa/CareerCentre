@@ -6,10 +6,13 @@ import Navigation from '../components/Navigation'
 import ClientLayout from '../components/ClientLayout'
 import KPICard from '../components/KPICard'
 import ServicesAccordion from '../components/ServicesAccordion'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './modern-home.css'
+import ContactForm from './about/contact-form'
 
 export default function HomePage() {
+  const [showContactForm, setShowContactForm] = useState(false)
+
   useEffect(() => {
     // Initialize partner carousel
     const initCarousel = () => {
@@ -266,12 +269,12 @@ export default function HomePage() {
                   </svg>
                   <span>Browse jobs</span>
                 </Link>
-                <Link href="/about" className="btn-secondary-hero" style={{ background: 'transparent', color: 'white', border: '2px solid white' }}>
+                <button onClick={() => setShowContactForm(true)} className="btn-secondary-hero" style={{ background: 'transparent', color: 'white', border: '2px solid white' }}>
                   <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   <span>Contact us</span>
-                </Link>
+                </button>
               </div>
             </div>
             
@@ -479,6 +482,11 @@ export default function HomePage() {
       </section>
 
       <Navigation />
+
+      {/* Contact Form Modal */}
+      {showContactForm && (
+        <ContactForm onClose={() => setShowContactForm(false)} />
+      )}
     </div>
     </ClientLayout>
   )

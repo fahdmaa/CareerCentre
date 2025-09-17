@@ -8,6 +8,7 @@ interface Message {
   id: number
   sender_name: string
   sender_email: string
+  sender_phone?: string
   subject: string
   message: string
   status: string
@@ -1420,16 +1421,17 @@ export default function AdminDashboardPage() {
                                   deleteMessage(message.id)
                                 }}
                                 style={{
-                                  padding: '6px 10px',
+                                  padding: '6px 12px',
                                   background: '#ef4444',
                                   color: 'white',
                                   border: 'none',
                                   borderRadius: '6px',
                                   fontSize: '12px',
-                                  cursor: 'pointer'
+                                  cursor: 'pointer',
+                                  fontWeight: 500
                                 }}
                               >
-                                🗑️
+                                Delete
                               </button>
                             </div>
                           </td>
@@ -1456,6 +1458,9 @@ export default function AdminDashboardPage() {
                     <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '5px' }}>From</p>
                     <p style={{ fontSize: '14px', color: '#1a1a1a', fontWeight: 500 }}>{selectedMessage.sender_name}</p>
                     <p style={{ fontSize: '13px', color: '#6b7280' }}>{selectedMessage.sender_email}</p>
+                    {selectedMessage.sender_phone && (
+                      <p style={{ fontSize: '13px', color: '#6b7280' }}>📱 {selectedMessage.sender_phone}</p>
+                    )}
                   </div>
                   <div style={{ marginBottom: '15px' }}>
                     <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '5px' }}>Subject</p>

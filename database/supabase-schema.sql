@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS messages (
     id SERIAL PRIMARY KEY,
     sender_name VARCHAR(100),
     sender_email VARCHAR(100),
+    sender_phone VARCHAR(50),
     subject VARCHAR(200),
     message TEXT,
     status VARCHAR(20) DEFAULT 'unread',
