@@ -143,6 +143,161 @@ export default function AdminDashboardPage() {
   const [selectedApplication, setSelectedApplication] = useState<CohortApplication | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
+  // Profile management states
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false)
+  const [showEditProfile, setShowEditProfile] = useState(false)
+  const [profilePicture, setProfilePicture] = useState<string | null>(null)
+  const [adminData, setAdminData] = useState({
+    fullName: 'Admin User',
+    email: 'admin@emsi.ma',
+    occupation: 'System Administrator',
+    role: 'admin', // admin, super_admin, member
+    username: 'admin'
+  })
+  const [editFormData, setEditFormData] = useState({
+    fullName: '',
+    email: '',
+    occupation: '',
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+  const [passwordError, setPasswordError] = useState('')
+  const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false)
+
+  // Load profile picture and admin data on mount
+  useEffect(() => {
+    const savedPicture = localStorage.getItem('adminProfilePicture')
+    if (savedPicture) {
+      setProfilePicture(savedPicture)
+    }
+
+    // Fetch admin profile data
+    const fetchAdminProfile = async () => {
+      try {
+        const token = localStorage.getItem('adminToken')
+        const response = await fetch('/api/admin/profile', {
+          headers: {
+            ...(token && { 'Authorization': `Bearer ${token}` })
+          },
+          credentials: 'include'
+        })
+
+        if (response.ok) {
+          const profileData = await response.json()
+          setAdminData(profileData)
+          setEditFormData({
+            fullName: profileData.fullName,
+            email: profileData.email,
+            occupation: profileData.occupation,
+            currentPassword: '',
+            newPassword: '',
+            confirmPassword: ''
+          })
+        }
+      } catch (error) {
+        console.error('Failed to fetch admin profile:', error)
+      }
+    }
+
+    fetchAdminProfile()
+  }, [])
+
+  // Handle password change validation
+  const handlePasswordChange = async () => {
+    setPasswordError('')
+
+    if (editFormData.newPassword || editFormData.confirmPassword || editFormData.currentPassword) {
+      if (!editFormData.currentPassword) {
+        setPasswordError('Please enter your current password')
+        return false
+      }
+
+      if (editFormData.newPassword !== editFormData.confirmPassword) {
+        setPasswordError('New passwords do not match')
+        return false
+      }
+
+      if (editFormData.newPassword.length < 6) {
+        setPasswordError('New password must be at least 6 characters')
+        return false
+      }
+
+      // Verify current password
+      try {
+        const token = localStorage.getItem('adminToken')
+        const response = await fetch('/api/admin/verify-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` })
+          },
+          body: JSON.stringify({ password: editFormData.currentPassword })
+        })
+
+        if (!response.ok) {
+          setPasswordError('Current password is incorrect')
+          return false
+        }
+      } catch (error) {
+        setPasswordError('Failed to verify password')
+        return false
+      }
+    }
+
+    return true
+  }
+
+  // Handle profile update
+  const handleProfileUpdate = async () => {
+    if (await handlePasswordChange()) {
+      // Update admin data
+      setAdminData({
+        ...adminData,
+        fullName: editFormData.fullName,
+        email: editFormData.email,
+        occupation: editFormData.occupation
+      })
+
+      // Save to backend (we'll create the endpoint later)
+      try {
+        const token = localStorage.getItem('adminToken')
+        const updateData: any = {
+          fullName: editFormData.fullName,
+          email: editFormData.email,
+          occupation: editFormData.occupation
+        }
+
+        if (editFormData.newPassword) {
+          updateData.newPassword = editFormData.newPassword
+        }
+
+        await fetch('/api/admin/profile', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` })
+          },
+          body: JSON.stringify(updateData)
+        })
+      } catch (error) {
+        console.error('Failed to update profile:', error)
+      }
+
+      setProfileUpdateSuccess(true)
+      setTimeout(() => {
+        setShowEditProfile(false)
+        setProfileUpdateSuccess(false)
+        setEditFormData({
+          ...editFormData,
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        })
+      }, 2000)
+    }
+  }
+
   useEffect(() => {
     // Check if token exists in localStorage
     const token = localStorage.getItem('admin-token')
@@ -739,29 +894,252 @@ export default function AdminDashboardPage() {
                 e.target.style.borderColor = '#e5e7eb'
               }}
             />
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              padding: '8px 15px',
-              background: '#f3f4f6',
-              borderRadius: '8px'
-            }}>
-              <div style={{
-                width: '35px',
-                height: '35px',
-                background: '#00A651',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontSize: '14px',
-                fontWeight: 600
-              }}>
-                A
+            <div style={{ position: 'relative' }}>
+              <div
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  padding: '8px 15px',
+                  background: '#f3f4f6',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  transition: 'background 0.3s',
+                  userSelect: 'none'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#e5e7eb'}
+                onMouseLeave={(e) => e.currentTarget.style.background = '#f3f4f6'}
+              >
+                {profilePicture ? (
+                  <img
+                    src={profilePicture}
+                    alt="Profile"
+                    style={{
+                      width: '35px',
+                      height: '35px',
+                      borderRadius: '50%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                ) : (
+                  <div style={{
+                    width: '35px',
+                    height: '35px',
+                    background: '#00A651',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '14px',
+                    fontWeight: 600
+                  }}>
+                    {adminData.fullName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span style={{ fontSize: '14px', color: '#4b5563' }}>{adminData.fullName}</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#4b5563"
+                  strokeWidth="2"
+                  style={{ transform: showProfileDropdown ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.3s' }}
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
               </div>
-              <span style={{ fontSize: '14px', color: '#4b5563' }}>Admin</span>
+
+              {/* Profile Dropdown Menu */}
+              {showProfileDropdown && (
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  right: 0,
+                  marginTop: '8px',
+                  background: 'white',
+                  borderRadius: '12px',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                  minWidth: '250px',
+                  zIndex: 100,
+                  overflow: 'hidden',
+                  animation: 'slideDown 0.3s ease'
+                }}>
+                  <div style={{ padding: '15px', borderBottom: '1px solid #e5e7eb' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      {profilePicture ? (
+                        <img
+                          src={profilePicture}
+                          alt="Profile"
+                          style={{
+                            width: '45px',
+                            height: '45px',
+                            borderRadius: '50%',
+                            objectFit: 'cover'
+                          }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: '45px',
+                          height: '45px',
+                          background: '#00A651',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'white',
+                          fontSize: '18px',
+                          fontWeight: 600
+                        }}>
+                          {adminData.fullName.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div>
+                        <div style={{ fontSize: '14px', fontWeight: 600, color: '#1a1a1a' }}>{adminData.fullName}</div>
+                        <div style={{ fontSize: '12px', color: '#6b7280' }}>{adminData.email}</div>
+                        <div style={{
+                          fontSize: '11px',
+                          color: '#00A651',
+                          background: '#00A65120',
+                          padding: '2px 8px',
+                          borderRadius: '4px',
+                          display: 'inline-block',
+                          marginTop: '4px',
+                          textTransform: 'capitalize'
+                        }}>
+                          {adminData.role.replace('_', ' ')}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '8px' }}>
+                    <button
+                      onClick={() => {
+                        document.getElementById('profilePictureInput')?.click()
+                        setShowProfileDropdown(false)
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '10px 15px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        border: 'none',
+                        background: 'transparent',
+                        color: '#4b5563',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        borderRadius: '8px',
+                        transition: 'background 0.2s',
+                        textAlign: 'left'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                      </svg>
+                      {profilePicture ? 'Change Profile Picture' : 'Add Profile Picture'}
+                    </button>
+
+                    {profilePicture && (
+                      <button
+                        onClick={() => {
+                          setProfilePicture(null)
+                          localStorage.removeItem('adminProfilePicture')
+                          setShowProfileDropdown(false)
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '10px 15px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          border: 'none',
+                          background: 'transparent',
+                          color: '#ef4444',
+                          fontSize: '14px',
+                          cursor: 'pointer',
+                          borderRadius: '8px',
+                          transition: 'background 0.2s',
+                          textAlign: 'left'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = '#fef2f2'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        </svg>
+                        Delete Profile Picture
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => {
+                        setShowProfileDropdown(false)
+                        setShowEditProfile(true)
+                        setEditFormData({
+                          fullName: adminData.fullName,
+                          email: adminData.email,
+                          occupation: adminData.occupation,
+                          currentPassword: '',
+                          newPassword: '',
+                          confirmPassword: ''
+                        })
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '10px 15px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        border: 'none',
+                        background: 'transparent',
+                        color: '#4b5563',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        borderRadius: '8px',
+                        transition: 'background 0.2s',
+                        textAlign: 'left'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                      Edit Your Admin Data
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Hidden file input for profile picture */}
+              <input
+                id="profilePictureInput"
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) {
+                    const reader = new FileReader()
+                    reader.onloadend = () => {
+                      const result = reader.result as string
+                      setProfilePicture(result)
+                      localStorage.setItem('adminProfilePicture', result)
+                    }
+                    reader.readAsDataURL(file)
+                  }
+                }}
+              />
             </div>
           </div>
         </div>
@@ -1502,10 +1880,398 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
+      {/* Edit Profile Modal */}
+      {showEditProfile && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          animation: 'fadeIn 0.3s ease'
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            width: '90%',
+            maxWidth: '550px',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            boxShadow: '0 25px 50px rgba(0, 0, 0, 0.25)',
+            animation: 'slideUp 0.3s ease'
+          }}>
+            {/* Modal Header */}
+            <div style={{
+              padding: '25px 30px',
+              borderBottom: '1px solid #e5e7eb',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <h2 style={{
+                fontSize: '20px',
+                fontWeight: 700,
+                color: '#1a1a1a',
+                margin: 0
+              }}>Edit Your Admin Data</h2>
+              <button
+                onClick={() => {
+                  setShowEditProfile(false)
+                  setPasswordError('')
+                  setProfileUpdateSuccess(false)
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '5px'
+                }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '30px' }}>
+              {profileUpdateSuccess && (
+                <div style={{
+                  padding: '12px 16px',
+                  background: '#10b98120',
+                  border: '1px solid #10b981',
+                  borderRadius: '8px',
+                  marginBottom: '20px',
+                  color: '#059669',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  Profile updated successfully!
+                </div>
+              )}
+
+              <div style={{ marginBottom: '25px' }}>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#4b5563'
+                }}>Full Name</label>
+                <input
+                  type="text"
+                  value={editFormData.fullName}
+                  onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'border-color 0.3s'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#00A651'}
+                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                />
+              </div>
+
+              <div style={{ marginBottom: '25px' }}>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#4b5563'
+                }}>Email</label>
+                <input
+                  type="email"
+                  value={editFormData.email}
+                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'border-color 0.3s'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#00A651'}
+                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                />
+              </div>
+
+              <div style={{ marginBottom: '25px' }}>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#4b5563'
+                }}>Occupation</label>
+                <input
+                  type="text"
+                  value={editFormData.occupation}
+                  onChange={(e) => setEditFormData({ ...editFormData, occupation: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    transition: 'border-color 0.3s'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#00A651'}
+                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                />
+              </div>
+
+              <div style={{ marginBottom: '25px' }}>
+                <label style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#4b5563'
+                }}>Current Status</label>
+                <div style={{
+                  padding: '10px 14px',
+                  background: '#f3f4f6',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  color: '#6b7280',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+                }}>
+                  <span style={{ textTransform: 'capitalize' }}>
+                    {adminData.role.replace('_', ' ')}
+                  </span>
+                  <span style={{
+                    fontSize: '12px',
+                    color: '#00A651',
+                    background: '#00A65120',
+                    padding: '4px 10px',
+                    borderRadius: '4px'
+                  }}>Active</span>
+                </div>
+              </div>
+
+              {/* Password Change Section */}
+              <div style={{
+                marginTop: '30px',
+                paddingTop: '30px',
+                borderTop: '1px solid #e5e7eb'
+              }}>
+                <h3 style={{
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  color: '#1a1a1a',
+                  marginBottom: '20px'
+                }}>Change Password (Optional)</h3>
+
+                {passwordError && (
+                  <div style={{
+                    padding: '10px 14px',
+                    background: '#ef444420',
+                    border: '1px solid #ef4444',
+                    borderRadius: '8px',
+                    marginBottom: '15px',
+                    color: '#dc2626',
+                    fontSize: '13px'
+                  }}>
+                    {passwordError}
+                  </div>
+                )}
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: '#4b5563'
+                  }}>Current Password</label>
+                  <input
+                    type="password"
+                    value={editFormData.currentPassword}
+                    onChange={(e) => setEditFormData({ ...editFormData, currentPassword: e.target.value })}
+                    placeholder="Enter current password to change"
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'border-color 0.3s'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#00A651'}
+                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: '#4b5563'
+                  }}>New Password</label>
+                  <input
+                    type="password"
+                    value={editFormData.newPassword}
+                    onChange={(e) => setEditFormData({ ...editFormData, newPassword: e.target.value })}
+                    placeholder="Minimum 6 characters"
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'border-color 0.3s'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#00A651'}
+                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '8px',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: '#4b5563'
+                  }}>Confirm New Password</label>
+                  <input
+                    type="password"
+                    value={editFormData.confirmPassword}
+                    onChange={(e) => setEditFormData({ ...editFormData, confirmPassword: e.target.value })}
+                    placeholder="Re-enter new password"
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'border-color 0.3s'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#00A651'}
+                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+              </div>
+
+              {/* Modal Actions */}
+              <div style={{
+                display: 'flex',
+                gap: '12px',
+                marginTop: '30px'
+              }}>
+                <button
+                  onClick={handleProfileUpdate}
+                  style={{
+                    flex: 1,
+                    padding: '12px 24px',
+                    background: '#00A651',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'background 0.3s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = '#008741'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = '#00A651'}
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={() => {
+                    setShowEditProfile(false)
+                    setPasswordError('')
+                    setProfileUpdateSuccess(false)
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: '12px 24px',
+                    background: 'white',
+                    color: '#6b7280',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.3s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#f3f4f6'
+                    e.currentTarget.style.borderColor = '#d1d5db'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'white'
+                    e.currentTarget.style.borderColor = '#e5e7eb'
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        @keyframes slideUp {
+          from {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
       `}</style>
     </div>
