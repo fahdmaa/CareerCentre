@@ -314,6 +314,15 @@ export default function AdminDashboardPage() {
     fetchAllData()
   }, [])
 
+  // Update stats whenever messages change
+  useEffect(() => {
+    setStats(prev => ({
+      ...prev,
+      totalMessages: messages.length,
+      unreadMessages: messages.filter(m => m.status === 'unread').length
+    }))
+  }, [messages])
+
   const checkAuth = async () => {
     try {
       const token = localStorage.getItem('admin-token')
@@ -527,12 +536,6 @@ export default function AdminDashboardPage() {
           }}></div>
           <p style={{ color: '#666', fontSize: '16px' }}>Loading dashboard...</p>
         </div>
-        <style jsx>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
       </div>
     )
   }
@@ -992,7 +995,9 @@ export default function AdminDashboardPage() {
                   minWidth: '250px',
                   zIndex: 100,
                   overflow: 'hidden',
-                  animation: 'slideDown 0.3s ease'
+                  transform: 'translateY(0)',
+                  opacity: 1,
+                  transition: 'opacity 0.3s ease, transform 0.3s ease'
                 }}>
                   <div style={{ padding: '15px', borderBottom: '1px solid #e5e7eb' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
