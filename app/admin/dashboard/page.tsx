@@ -421,13 +421,26 @@ export default function AdminDashboardPage() {
 
   const markMessageAsRead = async (id: number) => {
     try {
-      await fetch(`/api/messages/${id}`, {
+      const token = localStorage.getItem('adminToken')
+      const response = await fetch(`/api/messages/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
         credentials: 'include',
         body: JSON.stringify({ status: 'read' })
       })
-      fetchAllData()
+
+      if (response.ok) {
+        // Update local state instead of refetching everything
+        setMessages(messages.map(msg =>
+          msg.id === id ? { ...msg, status: 'read' } : msg
+        ))
+        if (selectedMessage?.id === id) {
+          setSelectedMessage({ ...selectedMessage, status: 'read' })
+        }
+      }
     } catch (error) {
       console.error('Failed to update message:', error)
     }
@@ -436,9 +449,22 @@ export default function AdminDashboardPage() {
   const deleteMessage = async (id: number) => {
     if (confirm('Are you sure you want to delete this message?')) {
       try {
-        await fetch(`/api/messages/${id}`, { method: 'DELETE', credentials: 'include' })
-        setSelectedMessage(null)
-        fetchAllData()
+        const token = localStorage.getItem('adminToken')
+        const response = await fetch(`/api/messages/${id}`, {
+          method: 'DELETE',
+          headers: {
+            ...(token && { 'Authorization': `Bearer ${token}` })
+          },
+          credentials: 'include'
+        })
+
+        if (response.ok) {
+          // Update local state instead of refetching
+          setMessages(messages.filter(msg => msg.id !== id))
+          if (selectedMessage?.id === id) {
+            setSelectedMessage(null)
+          }
+        }
       } catch (error) {
         console.error('Failed to delete message:', error)
       }
@@ -1368,10 +1394,25 @@ export default function AdminDashboardPage() {
                         <tr key={message.id}
                             style={{
                               borderBottom: '1px solid #e5e7eb',
-                              background: message.status === 'unread' ? '#f0fdf4' : 'white',
-                              cursor: 'pointer'
+                              background: selectedMessage?.id === message.id
+                                ? '#e0f2fe'
+                                : message.status === 'unread'
+                                  ? '#f0fdf4'
+                                  : 'white',
+                              cursor: 'pointer',
+                              transition: 'background 0.2s'
                             }}
-                            onClick={() => setSelectedMessage(message)}>
+                            onClick={() => setSelectedMessage(message)}
+                            onMouseEnter={(e) => {
+                              if (selectedMessage?.id !== message.id) {
+                                e.currentTarget.style.background = '#f9fafb'
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (selectedMessage?.id !== message.id) {
+                                e.currentTarget.style.background = message.status === 'unread' ? '#f0fdf4' : 'white'
+                              }
+                            }}>
                           <td style={{ padding: '15px' }}>
                             <div>
                               <p style={{ fontWeight: 500, color: '#1a1a1a', fontSize: '14px' }}>{message.sender_name}</p>
@@ -1451,9 +1492,32 @@ export default function AdminDashboardPage() {
                   padding: '25px',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
                 }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '20px', color: '#1a1a1a' }}>
-                    Message Details
-                  </h3>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#1a1a1a', margin: 0 }}>
+                      Message Details
+                    </h3>
+                    <button
+                      onClick={() => setSelectedMessage(null)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        borderRadius: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'background 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </button>
+                  </div>
                   <div style={{ marginBottom: '15px' }}>
                     <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '5px' }}>From</p>
                     <p style={{ fontSize: '14px', color: '#1a1a1a', fontWeight: 500 }}>{selectedMessage.sender_name}</p>
