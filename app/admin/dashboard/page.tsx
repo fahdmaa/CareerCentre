@@ -384,24 +384,32 @@ export default function AdminDashboardPage() {
           padding: isSidebarCollapsed ? '30px 10px' : '30px 20px',
           borderBottom: '1px solid #e5e7eb',
           textAlign: 'center',
-          transition: 'padding 0.3s ease'
+          transition: 'padding 0.3s ease',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          minHeight: '140px'
         }}>
+          {/* Dynamic Logo based on sidebar state */}
           <div style={{
-            width: '60px',
-            height: '60px',
-            background: '#00A651',
-            borderRadius: '15px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            margin: '0 auto 15px',
-            boxShadow: '0 4px 12px rgba(0, 166, 81, 0.2)'
+            marginBottom: '15px',
+            height: '60px',
+            transition: 'all 0.3s ease'
           }}>
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <Image
+              src={isSidebarCollapsed ? '/images/logo-minimized-sidebar.png' : '/images/logo-full-sidebar.png'}
+              alt="EMSI Logo"
+              width={isSidebarCollapsed ? 50 : 180}
+              height={50}
+              style={{
+                objectFit: 'contain',
+                transition: 'all 0.3s ease'
+              }}
+              priority
+            />
           </div>
           <h2 style={{
             fontSize: '18px',
@@ -410,17 +418,17 @@ export default function AdminDashboardPage() {
             opacity: isSidebarCollapsed ? 0 : 1,
             height: isSidebarCollapsed ? 0 : 'auto',
             overflow: 'hidden',
-            transition: 'opacity 0.3s ease, height 0.3s ease'
+            transition: 'opacity 0.3s ease, height 0.3s ease',
+            marginBottom: '5px'
           }}>Admin Dashboard</h2>
           <p style={{
             fontSize: '12px',
             color: '#666',
-            marginTop: '5px',
             opacity: isSidebarCollapsed ? 0 : 1,
             height: isSidebarCollapsed ? 0 : 'auto',
             overflow: 'hidden',
             transition: 'opacity 0.3s ease, height 0.3s ease'
-          }}>EMSI Career Center</p>
+          }}>Career Center Management</p>
         </div>
 
         <nav style={{
