@@ -959,6 +959,44 @@ export default function AdminDashboardPage() {
 
   const { messages: filteredMessages, registrations: filteredRegistrations, applications: filteredApplications } = filteredData()
 
+  // Helper function for percentage calculations (extracted from JSX for better performance and build compatibility)
+  const getConfirmationPercentage = (confirmed: number, count: number): number => {
+    return count > 0 ? (confirmed / count) * 100 : 0
+  }
+
+  // Compute event groups for analytics (extracted from JSX for better performance and build compatibility)
+  const eventGroups = registrations.reduce((acc: any, reg) => {
+    const eventTitle = reg.events?.title || reg.event?.title || 'Unknown Event'
+    const eventId = reg.event_id || 'unknown'
+
+    if (!acc[eventId]) {
+      acc[eventId] = {
+        title: eventTitle,
+        count: 0,
+        confirmed: 0,
+        waitlisted: 0,
+        event: reg.events || reg.event
+      }
+    }
+    acc[eventId].count++
+    if (reg.status === 'confirmed' && !reg.on_waitlist) {
+      acc[eventId].confirmed++
+    }
+    if (reg.on_waitlist) {
+      acc[eventId].waitlisted++
+    }
+    return acc
+  }, {})
+
+  const topEventGroups = Object.values(eventGroups).slice(0, 5)
+
+  // Compute recent registrations for analytics (extracted from JSX for better performance and build compatibility)
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  const recentRegistrationsCount = filteredRegistrations.filter(r =>
+    new Date(r.registration_date) >= sevenDaysAgo
+  ).length
+  const recentRegistrationsText = `${recentRegistrationsCount} new registrations in the past week`
+
   return (
     <div style={{
       display: 'flex',
@@ -2368,13 +2406,7 @@ export default function AdminDashboardPage() {
                       Recent Activity (Last 7 Days)
                     </h4>
                     <div style={{ fontSize: '14px', color: '#6b7280' }}>
-                      {(() => {
-                        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-                        const recentCount = filteredRegistrations.filter(r =>
-                          new Date(r.registration_date) >= sevenDaysAgo
-                        ).length
-                        return `${recentCount} new registrations in the past week`
-                      })()}
+                      {recentRegistrationsText}
                     </div>
                   </div>
                 </div>
@@ -2393,32 +2425,7 @@ export default function AdminDashboardPage() {
                   </h3>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {(() => {
-                      // Group registrations by event
-                      const eventGroups = registrations.reduce((acc: any, reg) => {
-                        const eventTitle = reg.events?.title || reg.event?.title || 'Unknown Event'
-                        const eventId = reg.event_id || 'unknown'
-
-                        if (!acc[eventId]) {
-                          acc[eventId] = {
-                            title: eventTitle,
-                            count: 0,
-                            confirmed: 0,
-                            waitlisted: 0,
-                            event: reg.events || reg.event
-                          }
-                        }
-                        acc[eventId].count++
-                        if (reg.status === 'confirmed' && !reg.on_waitlist) {
-                          acc[eventId].confirmed++
-                        }
-                        if (reg.on_waitlist) {
-                          acc[eventId].waitlisted++
-                        }
-                        return acc
-                      }, {})
-
-                      return Object.values(eventGroups).slice(0, 5).map((group: any) => (
+                    {topEventGroups.map((group: any) => (
                         <div key={group.title} style={{
                           padding: '16px',
                           background: '#f9fafb',
@@ -2459,7 +2466,7 @@ export default function AdminDashboardPage() {
                                 <div style={{
                                   height: '100%',
                                   background: '#10b981',
-                                  width: `${group.count > 0 ? (group.confirmed / group.count) * 100 : 0}%`,
+                                  width: `${getConfirmationPercentage(group.confirmed, group.count)}%`,
                                   borderRadius: '2px'
                                 }} />
                               </div>
@@ -2467,7 +2474,7 @@ export default function AdminDashboardPage() {
                           </div>
                         </div>
                       ))
-                    })()}
+                    )}
                   </div>
 
                   {registrations.length === 0 && (

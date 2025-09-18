@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
+import ErrorBoundary from '../components/ErrorBoundary'
 import './globals.css'
+import './accessibility.css'
 
 export const metadata: Metadata = {
   title: 'EMSI Career Center',
@@ -21,7 +23,16 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+        <ErrorBoundary>
+          <main id="main-content">
+            {children}
+          </main>
+        </ErrorBoundary>
+      </body>
     </html>
   )
 }
