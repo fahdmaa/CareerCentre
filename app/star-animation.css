@@ -1,6 +1,6 @@
-/* Global Star Border Animation for All Buttons */
+/* Star Border Animation - Clean Green Version */
 
-/* Apply to all button-like elements */
+/* Apply to all button elements */
 button,
 [type="submit"],
 [type="button"],
@@ -12,9 +12,11 @@ a[class*="button"] {
   position: relative !important;
   overflow: hidden !important;
   z-index: 1;
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
 }
 
-/* Create star border effect */
+/* Create the border background */
 button::before,
 [type="submit"]::before,
 [type="button"]::before,
@@ -25,39 +27,26 @@ a[class*="btn"]::before,
 a[class*="button"]::before {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 300%;
-  height: 300%;
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    transparent 0deg,
-    #FFD700 20deg,
-    #FFA500 40deg,
-    #FF69B4 60deg,
-    #00CED1 80deg,
-    #00FA9A 100deg,
-    #FFD700 120deg,
-    transparent 140deg,
-    transparent 220deg,
-    #FFA500 240deg,
-    #FF69B4 260deg,
-    #00CED1 280deg,
-    #00FA9A 300deg,
-    #FFD700 320deg,
-    transparent 340deg,
-    transparent 360deg
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    transparent 40%,
+    #00A651 50%,
+    transparent 60%,
+    transparent 100%
   );
-  transform: translate(-50%, -50%) scale(0);
+  background-size: 200% 100%;
+  border-radius: inherit;
   opacity: 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: rotate-star 4s linear infinite;
-  z-index: -1;
-  pointer-events: none;
-  filter: blur(2px);
+  transition: opacity 0.3s ease;
+  z-index: -2;
+  animation: star-move 3s linear infinite;
 }
 
-/* Star particles effect */
+/* Create the rotating star effect */
 button::after,
 [type="submit"]::after,
 [type="button"]::after,
@@ -68,24 +57,25 @@ a[class*="btn"]::after,
 a[class*="button"]::after {
   content: '';
   position: absolute;
-  inset: -30px;
-  background-image:
-    radial-gradient(circle, #FFD700 0.5px, transparent 0.5px),
-    radial-gradient(circle, #FFA500 0.5px, transparent 0.5px),
-    radial-gradient(circle, #FF69B4 0.5px, transparent 0.5px),
-    radial-gradient(circle, #00CED1 0.5px, transparent 0.5px),
-    radial-gradient(circle, #00FA9A 0.5px, transparent 0.5px);
-  background-size: 20px 20px, 25px 25px, 30px 30px, 35px 35px, 40px 40px;
-  background-position: 0 0, 5px 5px, 10px 2px, 2px 8px, 15px 10px;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 0deg,
+    transparent 340deg,
+    #00A651 340deg,
+    #00FA9A 360deg
+  );
+  border-radius: inherit;
   opacity: 0;
-  animation: twinkle 3s ease-in-out infinite;
-  pointer-events: none;
+  transition: opacity 0.3s ease;
   z-index: -1;
-  transform: scale(0);
-  transition: all 0.4s ease;
+  animation: star-rotate 2s linear infinite;
 }
 
-/* Activate on hover */
+/* Show animation on hover */
 button:hover::before,
 [type="submit"]:hover::before,
 [type="button"]:hover::before,
@@ -93,9 +83,16 @@ button:hover::before,
 .btn:hover::before,
 .button:hover::before,
 a[class*="btn"]:hover::before,
-a[class*="button"]:hover::before {
-  transform: translate(-50%, -50%) scale(1);
-  opacity: 0.7;
+a[class*="button"]:hover::before,
+button:focus::before,
+[type="submit"]:focus::before,
+[type="button"]:focus::before,
+[type="reset"]:focus::before,
+.btn:focus::before,
+.button:focus::before,
+a[class*="btn"]:focus::before,
+a[class*="button"]:focus::before {
+  opacity: 1;
 }
 
 button:hover::after,
@@ -105,63 +102,46 @@ button:hover::after,
 .btn:hover::after,
 .button:hover::after,
 a[class*="btn"]:hover::after,
-a[class*="button"]:hover::after {
-  transform: scale(1);
+a[class*="button"]:hover::after,
+button:focus::after,
+[type="submit"]:focus::after,
+[type="button"]:focus::after,
+[type="reset"]:focus::after,
+.btn:focus::after,
+.button:focus::after,
+a[class*="btn"]:focus::after,
+a[class*="button"]:focus::after {
   opacity: 1;
 }
 
-/* Focus state animation */
-button:focus::before,
-[type="submit"]:focus::before,
-[type="button"]:focus::before,
-[type="reset"]:focus::before,
-.btn:focus::before,
-.button:focus::before,
-a[class*="btn"]:focus::before,
-a[class*="button"]:focus::before {
-  transform: translate(-50%, -50%) scale(1.1);
-  opacity: 0.5;
+/* Moving star animation */
+@keyframes star-move {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
-/* Active state */
-button:active::before,
-[type="submit"]:active::before,
-[type="button"]:active::before,
-[type="reset"]:active::before,
-.btn:active::before,
-.button:active::before,
-a[class*="btn"]:active::before,
-a[class*="button"]:active::before {
-  transform: translate(-50%, -50%) scale(0.9);
-  opacity: 1;
-}
-
-/* Keyframe animations */
-@keyframes rotate-star {
+/* Rotating star animation */
+@keyframes star-rotate {
   from {
-    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    --angle: 0deg;
   }
   to {
-    transform: translate(-50%, -50%) rotate(360deg) scale(1);
+    --angle: 360deg;
   }
 }
 
-@keyframes twinkle {
-  0%, 100% {
-    background-position: 0 0, 5px 5px, 10px 2px, 2px 8px, 15px 10px;
-  }
-  25% {
-    background-position: 2px 2px, 7px 7px, 12px 4px, 4px 10px, 17px 12px;
-  }
-  50% {
-    background-position: -2px -2px, 3px 3px, 8px 0px, 0px 6px, 13px 8px;
-  }
-  75% {
-    background-position: 1px 1px, 6px 6px, 11px 3px, 3px 9px, 16px 11px;
-  }
+/* Alternative: CSS property animation for browsers that support it */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
 }
 
-/* Enhanced glow effect on hover */
+/* Clean glow effect */
 button:hover,
 [type="submit"]:hover,
 [type="button"]:hover,
@@ -170,12 +150,8 @@ button:hover,
 .button:hover,
 a[class*="btn"]:hover,
 a[class*="button"]:hover {
-  box-shadow:
-    0 0 15px rgba(255, 215, 0, 0.4),
-    0 0 30px rgba(255, 165, 0, 0.3),
-    0 0 45px rgba(255, 105, 180, 0.2),
-    inset 0 0 10px rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgba(0, 166, 81, 0.2);
+  border-color: rgba(0, 166, 81, 0.3) !important;
   transition: all 0.3s ease;
 }
 
@@ -196,18 +172,10 @@ button:disabled:hover,
 [type="button"]:disabled:hover,
 .btn:disabled:hover {
   box-shadow: none;
-  transform: none;
+  border-color: transparent !important;
 }
 
-/* Special handling for small buttons */
-button.small::before,
-button.small::after,
-.btn-sm::before,
-.btn-sm::after {
-  transform-origin: center;
-}
-
-/* Ensure proper layering */
+/* Ensure content stays on top */
 button > *,
 [type="submit"] > *,
 [type="button"] > *,
@@ -216,5 +184,32 @@ button > *,
 a[class*="btn"] > *,
 a[class*="button"] > * {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+}
+
+/* Clean border gradient version */
+.star-border-clean::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2px;
+  background: linear-gradient(90deg, transparent, #00A651, transparent);
+  background-size: 200% 100%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  border-radius: inherit;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
