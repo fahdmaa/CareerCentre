@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import './globals.css'
+import './star-animation.css'
 
 export const metadata: Metadata = {
   title: 'EMSI Career Center',
