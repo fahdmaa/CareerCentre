@@ -74,6 +74,37 @@ interface Interview {
   }
 }
 
+interface Event {
+  id: number
+  title: string
+  description?: string
+  event_date: string
+  event_time: string
+  location: string
+  capacity: number
+  spots_taken: number
+  event_type: string
+  event_format: string
+  status: string
+  created_at: string
+  updated_at?: string
+  featured?: boolean
+  city?: string
+  campus?: string
+  host_org?: string
+  image_url?: string
+  guest_speaker_name?: string
+  guest_speaker_occupation?: string
+  guest_speaker_bio?: string
+  guest_speaker_photo?: string
+  guest_speaker_linkedin?: string
+  agenda?: string
+  speakers?: string
+  what_to_bring?: string
+  meeting_link?: string
+  tags?: string[]
+}
+
 interface RecentActivity {
   id: number
   activity_type: string
@@ -141,6 +172,7 @@ export default function AdminDashboardPage() {
   const [registrations, setRegistrations] = useState<EventRegistration[]>([])
   const [applications, setApplications] = useState<CohortApplication[]>([])
   const [interviews, setInterviews] = useState<Interview[]>([])
+  const [events, setEvents] = useState<Event[]>([])
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([])
   const [stats, setStats] = useState<Stats>({
     totalMessages: 0,
@@ -178,6 +210,34 @@ export default function AdminDashboardPage() {
   })
   const [passwordError, setPasswordError] = useState('')
   const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false)
+
+  // Events management states
+  const [showEventModal, setShowEventModal] = useState(false)
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [eventFormData, setEventFormData] = useState({
+    title: '',
+    description: '',
+    event_date: '',
+    event_time: '',
+    location: '',
+    capacity: '',
+    event_type: 'workshop',
+    event_format: 'on-campus',
+    featured: false,
+    city: '',
+    campus: '',
+    host_org: '',
+    image_url: '',
+    guest_speaker_name: '',
+    guest_speaker_occupation: '',
+    guest_speaker_bio: '',
+    guest_speaker_photo: '',
+    guest_speaker_linkedin: '',
+    agenda: '',
+    speakers: '',
+    what_to_bring: '',
+    meeting_link: ''
+  })
 
   // Load profile picture and admin data on mount
   useEffect(() => {
@@ -378,11 +438,12 @@ export default function AdminDashboardPage() {
       }
 
       // Fetch all data in parallel
-      const [messagesRes, registrationsRes, applicationsRes, interviewsRes, activitiesRes] = await Promise.all([
+      const [messagesRes, registrationsRes, applicationsRes, interviewsRes, eventsRes, activitiesRes] = await Promise.all([
         fetch('/api/messages', { credentials: 'include', headers: authHeaders }),
         fetch('/api/admin/registrations', { credentials: 'include', headers: authHeaders }).catch(() => null),
         fetch('/api/admin/applications', { credentials: 'include', headers: authHeaders }).catch(() => null),
         fetch('/api/admin/interviews', { credentials: 'include', headers: authHeaders }).catch(() => null),
+        fetch('/api/admin/events', { credentials: 'include', headers: authHeaders }).catch(() => null),
         fetch('/api/admin/activities', { credentials: 'include', headers: authHeaders }).catch(() => null)
       ])
 
@@ -425,6 +486,19 @@ export default function AdminDashboardPage() {
         setStats(prev => ({
           ...prev,
           scheduledInterviews: intData.filter((i: Interview) => i.status === 'scheduled').length
+        }))
+      }
+
+      if (eventsRes?.ok) {
+        const eventsData = await eventsRes.json()
+        // Handle new API response structure
+        const eventsList = eventsData.events || eventsData || []
+        const analytics = eventsData.analytics || {}
+
+        setEvents(eventsList)
+        setStats(prev => ({
+          ...prev,
+          upcomingEvents: analytics.upcomingEvents || eventsList.filter((e: Event) => e.status === 'upcoming').length
         }))
       }
 
@@ -508,6 +582,133 @@ export default function AdminDashboardPage() {
       fetchAllData()
     } catch (error) {
       console.error('Failed to update application:', error)
+    }
+  }
+
+  // Event management functions
+  const openEventModal = (event?: Event) => {
+    if (event) {
+      setSelectedEvent(event)
+      setEventFormData({
+        title: event.title,
+        description: event.description || '',
+        event_date: event.event_date,
+        event_time: event.event_time,
+        location: event.location,
+        capacity: event.capacity.toString(),
+        event_type: event.event_type,
+        event_format: event.event_format,
+        featured: event.featured || false,
+        city: event.city || '',
+        campus: event.campus || '',
+        host_org: event.host_org || '',
+        image_url: event.image_url || '',
+        guest_speaker_name: event.guest_speaker_name || '',
+        guest_speaker_occupation: event.guest_speaker_occupation || '',
+        guest_speaker_bio: event.guest_speaker_bio || '',
+        guest_speaker_photo: event.guest_speaker_photo || '',
+        guest_speaker_linkedin: event.guest_speaker_linkedin || '',
+        agenda: event.agenda || '',
+        speakers: event.speakers || '',
+        what_to_bring: event.what_to_bring || '',
+        meeting_link: event.meeting_link || ''
+      })
+    } else {
+      setSelectedEvent(null)
+      setEventFormData({
+        title: '',
+        description: '',
+        event_date: '',
+        event_time: '',
+        location: '',
+        capacity: '',
+        event_type: 'workshop',
+        event_format: 'on-campus',
+        featured: false,
+        city: '',
+        campus: '',
+        host_org: '',
+        image_url: '',
+        guest_speaker_name: '',
+        guest_speaker_occupation: '',
+        guest_speaker_bio: '',
+        guest_speaker_photo: '',
+        guest_speaker_linkedin: '',
+        agenda: '',
+        speakers: '',
+        what_to_bring: '',
+        meeting_link: ''
+      })
+    }
+    setShowEventModal(true)
+  }
+
+  const closeEventModal = () => {
+    setShowEventModal(false)
+    setSelectedEvent(null)
+  }
+
+  const handleEventSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    try {
+      const token = localStorage.getItem('admin-token')
+      const isEditing = selectedEvent !== null
+
+      const eventData = {
+        ...eventFormData,
+        capacity: parseInt(eventFormData.capacity)
+      }
+
+      if (isEditing) {
+        eventData.eventId = selectedEvent.id
+      }
+
+      const response = await fetch('/api/admin/events', {
+        method: isEditing ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        credentials: 'include',
+        body: JSON.stringify(eventData)
+      })
+
+      if (response.ok) {
+        await fetchAllData()
+        closeEventModal()
+      } else {
+        const errorData = await response.json()
+        console.error('Failed to save event:', errorData)
+      }
+    } catch (error) {
+      console.error('Error saving event:', error)
+    }
+  }
+
+  const deleteEvent = async (eventId: number) => {
+    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('admin-token')
+      const response = await fetch(`/api/admin/events?id=${eventId}`, {
+        method: 'DELETE',
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        credentials: 'include'
+      })
+
+      if (response.ok) {
+        await fetchAllData()
+      } else {
+        const errorData = await response.json()
+        console.error('Failed to delete event:', errorData)
+      }
+    } catch (error) {
+      console.error('Error deleting event:', error)
     }
   }
 
@@ -742,6 +943,22 @@ export default function AdminDashboardPage() {
               badge: stats.scheduledInterviews
             },
             {
+              id: 'events',
+              label: 'Events',
+              icon: (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                  <circle cx="8" cy="14" r="1" />
+                  <circle cx="12" cy="14" r="1" />
+                  <circle cx="16" cy="14" r="1" />
+                </svg>
+              ),
+              badge: null
+            },
+            {
               id: 'activities',
               label: 'Recent Activities',
               icon: (
@@ -912,6 +1129,7 @@ export default function AdminDashboardPage() {
               {activeSection === 'registrations' && 'Event Registrations'}
               {activeSection === 'applications' && 'Ambassador Applications'}
               {activeSection === 'interviews' && 'Interview Schedule'}
+              {activeSection === 'events' && 'Event Management'}
               {activeSection === 'activities' && 'Recent Activities'}
             </h1>
             <p style={{ color: '#666', fontSize: '14px' }}>
@@ -1907,6 +2125,204 @@ export default function AdminDashboardPage() {
                   <p style={{ color: '#9ca3af', textAlign: 'center', gridColumn: '1 / -1' }}>
                     No interviews scheduled
                   </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Events Section */}
+          {activeSection === 'events' && (
+            <div>
+              {/* Header with Create Button */}
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                padding: '25px',
+                marginBottom: '20px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <div>
+                  <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '5px', color: '#1a1a1a' }}>
+                    Event Management
+                  </h2>
+                  <p style={{ color: '#666', fontSize: '14px', margin: 0 }}>
+                    Create, edit, and manage career events
+                  </p>
+                </div>
+                <button
+                  onClick={() => openEventModal()}
+                  style={{
+                    background: '#00A651',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px 20px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Create Event
+                </button>
+              </div>
+
+              {/* Events List */}
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                padding: '25px'
+              }}>
+                {events.length === 0 ? (
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '40px',
+                    color: '#666'
+                  }}>
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ margin: '0 auto 16px' }}>
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <p style={{ margin: 0, fontSize: '16px' }}>No events found</p>
+                    <p style={{ margin: '8px 0 0', fontSize: '14px', color: '#999' }}>Create your first event to get started</p>
+                  </div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
+                          <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Event</th>
+                          <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Date & Time</th>
+                          <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Location</th>
+                          <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Capacity</th>
+                          <th style={{ textAlign: 'left', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Status</th>
+                          <th style={{ textAlign: 'right', padding: '12px 0', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {events.map(event => (
+                          <tr key={event.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                            <td style={{ padding: '16px 0' }}>
+                              <div>
+                                <div style={{ fontWeight: 500, color: '#1a1a1a', marginBottom: '4px' }}>
+                                  {event.title}
+                                  {event.featured && (
+                                    <span style={{
+                                      background: '#fbbf24',
+                                      color: 'white',
+                                      padding: '2px 6px',
+                                      borderRadius: '4px',
+                                      fontSize: '10px',
+                                      marginLeft: '8px'
+                                    }}>
+                                      Featured
+                                    </span>
+                                  )}
+                                </div>
+                                <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                                  {event.event_type} • {event.event_format}
+                                </div>
+                              </div>
+                            </td>
+                            <td style={{ padding: '16px 0', color: '#374151' }}>
+                              <div style={{ fontSize: '14px', fontWeight: 500 }}>
+                                {new Date(event.event_date).toLocaleDateString()}
+                              </div>
+                              <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                                {event.event_time}
+                              </div>
+                            </td>
+                            <td style={{ padding: '16px 0', color: '#374151', fontSize: '14px' }}>
+                              {event.location}
+                            </td>
+                            <td style={{ padding: '16px 0' }}>
+                              <div style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>
+                                {event.spots_taken} / {event.capacity}
+                              </div>
+                              <div style={{
+                                width: '60px',
+                                height: '4px',
+                                background: '#e5e7eb',
+                                borderRadius: '2px',
+                                marginTop: '4px',
+                                overflow: 'hidden'
+                              }}>
+                                <div style={{
+                                  width: `${(event.spots_taken / event.capacity) * 100}%`,
+                                  height: '100%',
+                                  background: event.spots_taken >= event.capacity ? '#ef4444' : event.spots_taken / event.capacity > 0.8 ? '#f59e0b' : '#00A651',
+                                  transition: 'width 0.3s ease'
+                                }} />
+                              </div>
+                            </td>
+                            <td style={{ padding: '16px 0' }}>
+                              <span style={{
+                                background: event.status === 'upcoming' ? '#dcfce7' : event.status === 'ongoing' ? '#fef3c7' : '#fee2e2',
+                                color: event.status === 'upcoming' ? '#166534' : event.status === 'ongoing' ? '#92400e' : '#dc2626',
+                                padding: '4px 8px',
+                                borderRadius: '6px',
+                                fontSize: '12px',
+                                fontWeight: 500,
+                                textTransform: 'capitalize'
+                              }}>
+                                {event.status}
+                              </span>
+                            </td>
+                            <td style={{ padding: '16px 0', textAlign: 'right' }}>
+                              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                <button
+                                  onClick={() => openEventModal(event)}
+                                  style={{
+                                    background: '#f3f4f6',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    padding: '6px',
+                                    cursor: 'pointer',
+                                    color: '#374151'
+                                  }}
+                                  title="Edit Event"
+                                >
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                  </svg>
+                                </button>
+                                <button
+                                  onClick={() => deleteEvent(event.id)}
+                                  style={{
+                                    background: '#fee2e2',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    padding: '6px',
+                                    cursor: 'pointer',
+                                    color: '#dc2626'
+                                  }}
+                                  title="Delete Event"
+                                >
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <polyline points="3,6 5,6 21,6"></polyline>
+                                    <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
+                                  </svg>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </div>
             </div>
