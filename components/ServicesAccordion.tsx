@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
-import StarBorder from './StarBorder'
 
 interface ServiceItem {
   id: string
@@ -299,28 +298,22 @@ export default function ServicesAccordion() {
             
             {/* Sticky Footer with Buttons */}
             <div className="modal-footer-sticky">
-              <StarBorder
-                as={Link}
+              <Link
                 href={selectedService.primaryCTA.href}
                 className="btn-modal-primary"
-                color="#00A651"
-                speed="4s"
                 onClick={handleClose}
                 style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 {selectedService.primaryCTA.text}
-              </StarBorder>
-              <StarBorder
-                as={Link}
+              </Link>
+              <Link
                 href={selectedService.secondaryCTA.href}
-                className="secondary btn-modal-secondary"
-                color="#00A651"
-                speed="4s"
+                className="btn-modal-secondary"
                 onClick={handleClose}
                 style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 {selectedService.secondaryCTA.text}
-              </StarBorder>
+              </Link>
             </div>
           </div>
         </div>

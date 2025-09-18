@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Navigation from '../../components/Navigation'
-import StarBorder from '../../components/StarBorder'
 
 interface Ambassador {
   id: number
@@ -381,117 +380,195 @@ export default function AmbassadorsPage() {
 
         .ambassadors-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-          gap: 16px;
+          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+          gap: 20px;
         }
 
         .ambassador-card {
-          background: white;
-          border-radius: 12px;
+          background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
+          border-radius: 16px;
           overflow: hidden;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-          transition: all 0.3s;
+          box-shadow:
+            0 4px 6px rgba(0, 0, 0, 0.05),
+            0 10px 15px rgba(0, 0, 0, 0.05),
+            0 0 0 1px rgba(255, 255, 255, 0.5);
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           display: flex;
           flex-direction: column;
           height: 100%;
+          position: relative;
+          border: 1px solid rgba(0, 166, 81, 0.1);
+        }
+
+        .ambassador-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #00A651 0%, #004A99 100%);
+          border-radius: 16px 16px 0 0;
         }
 
         .ambassador-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+          transform: translateY(-8px) scale(1.02);
+          box-shadow:
+            0 20px 25px rgba(0, 166, 81, 0.15),
+            0 10px 10px rgba(0, 166, 81, 0.05),
+            0 0 30px rgba(0, 74, 153, 0.1);
+          border-color: rgba(0, 166, 81, 0.2);
         }
 
         .ambassador-image {
           width: 100%;
-          height: 120px;
-          background: linear-gradient(135deg, #00A651, #00C853);
+          height: 140px;
+          background: linear-gradient(135deg, #00A651 0%, #00C853 50%, #004A99 100%);
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
-          font-size: 28px;
-          font-weight: 600;
+          font-size: 32px;
+          font-weight: 700;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .ambassador-image::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+        }
+
+        .ambassador-image img {
+          border-radius: 0;
+          position: relative;
+          z-index: 1;
         }
 
         .ambassador-info {
-          padding: 14px;
+          padding: 18px;
           display: flex;
           flex-direction: column;
           flex-grow: 1;
+          position: relative;
         }
 
         .ambassador-content {
           flex-grow: 1;
-          margin-bottom: 12px;
+          margin-bottom: 16px;
         }
 
         .ambassador-name {
-          font-size: 16px;
-          font-weight: 600;
+          font-size: 18px;
+          font-weight: 700;
           color: #1f2937;
-          margin-bottom: 2px;
+          margin-bottom: 6px;
+          line-height: 1.2;
         }
 
         .ambassador-role {
-          color: #00A651;
-          font-size: 12px;
-          margin-bottom: 6px;
+          background: linear-gradient(90deg, #00A651, #004A99);
+          background-clip: text;
+          -webkit-background-clip: text;
+          color: transparent;
+          font-size: 13px;
+          font-weight: 600;
+          margin-bottom: 8px;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
         .ambassador-details {
           color: #6b7280;
-          font-size: 12px;
-          line-height: 1.3;
+          font-size: 13px;
+          line-height: 1.4;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
 
+        .ambassador-details span {
+          display: inline-block;
+          background: linear-gradient(90deg, #00A651, #004A99);
+          color: white;
+          padding: 2px 8px;
+          border-radius: 12px;
+          font-size: 11px;
+          font-weight: 600;
+          margin-top: 6px;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+        }
+
         .ambassador-actions {
-          padding-top: 12px;
-          border-top: 1px solid #f3f4f6;
+          padding-top: 16px;
+          border-top: 1px solid rgba(0, 166, 81, 0.1);
           margin-top: auto;
-          min-height: 44px;
+          min-height: 48px;
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 10px;
           flex-wrap: wrap;
         }
 
         .social-link {
           display: inline-flex;
           align-items: center;
-          padding: 6px 10px;
-          background: #f9fafb;
-          border: 1px solid #e5e7eb;
-          border-radius: 6px;
+          padding: 8px 12px;
+          background: linear-gradient(145deg, #f8fafc, #f1f5f9);
+          border: 1px solid rgba(0, 166, 81, 0.15);
+          border-radius: 20px;
           color: #4b5563;
           text-decoration: none;
-          font-size: 11px;
-          font-weight: 500;
-          transition: all 0.2s ease;
+          font-size: 12px;
+          font-weight: 600;
+          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           white-space: nowrap;
-          min-height: 32px;
+          min-height: 36px;
           flex-shrink: 0;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .social-link::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+          transition: left 0.5s;
         }
 
         .social-link:hover {
-          background: #00A651;
-          border-color: #00A651;
+          background: linear-gradient(135deg, #00A651, #004A99);
+          border-color: transparent;
           color: white;
-          transform: translateY(-1px);
-          box-shadow: 0 2px 4px rgba(0, 166, 81, 0.2);
+          transform: translateY(-2px);
+          box-shadow:
+            0 8px 15px rgba(0, 166, 81, 0.3),
+            0 4px 6px rgba(0, 74, 153, 0.2);
+        }
+
+        .social-link:hover::before {
+          left: 100%;
         }
 
         .social-link:focus {
           outline: 2px solid #00A651;
           outline-offset: 2px;
-          background: #00A651;
-          border-color: #00A651;
+          background: linear-gradient(135deg, #00A651, #004A99);
+          border-color: transparent;
           color: white;
         }
 
@@ -500,8 +577,8 @@ export default function AmbassadorsPage() {
         }
 
         .social-link i {
-          margin-right: 4px;
-          font-size: 10px;
+          margin-right: 6px;
+          font-size: 12px;
         }
 
         .sr-only {
@@ -806,10 +883,31 @@ export default function AmbassadorsPage() {
           .about-grid, .activities-grid, .benefits-grid { grid-template-columns: 1fr; }
           .process-steps { grid-template-columns: 1fr; gap: 32px; }
           .ambassadors-grid {
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
           }
           .hero-actions { flex-direction: column; align-items: center; }
+          .ambassador-card:hover {
+            transform: translateY(-4px) scale(1.01);
+          }
+          .ambassador-image {
+            height: 120px;
+            font-size: 28px;
+          }
+          .ambassador-name {
+            font-size: 16px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .ambassadors-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+          .ambassador-card {
+            max-width: 300px;
+            margin: 0 auto;
+          }
         }
 
         @media (max-width: 240px) {
@@ -849,17 +947,17 @@ export default function AmbassadorsPage() {
           <p className={`hero-subtitle ${visibleSections.has('hero') ? 'animate-fade-in-up animate-delay-2' : ''}`}>Lead, connect, and represent EMSI.</p>
           <div className={`hero-actions ${visibleSections.has('hero') ? 'animate-fade-in-up animate-delay-3' : ''}`}>
             {isApplicationOpen ? (
-              <StarBorder className="btn btn-primary" color="#00A651" speed="4s" onClick={() => setShowApplicationModal(true)}>
+              <button className="btn btn-primary" onClick={() => setShowApplicationModal(true)}>
                 Apply Now
-              </StarBorder>
+              </button>
             ) : (
-              <StarBorder className="btn btn-primary" color="#00A651" speed="4s" onClick={() => setShowNotificationModal(true)}>
+              <button className="btn btn-primary" onClick={() => setShowNotificationModal(true)}>
                 Get Notified
-              </StarBorder>
+              </button>
             )}
-            <StarBorder as="a" href="#about" className="btn btn-secondary secondary" color="#00A651" speed="4s">
+            <a href="#about" className="btn btn-secondary">
               Learn More
-            </StarBorder>
+            </a>
           </div>
         </div>
       </section>
@@ -1177,10 +1275,10 @@ export default function AmbassadorsPage() {
                     ({getDaysLeft(activeCohort.application_deadline)} days left)
                   </p>
                   <div className="hero-actions" style={{ marginTop: '24px' }}>
-                    <StarBorder className="btn btn-primary" color="#00A651" speed="4s" onClick={() => setShowApplicationModal(true)}>
+                    <button className="btn btn-primary" onClick={() => setShowApplicationModal(true)}>
                       Apply Now
-                    </StarBorder>
-                    <StarBorder as="a" href="#about" className="btn btn-secondary secondary" color="#00A651" speed="4s">Learn More</StarBorder>
+                    </button>
+                    <a href="#about" className="btn btn-secondary">Learn More</a>
                   </div>
                 </>
               ) : (
@@ -1190,10 +1288,10 @@ export default function AmbassadorsPage() {
                     Be the first to know when we open applications for the next cohort
                   </p>
                   <div className="hero-actions" style={{ marginTop: '24px' }}>
-                    <StarBorder className="btn btn-primary" color="#00A651" speed="4s" onClick={() => setShowNotificationModal(true)}>
+                    <button className="btn btn-primary" onClick={() => setShowNotificationModal(true)}>
                       Get Notified
-                    </StarBorder>
-                    <StarBorder as="a" href="#about" className="btn btn-secondary secondary" color="#00A651" speed="4s">Learn More</StarBorder>
+                    </button>
+                    <a href="#about" className="btn btn-secondary">Learn More</a>
                   </div>
                 </>
               )}
@@ -1353,12 +1451,12 @@ export default function AmbassadorsPage() {
               </div>
             </div>
             <div className="modal-footer">
-              <StarBorder type="button" className="btn btn-secondary secondary" color="#00A651" speed="4s" onClick={() => setShowApplicationModal(false)}>
+              <button type="button" className="btn btn-secondary" onClick={() => setShowApplicationModal(false)}>
                 Cancel
-              </StarBorder>
-              <StarBorder type="submit" className="btn btn-primary" color="#00A651" speed="4s">
+              </button>
+              <button type="submit" className="btn btn-primary">
                 Submit Application
-              </StarBorder>
+              </button>
             </div>
           </form>
         </div>
@@ -1433,12 +1531,12 @@ export default function AmbassadorsPage() {
               </div>
             </div>
             <div className="modal-footer">
-              <StarBorder type="button" className="btn btn-secondary secondary" color="#00A651" speed="4s" onClick={() => setShowNotificationModal(false)}>
+              <button type="button" className="btn btn-secondary" onClick={() => setShowNotificationModal(false)}>
                 Cancel
-              </StarBorder>
-              <StarBorder type="submit" className="btn btn-primary" color="#00A651" speed="4s">
+              </button>
+              <button type="submit" className="btn btn-primary">
                 Subscribe
-              </StarBorder>
+              </button>
             </div>
           </form>
         </div>
@@ -1475,9 +1573,9 @@ export default function AmbassadorsPage() {
             </ul>
           </div>
           <div className="modal-footer">
-            <StarBorder type="button" className="btn btn-primary" color="#00A651" speed="4s" onClick={() => setShowLeadershipModal(false)}>
+            <button type="button" className="btn btn-primary" onClick={() => setShowLeadershipModal(false)}>
               Got It
-            </StarBorder>
+            </button>
           </div>
         </div>
       </div>

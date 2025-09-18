@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navigation from '../../components/Navigation'
 import ClientLayout from '../../components/ClientLayout'
-import StarBorder from '../../components/StarBorder'
 
 export default function JobsPage() {
   const [countdown, setCountdown] = useState(10)
@@ -48,14 +47,12 @@ export default function JobsPage() {
             </p>
           </div>
           
-          <StarBorder
+          <button
             onClick={handleGoNow}
             className="go-now-button"
-            color="#00A651"
-            speed="4s"
           >
             Go Now
-          </StarBorder>
+          </button>
           
           <Link href="/" className="back-link">
             ← Back to Home
@@ -126,6 +123,24 @@ export default function JobsPage() {
         
         .go-now-button {
           margin-bottom: 2rem;
+          background: #00A651;
+          color: white;
+          border: none;
+          padding: 14px 32px;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .go-now-button:hover {
+          background: #008a43;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px rgba(0, 166, 81, 0.3);
         }
         
         .back-link {

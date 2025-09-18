@@ -7,7 +7,6 @@ import Navigation from '../../components/Navigation'
 import EventCalendar from '../../components/EventCalendar'
 import RSVPModal from '../../components/RSVPModal'
 import EventDetailsModal from '../../components/EventDetailsModal'
-import StarBorder from '../../components/StarBorder'
 
 interface Event {
   id: number
@@ -749,24 +748,20 @@ export default function EventsPage() {
                 />
               </div>
               <div className="view-toggle">
-                <StarBorder
-                  className={`view-btn transparent ${viewMode === 'list' ? 'active' : ''}`}
+                <button
+                  className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
                   onClick={() => setViewMode('list')}
-                  color="#00A651"
-                  speed="4s"
                 >
                   <i className="fas fa-th-large" style={{ marginRight: '6px' }}></i>
                   Grid
-                </StarBorder>
-                <StarBorder
-                  className={`view-btn transparent ${viewMode === 'calendar' ? 'active' : ''}`}
+                </button>
+                <button
+                  className={`view-btn ${viewMode === 'calendar' ? 'active' : ''}`}
                   onClick={() => setViewMode('calendar')}
-                  color="#00A651"
-                  speed="4s"
                 >
                   <i className="fas fa-calendar" style={{ marginRight: '6px' }}></i>
                   Calendar
-                </StarBorder>
+                </button>
               </div>
             </div>
             <div className="toolbar-right">
@@ -888,14 +883,12 @@ export default function EventsPage() {
                       <span className={`spots-indicator ${getSpotsLeftClass(event)}`}>
                         {getSpotsLeftText(event)}
                       </span>
-                      <StarBorder
+                      <button
                         className="btn-rsvp"
                         disabled={event.capacity - event.spots_taken <= 0 && false}
-                        color="#00A651"
-                        speed="4s"
                       >
                         {event.capacity - event.spots_taken <= 0 ? 'Join Waitlist' : 'RSVP'}
-                      </StarBorder>
+                      </button>
                     </div>
                   </div>
                 </div>

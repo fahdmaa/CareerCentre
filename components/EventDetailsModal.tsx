@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import StarBorder from './StarBorder'
 
 interface Event {
   id: number
@@ -647,24 +646,19 @@ export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetai
         </div>
 
         <div style={styles.footer}>
-          <StarBorder
-            className="secondary"
-            color="#00A651"
-            speed="4s"
+          <button
             style={styles.btnSecondary}
             onClick={onClose}
           >
             Close
-          </StarBorder>
-          <StarBorder
-            color="#00A651"
-            speed="4s"
+          </button>
+          <button
             style={styles.btnPrimary}
             onClick={onRSVP}
           >
             <i className={`fas ${isWaitlist ? 'fa-clock' : 'fa-check'}`}></i>
             {isWaitlist ? 'Join Waitlist' : 'Register Now'}
-          </StarBorder>
+          </button>
         </div>
       </div>
     </div>

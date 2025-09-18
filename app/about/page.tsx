@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Navigation from '../../components/Navigation'
-import StarBorder from '../../components/StarBorder'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -287,14 +286,27 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
-            <StarBorder
+            <button
               type="submit"
               disabled={isLoading}
-              color="#00A651"
-              speed="4s"
               style={{
-                width: '100%'
+                width: '100%',
+                background: '#00A651',
+                color: 'white',
+                border: 'none',
+                padding: '14px 24px',
+                borderRadius: '10px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
               }}
+              onMouseEnter={(e) => !isLoading && (e.currentTarget.style.background = '#008a43')}
+              onMouseLeave={(e) => !isLoading && (e.currentTarget.style.background = '#00A651')}
             >
               {isLoading ? (
                 <>
@@ -320,7 +332,7 @@ export default function AdminLoginPage() {
                   </svg>
                 </>
               )}
-            </StarBorder>
+            </button>
           </form>
 
           {/* Footer */}
