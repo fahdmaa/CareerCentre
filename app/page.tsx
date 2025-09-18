@@ -6,6 +6,7 @@ import Navigation from '../components/Navigation'
 import ClientLayout from '../components/ClientLayout'
 import KPICard from '../components/KPICard'
 import ServicesAccordion from '../components/ServicesAccordion'
+import StarBorder from '../components/StarBorder'
 import { useEffect, useState } from 'react'
 import './modern-home.css'
 import ContactForm from './about/contact-form'
@@ -59,18 +60,30 @@ export default function HomePage() {
               The EMSI Career Center connects talented students and alumni with exciting opportunities in the professional world. Start your journey today.
             </p>
             <div className="hero-buttons">
-              <Link href="/jobs" className="btn-primary-hero">
+              <StarBorder
+                as={Link}
+                href="/jobs"
+                className="btn-primary-hero"
+                color="#00A651"
+                speed="4s"
+              >
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <span>Explore Jobs</span>
-              </Link>
-              <Link href="/events" className="btn-secondary-hero">
+              </StarBorder>
+              <StarBorder
+                as={Link}
+                href="/events"
+                className="secondary"
+                color="#00A651"
+                speed="4s"
+              >
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span>View Events</span>
-              </Link>
+              </StarBorder>
             </div>
           </div>
           <div className="hero-image-wrapper">
@@ -455,18 +468,30 @@ export default function HomePage() {
                 Join thousands of EMSI students and alumni who have found their dream jobs through our career services.
               </p>
               <div className="cta-buttons-final">
-                <Link href="/jobs" className="btn-primary-hero">
+                <StarBorder
+                  as={Link}
+                  href="/jobs"
+                  className="cta-white"
+                  color="#00A651"
+                  speed="4s"
+                >
                   <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   <span>Browse jobs</span>
-                </Link>
-                <button onClick={() => setShowContactForm(true)} className="btn-secondary-hero" style={{ background: 'transparent', color: 'white', border: '2px solid white' }}>
+                </StarBorder>
+                <StarBorder
+                  as="button"
+                  onClick={() => setShowContactForm(true)}
+                  className="transparent"
+                  color="white"
+                  speed="4s"
+                >
                   <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   <span>Contact us</span>
-                </button>
+                </StarBorder>
               </div>
             </div>
             

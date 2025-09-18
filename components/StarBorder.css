@@ -1,0 +1,167 @@
+.star-border-container {
+  display: inline-block;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.star-border-container:hover {
+  transform: translateY(-2px);
+}
+
+.border-gradient-bottom {
+  position: absolute;
+  width: 300%;
+  height: 50%;
+  opacity: 0.7;
+  bottom: -12px;
+  right: -250%;
+  border-radius: 50%;
+  animation: star-movement-bottom linear infinite alternate;
+  z-index: 0;
+}
+
+.border-gradient-top {
+  position: absolute;
+  opacity: 0.7;
+  width: 300%;
+  height: 50%;
+  top: -12px;
+  left: -250%;
+  border-radius: 50%;
+  animation: star-movement-top linear infinite alternate;
+  z-index: 0;
+}
+
+.inner-content {
+  position: relative;
+  border: 1px solid rgba(0, 166, 81, 0.2);
+  background: linear-gradient(135deg, #004A99, #003570);
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  padding: 16px 26px;
+  border-radius: 20px;
+  z-index: 1;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+/* For secondary/outline buttons */
+.star-border-container.secondary .inner-content {
+  background: white;
+  color: #004A99;
+  border: 2px solid #004A99;
+}
+
+.star-border-container.secondary:hover .inner-content {
+  background: #004A99;
+  color: white;
+}
+
+/* For CTA white buttons */
+.star-border-container.cta-white .inner-content {
+  background: white;
+  color: #00A651;
+  border: 1px solid rgba(0, 166, 81, 0.1);
+}
+
+/* For transparent buttons */
+.star-border-container.transparent .inner-content {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.star-border-container.transparent:hover .inner-content {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Admin buttons */
+.star-border-container.admin-green .inner-content {
+  background: #00A651;
+  border: 1px solid #00A651;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.star-border-container.admin-red .inner-content {
+  background: #ef4444;
+  border: 1px solid #ef4444;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.star-border-container.admin-blue .inner-content {
+  background: #3b82f6;
+  border: 1px solid #3b82f6;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* Small buttons */
+.star-border-container.small .inner-content {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* Large buttons */
+.star-border-container.large .inner-content {
+  padding: 20px 40px;
+  font-size: 18px;
+}
+
+@keyframes star-movement-bottom {
+  0% {
+    transform: translate(0%, 0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-100%, 0%);
+    opacity: 0;
+  }
+}
+
+@keyframes star-movement-top {
+  0% {
+    transform: translate(0%, 0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(100%, 0%);
+    opacity: 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .inner-content {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .star-border-container.large .inner-content {
+    padding: 16px 32px;
+    font-size: 16px;
+  }
+}
+
+/* Disable animation for disabled buttons */
+.star-border-container:disabled .border-gradient-bottom,
+.star-border-container:disabled .border-gradient-top {
+  display: none;
+}
+
+.star-border-container:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.star-border-container:disabled:hover {
+  transform: none;
+}
