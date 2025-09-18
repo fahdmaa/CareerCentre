@@ -995,7 +995,7 @@ export default function AdminDashboardPage() {
   const recentRegistrationsCount = filteredRegistrations.filter(r =>
     new Date(r.registration_date) >= sevenDaysAgo
   ).length
-  const recentRegistrationsText = `${recentRegistrationsCount} new registrations in the past week`
+  const recentRegistrationsText = recentRegistrationsCount + ' new registrations in the past week'
 
   return (
     <div style={{
@@ -2304,7 +2304,6 @@ export default function AdminDashboardPage() {
               </table>
             </div>
 
-            {/* Registration Analytics Dashboard */}
             <div style={{ marginTop: '24px', display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
               {/* Analytics Grid */}
               <div>
@@ -2474,7 +2473,7 @@ export default function AdminDashboardPage() {
                           </div>
                         </div>
                       ))
-                    )}
+                    }
                   </div>
 
                   {registrations.length === 0 && (
