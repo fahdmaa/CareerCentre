@@ -200,56 +200,248 @@ export default function HomePage() {
           <h2 className="section-title">Our trusted partners</h2>
           <p className="section-subtitle">Leading companies that hire EMSI graduates</p>
         </div>
-        
+
         <div className="partners-container">
-          <div className="partners-grid">
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-1.png" alt="Partner 1" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-2.png" alt="Partner 2" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-3.png" alt="Partner 3" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-4.png" alt="Partner 4" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-5.png" alt="Partner 5" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-6.png" alt="Partner 6" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-7.png" alt="Partner 7" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-8.png" alt="Partner 8" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-9.png" alt="Partner 9" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-10.png" alt="Partner 10" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-11.png" alt="Partner 11" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-12.png" alt="Partner 12" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-13.png" alt="Partner 13" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-14.png" alt="Partner 14" width={120} height={60} className="partner-logo" />
-            </div>
-            <div className="partner-logo-wrapper">
-              <Image src="/images/partner-logo-15.png" alt="Partner 15" width={120} height={60} className="partner-logo" />
+          <div className="logo-carousel">
+            <div className="logo-track">
+              {/* First set of logos */}
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-1.png" alt="Partner 1" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-2.png" alt="Partner 2" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-3.png" alt="Partner 3" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-4.png" alt="Partner 4" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-5.png" alt="Partner 5" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-6.png" alt="Partner 6" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-7.png" alt="Partner 7" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-8.png" alt="Partner 8" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-9.png" alt="Partner 9" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-10.png" alt="Partner 10" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-11.png" alt="Partner 11" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-12.png" alt="Partner 12" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-13.png" alt="Partner 13" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-14.png" alt="Partner 14" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-15.png" alt="Partner 15" width={140} height={70} className="partner-logo" />
+              </div>
+
+              {/* Duplicate set for seamless loop */}
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-1.png" alt="Partner 1" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-2.png" alt="Partner 2" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-3.png" alt="Partner 3" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-4.png" alt="Partner 4" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-5.png" alt="Partner 5" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-6.png" alt="Partner 6" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-7.png" alt="Partner 7" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-8.png" alt="Partner 8" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-9.png" alt="Partner 9" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-10.png" alt="Partner 10" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-11.png" alt="Partner 11" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-12.png" alt="Partner 12" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-13.png" alt="Partner 13" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-14.png" alt="Partner 14" width={140} height={70} className="partner-logo" />
+              </div>
+              <div className="logo-slide">
+                <Image src="/images/partner-logo-15.png" alt="Partner 15" width={140} height={70} className="partner-logo" />
+              </div>
             </div>
           </div>
         </div>
+
+        <style jsx>{`
+          .partners-section {
+            padding: 4rem 1rem;
+            background: #f8fafc;
+            overflow: hidden;
+          }
+
+          .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+          }
+
+          .section-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+          }
+
+          .section-subtitle {
+            font-size: 1.125rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+          }
+
+          .partners-container {
+            max-width: 100%;
+            overflow: hidden;
+            position: relative;
+          }
+
+          .logo-carousel {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            mask: linear-gradient(
+              to right,
+              transparent,
+              white 10%,
+              white 90%,
+              transparent
+            );
+            -webkit-mask: linear-gradient(
+              to right,
+              transparent,
+              white 10%,
+              white 90%,
+              transparent
+            );
+          }
+
+          .logo-track {
+            display: flex;
+            gap: 3rem;
+            animation: scroll 40s linear infinite;
+            width: fit-content;
+          }
+
+          .logo-track:hover {
+            animation-play-state: paused;
+          }
+
+          .logo-slide {
+            flex: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 180px;
+            height: 100px;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+          }
+
+          .logo-slide:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+          }
+
+          .partner-logo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: grayscale(1) opacity(0.7);
+            transition: all 0.3s ease;
+          }
+
+          .logo-slide:hover .partner-logo {
+            filter: grayscale(0) opacity(1);
+            transform: scale(1.05);
+          }
+
+          @keyframes scroll {
+            0% {
+              transform: translateX(0);
+            }
+            100% {
+              transform: translateX(calc(-50% - 1.5rem));
+            }
+          }
+
+          @media (max-width: 768px) {
+            .partners-section {
+              padding: 3rem 1rem;
+            }
+
+            .section-title {
+              font-size: 2rem;
+            }
+
+            .section-subtitle {
+              font-size: 1rem;
+            }
+
+            .logo-track {
+              gap: 2rem;
+              animation-duration: 30s;
+            }
+
+            .logo-slide {
+              min-width: 140px;
+              height: 80px;
+              padding: 0.75rem;
+            }
+
+            @keyframes scroll {
+              0% {
+                transform: translateX(0);
+              }
+              100% {
+                transform: translateX(calc(-50% - 1rem));
+              }
+            }
+          }
+        `}</style>
       </section>
 
       {/* Final CTA Section - Clean and Aligned */}
