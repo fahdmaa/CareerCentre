@@ -434,12 +434,22 @@ export async function DELETE(request: NextRequest) {
 
     // If it was a confirmed registration, update event spots_taken
     if (registration && !registration.on_waitlist) {
-      await supabase
+      // Get current spots_taken value
+      const { data: event } = await supabase
         .from('events')
-        .update({
-          spots_taken: supabase.raw('spots_taken - 1')
-        })
+        .select('spots_taken')
         .eq('id', registration.event_id)
+        .single()
+
+      // Update with decremented value
+      if (event) {
+        await supabase
+          .from('events')
+          .update({
+            spots_taken: Math.max(0, (event.spots_taken || 1) - 1)
+          })
+          .eq('id', registration.event_id)
+      }
     }
 
     return NextResponse.json({
