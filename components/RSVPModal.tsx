@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import StarBorder from './StarBorder'
 
 interface Event {
   id: number
@@ -419,13 +420,25 @@ export default function RSVPModal({ event, onClose, onSuccess }: RSVPModalProps)
             </div>
 
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={onClose}>
+              <StarBorder
+                className="secondary btn btn-secondary"
+                color="#00A651"
+                speed="4s"
+                type="button"
+                onClick={onClose}
+              >
                 Cancel
-              </button>
-              <button type="submit" className="btn btn-primary" disabled={loading}>
+              </StarBorder>
+              <StarBorder
+                className="btn btn-primary"
+                color="#00A651"
+                speed="4s"
+                type="submit"
+                disabled={loading}
+              >
                 {loading && <span className="loading-spinner"></span>}
                 {isWaitlist ? 'Join waitlist' : 'Confirm RSVP'}
-              </button>
+              </StarBorder>
             </div>
           </form>
         </div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Navigation from '../../components/Navigation'
+import StarBorder from '../../components/StarBorder'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -286,39 +287,13 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
-            <button
+            <StarBorder
               type="submit"
               disabled={isLoading}
+              color="#00A651"
+              speed="4s"
               style={{
-                width: '100%',
-                padding: '14px',
-                background: isLoading ? '#9CA3AF' : '#00A651',
-                color: 'white',
-                fontSize: '16px',
-                fontWeight: 600,
-                borderRadius: '10px',
-                border: 'none',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                transition: 'all 0.3s',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px',
-                boxShadow: isLoading ? 'none' : '0 4px 14px rgba(0, 166, 81, 0.4)'
-              }}
-              onMouseEnter={(e) => {
-                if (!isLoading) {
-                  e.currentTarget.style.background = '#008A43'
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 166, 81, 0.5)'
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isLoading) {
-                  e.currentTarget.style.background = '#00A651'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 4px 14px rgba(0, 166, 81, 0.4)'
-                }
+                width: '100%'
               }}
             >
               {isLoading ? (
@@ -345,7 +320,7 @@ export default function AdminLoginPage() {
                   </svg>
                 </>
               )}
-            </button>
+            </StarBorder>
           </form>
 
           {/* Footer */}

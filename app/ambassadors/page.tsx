@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Navigation from '../../components/Navigation'
+import StarBorder from '../../components/StarBorder'
 
 interface Ambassador {
   id: number
@@ -848,17 +849,17 @@ export default function AmbassadorsPage() {
           <p className={`hero-subtitle ${visibleSections.has('hero') ? 'animate-fade-in-up animate-delay-2' : ''}`}>Lead, connect, and represent EMSI.</p>
           <div className={`hero-actions ${visibleSections.has('hero') ? 'animate-fade-in-up animate-delay-3' : ''}`}>
             {isApplicationOpen ? (
-              <button className="btn btn-primary" onClick={() => setShowApplicationModal(true)}>
+              <StarBorder className="btn btn-primary" color="#00A651" speed="4s" onClick={() => setShowApplicationModal(true)}>
                 Apply Now
-              </button>
+              </StarBorder>
             ) : (
-              <button className="btn btn-primary" onClick={() => setShowNotificationModal(true)}>
+              <StarBorder className="btn btn-primary" color="#00A651" speed="4s" onClick={() => setShowNotificationModal(true)}>
                 Get Notified
-              </button>
+              </StarBorder>
             )}
-            <a href="#about" className="btn btn-secondary">
+            <StarBorder as="a" href="#about" className="btn btn-secondary secondary" color="#00A651" speed="4s">
               Learn More
-            </a>
+            </StarBorder>
           </div>
         </div>
       </section>
@@ -1176,10 +1177,10 @@ export default function AmbassadorsPage() {
                     ({getDaysLeft(activeCohort.application_deadline)} days left)
                   </p>
                   <div className="hero-actions" style={{ marginTop: '24px' }}>
-                    <button className="btn btn-primary" onClick={() => setShowApplicationModal(true)}>
+                    <StarBorder className="btn btn-primary" color="#00A651" speed="4s" onClick={() => setShowApplicationModal(true)}>
                       Apply Now
-                    </button>
-                    <a href="#about" className="btn btn-secondary">Learn More</a>
+                    </StarBorder>
+                    <StarBorder as="a" href="#about" className="btn btn-secondary secondary" color="#00A651" speed="4s">Learn More</StarBorder>
                   </div>
                 </>
               ) : (
@@ -1189,10 +1190,10 @@ export default function AmbassadorsPage() {
                     Be the first to know when we open applications for the next cohort
                   </p>
                   <div className="hero-actions" style={{ marginTop: '24px' }}>
-                    <button className="btn btn-primary" onClick={() => setShowNotificationModal(true)}>
+                    <StarBorder className="btn btn-primary" color="#00A651" speed="4s" onClick={() => setShowNotificationModal(true)}>
                       Get Notified
-                    </button>
-                    <a href="#about" className="btn btn-secondary">Learn More</a>
+                    </StarBorder>
+                    <StarBorder as="a" href="#about" className="btn btn-secondary secondary" color="#00A651" speed="4s">Learn More</StarBorder>
                   </div>
                 </>
               )}
@@ -1352,12 +1353,12 @@ export default function AmbassadorsPage() {
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={() => setShowApplicationModal(false)}>
+              <StarBorder type="button" className="btn btn-secondary secondary" color="#00A651" speed="4s" onClick={() => setShowApplicationModal(false)}>
                 Cancel
-              </button>
-              <button type="submit" className="btn btn-primary">
+              </StarBorder>
+              <StarBorder type="submit" className="btn btn-primary" color="#00A651" speed="4s">
                 Submit Application
-              </button>
+              </StarBorder>
             </div>
           </form>
         </div>
@@ -1432,12 +1433,12 @@ export default function AmbassadorsPage() {
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={() => setShowNotificationModal(false)}>
+              <StarBorder type="button" className="btn btn-secondary secondary" color="#00A651" speed="4s" onClick={() => setShowNotificationModal(false)}>
                 Cancel
-              </button>
-              <button type="submit" className="btn btn-primary">
+              </StarBorder>
+              <StarBorder type="submit" className="btn btn-primary" color="#00A651" speed="4s">
                 Subscribe
-              </button>
+              </StarBorder>
             </div>
           </form>
         </div>
@@ -1474,9 +1475,9 @@ export default function AmbassadorsPage() {
             </ul>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-primary" onClick={() => setShowLeadershipModal(false)}>
+            <StarBorder type="button" className="btn btn-primary" color="#00A651" speed="4s" onClick={() => setShowLeadershipModal(false)}>
               Got It
-            </button>
+            </StarBorder>
           </div>
         </div>
       </div>

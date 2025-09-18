@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import StarBorder from './StarBorder'
 
 interface Event {
   id: number
@@ -386,12 +387,22 @@ export default function EventCalendar({ events, onEventClick }: EventCalendarPro
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </h3>
           <div className="calendar-nav">
-            <button className="nav-btn" onClick={previousMonth}>
+            <StarBorder
+              className="secondary nav-btn"
+              color="#00A651"
+              speed="4s"
+              onClick={previousMonth}
+            >
               <i className="fas fa-chevron-left"></i>
-            </button>
-            <button className="nav-btn" onClick={nextMonth}>
+            </StarBorder>
+            <StarBorder
+              className="secondary nav-btn"
+              color="#00A651"
+              speed="4s"
+              onClick={nextMonth}
+            >
               <i className="fas fa-chevron-right"></i>
-            </button>
+            </StarBorder>
           </div>
         </div>
 
@@ -430,9 +441,13 @@ export default function EventCalendar({ events, onEventClick }: EventCalendarPro
                   <div className={`panel-event-spots ${spotsLeft <= 0 ? 'full' : ''}`}>
                     {spotsLeft <= 0 ? 'Full · Join waitlist' : `${spotsLeft} spots left`}
                   </div>
-                  <button className="btn-rsvp-panel">
+                  <StarBorder
+                    className="btn-rsvp-panel"
+                    color="#00A651"
+                    speed="4s"
+                  >
                     {spotsLeft <= 0 ? 'Join waitlist' : 'RSVP'}
-                  </button>
+                  </StarBorder>
                 </div>
               )
             })
