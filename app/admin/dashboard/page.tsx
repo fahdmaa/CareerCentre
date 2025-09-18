@@ -25,9 +25,22 @@ interface EventRegistration {
   year?: string
   registration_date: string
   status: string
+  on_waitlist?: boolean
+  waitlist_position?: number
+  consent_updates?: boolean
+  notes?: string
+  updated_at?: string
   event?: {
     title: string
     event_date: string
+  }
+  events?: {
+    id: number
+    title: string
+    event_date: string
+    event_time?: string
+    location?: string
+    capacity?: number
   }
 }
 
@@ -385,10 +398,14 @@ export default function AdminDashboardPage() {
 
       if (registrationsRes?.ok) {
         const regData = await registrationsRes.json()
-        setRegistrations(regData)
+        // Handle new API response structure
+        const registrationsList = regData.registrations || regData || []
+        const analytics = regData.analytics || {}
+
+        setRegistrations(registrationsList)
         setStats(prev => ({
           ...prev,
-          totalRegistrations: regData.length
+          totalRegistrations: analytics.totalRegistrations || registrationsList.length
         }))
       }
 
@@ -1612,7 +1629,7 @@ export default function AdminDashboardPage() {
                           </div>
                         </td>
                         <td style={{ padding: '15px', color: '#374151', fontSize: '14px' }}>
-                          {reg.event?.title || 'N/A'}
+                          {reg.events?.title || reg.event?.title || 'N/A'}
                         </td>
                         <td style={{ padding: '15px', color: '#6b7280', fontSize: '14px' }}>
                           {reg.major || 'N/A'} / {reg.year || 'N/A'}
