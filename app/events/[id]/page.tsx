@@ -159,7 +159,7 @@ export default function EventDetailPage() {
       <ClientLayout>
         <div className="error-container">
           <h2>Event not found</h2>
-          <p>The event you're looking for doesn't exist or has been removed.</p>
+          <p>The event you&apos;re looking for doesn&apos;t exist or has been removed.</p>
           <Link href="/events" className="btn-back">
             Back to Events
           </Link>

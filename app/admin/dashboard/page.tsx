@@ -660,9 +660,9 @@ export default function AdminDashboardPage() {
         capacity: parseInt(eventFormData.capacity)
       }
 
-      if (isEditing) {
-        eventData.eventId = selectedEvent.id
-      }
+      const requestBody: any = isEditing
+        ? { ...eventData, eventId: selectedEvent.id }
+        : eventData
 
       const response = await fetch('/api/admin/events', {
         method: isEditing ? 'PUT' : 'POST',
@@ -671,7 +671,7 @@ export default function AdminDashboardPage() {
           ...(token && { 'Authorization': `Bearer ${token}` })
         },
         credentials: 'include',
-        body: JSON.stringify(eventData)
+        body: JSON.stringify(requestBody)
       })
 
       if (response.ok) {

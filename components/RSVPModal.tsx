@@ -335,7 +335,7 @@ export default function RSVPModal({ event, onClose, onSuccess }: RSVPModalProps)
               {isWaitlist && (
                 <div className="waitlist-notice">
                   <i className="fas fa-exclamation-circle"></i>
-                  This event is full. You'll be added to the waitlist.
+                  This event is full. You&apos;ll be added to the waitlist.
                 </div>
               )}
 

@@ -142,7 +142,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
             <p style={{
               color: 'rgba(255, 255, 255, 0.9)',
               fontSize: '14px'
-            }}>We'd love to hear from you. Send us a message!</p>
+            }}>We&apos;d love to hear from you. Send us a message!</p>
           </div>
         </div>
 
@@ -165,7 +165,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                 <polyline points="22 4 12 14.01 9 11.01" />
               </svg>
-              Message sent successfully! We'll get back to you soon.
+              Message sent successfully! We&apos;ll get back to you soon.
             </div>
           )}
 

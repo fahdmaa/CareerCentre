@@ -976,7 +976,7 @@ export default function AmbassadorsPage() {
               <p className="fact-text">Bridge the gap between students and administration while fostering leadership skills</p>
             </div>
             <div className="fact-card">
-              <h3 className="fact-title">Who It's For</h3>
+              <h3 className="fact-title">Who It&apos;s For</h3>
               <p className="fact-text">Motivated students from all years and programs with strong communication skills</p>
             </div>
             <div className="fact-card">
@@ -990,7 +990,7 @@ export default function AmbassadorsPage() {
       {/* What You'll Do */}
       <section className={`section ${visibleSections.has('activities') ? 'visible' : ''}`} style={{ background: '#f9fafb' }} data-section-id="activities">
         <div className="container">
-          <h2 className="section-title">What You'll Do</h2>
+          <h2 className="section-title">What You&apos;ll Do</h2>
           <div className="activities-grid">
             <div className="activity-item">
               <div className="item-icon">
@@ -1562,7 +1562,7 @@ export default function AmbassadorsPage() {
               <li>Month 6: Personal Branding & Networking</li>
             </ul>
 
-            <h3 style={{ fontSize: '18px', margin: '24px 0 16px', color: '#1f2937' }}>Key Skills You'll Develop</h3>
+            <h3 style={{ fontSize: '18px', margin: '24px 0 16px', color: '#1f2937' }}>Key Skills You&apos;ll Develop</h3>
             <ul style={{ color: '#4b5563', lineHeight: '1.8' }}>
               <li>Professional communication and presentation</li>
               <li>Project management and organization</li>
