@@ -36,19 +36,19 @@ export default function RSVPModal({ event, onClose, onSuccess }: RSVPModalProps)
     setError('')
 
     try {
-      // Call our API endpoint instead of direct database access
-      const response = await fetch(`/api/events/${event.id}/rsvp`, {
+      // Call the public register API endpoint
+      const response = await fetch('/api/public/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          student_name: formData.studentName,
-          student_email: formData.studentEmail,
-          student_phone: '',
-          student_year: formData.studentYear,
-          student_program: formData.studentProgram,
-          consent_updates: formData.consentUpdates
+          event_id: event.id,
+          studentName: formData.studentName,
+          studentEmail: formData.studentEmail,
+          studentPhone: '', // Optional field
+          studentMajor: formData.studentProgram || 'Not specified',
+          yearOfStudy: formData.studentYear || 'Not specified'
         })
       })
 
@@ -58,19 +58,16 @@ export default function RSVPModal({ event, onClose, onSuccess }: RSVPModalProps)
         throw new Error(data.error || 'Registration failed')
       }
 
-      if (data.success) {
-        if (data.on_waitlist) {
-          alert(`You're on the waitlist! Position #${data.waitlist_position}. We'll notify you if a spot opens.`)
-        } else {
-          alert("You're in! We've emailed your ticket and added it to your calendar.")
-        }
-        onSuccess()
+      // Success - show appropriate message based on actual response
+      if (data.on_waitlist && data.waitlist_position) {
+        alert(`You're on the waitlist! Position #${data.waitlist_position}. We'll notify you if a spot opens.`)
       } else {
-        setError(data.error || 'Registration failed. Please try again.')
+        alert("You're registered! Check your email for confirmation details.")
       }
+      onSuccess()
     } catch (error: any) {
       console.error('RSVP error:', error)
-      setError(error.message || 'Something went wrong. Please try again in a moment.')
+      setError(error.message || 'Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }
