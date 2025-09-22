@@ -185,9 +185,20 @@ export default function EventsPage() {
   }
 
   const handleRSVP = () => {
-    console.log('RSVP clicked')
+    console.log('handleRSVP called in events page')
+    console.log('Current selectedEvent:', selectedEvent)
+    console.log('Closing details modal, opening RSVP modal')
+
+    if (!selectedEvent) {
+      console.error('No event selected for RSVP')
+      return
+    }
+
     setShowDetailsModal(false)
-    setShowRSVPModal(true)
+    // Small delay to ensure smooth transition
+    setTimeout(() => {
+      setShowRSVPModal(true)
+    }, 100)
   }
 
   const handleRSVPSuccess = () => {

@@ -42,6 +42,25 @@ export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetai
   const spotsLeft = event.capacity - event.spots_taken
   const isWaitlist = spotsLeft <= 0
 
+  const handleRegisterClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    console.log('Register Now button clicked in EventDetailsModal')
+    alert('Register button clicked! Check console for details.')
+    console.log('Event details:', event)
+    console.log('onRSVP function:', onRSVP)
+    console.log('Type of onRSVP:', typeof onRSVP)
+
+    if (typeof onRSVP === 'function') {
+      console.log('Calling onRSVP function...')
+      onRSVP()
+    } else {
+      console.error('onRSVP is not a function!', onRSVP)
+      alert('Error: onRSVP is not properly defined')
+    }
+  }
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
@@ -647,14 +666,20 @@ export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetai
 
         <div style={styles.footer}>
           <button
+            type="button"
             style={styles.btnSecondary}
             onClick={onClose}
           >
             Close
           </button>
           <button
+            type="button"
             style={styles.btnPrimary}
-            onClick={onRSVP}
+            onClick={handleRegisterClick}
+            onMouseDown={(e) => {
+              console.log('Button mousedown event triggered')
+              e.stopPropagation()
+            }}
           >
             <i className={`fas ${isWaitlist ? 'fa-clock' : 'fa-check'}`}></i>
             {isWaitlist ? 'Join Waitlist' : 'Register Now'}

@@ -19,6 +19,7 @@ interface RSVPModalProps {
 }
 
 export default function RSVPModal({ event, onClose, onSuccess }: RSVPModalProps) {
+  console.log('RSVPModal rendered with event:', event)
   const [formData, setFormData] = useState({
     studentName: '',
     studentEmail: '',
