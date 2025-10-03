@@ -62,6 +62,13 @@ export default function EventDetailsModal({ event, onClose, onRSVP, onSuccess }:
   const spotsLeft = event.capacity - event.spots_taken
   const isWaitlist = spotsLeft <= 0
 
+  // Check if event is in the past
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const eventDate = new Date(event.event_date)
+  eventDate.setHours(0, 0, 0, 0)
+  const isPastEvent = eventDate < today
+
   // Hide navigation when modal opens
   useEffect(() => {
     const nav = document.querySelector('.pill-navbar')
@@ -535,6 +542,16 @@ export default function EventDetailsModal({ event, onClose, onRSVP, onSuccess }:
               <i className={`fas ${getTypeIcon(event.event_type)}`}></i>
               {event.event_type}
             </span>
+            {isPastEvent && (
+              <span style={{
+                ...styles.badge,
+                background: '#fee2e2',
+                color: '#dc2626'
+              }}>
+                <i className="fas fa-history"></i>
+                Past Event
+              </span>
+            )}
           </div>
           <h2 style={styles.title}>{event.title}</h2>
           {event.host_org && (
@@ -733,13 +750,29 @@ export default function EventDetailsModal({ event, onClose, onRSVP, onSuccess }:
             >
               Close
             </button>
-            <button
-              type="button"
-              style={styles.btnPrimary}
-              onClick={handleRegisterClick}
-            >
-              {isWaitlist ? 'Join Waitlist' : 'Register Now'}
-            </button>
+            {isPastEvent ? (
+              <div style={{
+                flex: 1,
+                padding: '14px 28px',
+                borderRadius: '30px',
+                fontSize: '14px',
+                fontWeight: '600',
+                textAlign: 'center',
+                background: '#f3f4f6',
+                color: '#9ca3af',
+                border: '2px solid #e5e7eb'
+              }}>
+                Event Has Ended
+              </div>
+            ) : (
+              <button
+                type="button"
+                style={styles.btnPrimary}
+                onClick={handleRegisterClick}
+              >
+                {isWaitlist ? 'Join Waitlist' : 'Register Now'}
+              </button>
+            )}
           </div>
         ) : (
           <>

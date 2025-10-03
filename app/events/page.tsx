@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Navigation from '../../components/Navigation'
-import EventCalendar from '../../components/EventCalendar'
 import RSVPModal from '../../components/RSVPModal'
 import EventDetailsModal from '../../components/EventDetailsModal'
 
@@ -44,7 +43,6 @@ export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
-  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list')
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [showRSVPModal, setShowRSVPModal] = useState(false)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
@@ -81,7 +79,7 @@ export default function EventsPage() {
     console.log('Events changed:', events.length, 'events')
     console.log('Events data:', events)
     filterEvents()
-  }, [events, searchTerm, filters])
+  }, [events, searchTerm, filters, showPastEvents])
 
   const fetchEvents = async () => {
     console.log('fetchEvents called, showPastEvents:', showPastEvents)
@@ -119,6 +117,18 @@ export default function EventsPage() {
     console.log('Search term:', searchTerm)
     console.log('Total events:', events.length)
     let filtered = [...events]
+
+    // Past events filter - hide past events by default
+    if (!showPastEvents) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      filtered = filtered.filter(event => {
+        const eventDate = new Date(event.event_date)
+        eventDate.setHours(0, 0, 0, 0)
+        return eventDate >= today
+      })
+      console.log('After past events filter:', filtered.length)
+    }
 
     // Search filter
     if (searchTerm) {
@@ -384,31 +394,6 @@ export default function EventsPage() {
           color: #6b7280;
         }
 
-        .view-toggle {
-          display: flex;
-          background: #f3f4f6;
-          border-radius: 8px;
-          padding: 4px;
-        }
-
-        .view-btn {
-          padding: 8px 16px;
-          border: none;
-          background: transparent;
-          color: #6b7280;
-          font-size: 14px;
-          font-weight: 500;
-          cursor: pointer;
-          border-radius: 6px;
-          transition: all 0.3s;
-        }
-
-        .view-btn.active {
-          background: white;
-          color: #00A651;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
         .toolbar-right {
           display: flex;
           gap: 12px;
@@ -452,33 +437,79 @@ export default function EventsPage() {
           transform: translateX(20px);
         }
 
-        .filter-chips {
+        .filter-dropdowns {
           padding: 24px 0 0;
           display: flex;
           gap: 12px;
           flex-wrap: wrap;
+          align-items: center;
         }
 
-        .filter-chip {
-          padding: 8px 16px;
-          background: #f3f4f6;
-          border: 1px solid #d1d5db;
-          border-radius: 20px;
+        .filter-select {
+          padding: 10px 16px;
+          border: 2px solid #e5e7eb;
+          border-radius: 8px;
           font-size: 14px;
-          color: #4b5563;
+          color: #374151;
+          background: white;
           cursor: pointer;
+          outline: none;
+          transition: all 0.3s;
+          min-width: 150px;
+        }
+
+        .filter-select:hover {
+          border-color: #00A651;
+        }
+
+        .filter-select:focus {
+          border-color: #00A651;
+          box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
+        }
+
+        .checkbox-filter {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          color: #374151;
+          cursor: pointer;
+          padding: 10px 16px;
+          border: 2px solid #e5e7eb;
+          border-radius: 8px;
+          background: white;
           transition: all 0.3s;
         }
 
-        .filter-chip:hover {
+        .checkbox-filter:hover {
           border-color: #00A651;
-          color: #00A651;
         }
 
-        .filter-chip.active {
-          background: #00A651;
-          border-color: #00A651;
-          color: white;
+        .checkbox-filter input[type="checkbox"] {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+          accent-color: #00A651;
+        }
+
+        .clear-filters-btn {
+          padding: 10px 16px;
+          background: #f3f4f6;
+          border: 2px solid #e5e7eb;
+          border-radius: 8px;
+          font-size: 14px;
+          color: #6b7280;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          transition: all 0.3s;
+        }
+
+        .clear-filters-btn:hover {
+          background: #fee2e2;
+          border-color: #ef4444;
+          color: #dc2626;
         }
 
         .events-section {
@@ -782,22 +813,6 @@ export default function EventsPage() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <div className="view-toggle">
-                <button
-                  className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
-                  onClick={() => setViewMode('list')}
-                >
-                  <i className="fas fa-th-large" style={{ marginRight: '6px' }}></i>
-                  Grid
-                </button>
-                <button
-                  className={`view-btn ${viewMode === 'calendar' ? 'active' : ''}`}
-                  onClick={() => setViewMode('calendar')}
-                >
-                  <i className="fas fa-calendar" style={{ marginRight: '6px' }}></i>
-                  Calendar
-                </button>
-              </div>
             </div>
             <div className="toolbar-right">
               <div className="past-events-toggle">
@@ -811,43 +826,60 @@ export default function EventsPage() {
               </div>
             </div>
           </div>
-          <div className="filter-chips">
-            <div
-              className={`filter-chip ${filters.when === 'today' ? 'active' : ''}`}
-              onClick={() => setFilters({...filters, when: filters.when === 'today' ? '' : 'today'})}
+          <div className="filter-dropdowns">
+            <select
+              className="filter-select"
+              value={filters.when}
+              onChange={(e) => setFilters({...filters, when: e.target.value})}
             >
-              Today
-            </div>
-            <div
-              className={`filter-chip ${filters.when === 'this_week' ? 'active' : ''}`}
-              onClick={() => setFilters({...filters, when: filters.when === 'this_week' ? '' : 'this_week'})}
+              <option value="">When</option>
+              <option value="today">Today</option>
+              <option value="tomorrow">Tomorrow</option>
+              <option value="this_week">This Week</option>
+              <option value="this_month">This Month</option>
+            </select>
+
+            <select
+              className="filter-select"
+              value={filters.type}
+              onChange={(e) => setFilters({...filters, type: e.target.value})}
             >
-              This Week
-            </div>
-            <div
-              className={`filter-chip ${filters.type === 'Workshop' ? 'active' : ''}`}
-              onClick={() => setFilters({...filters, type: filters.type === 'Workshop' ? '' : 'Workshop'})}
+              <option value="">Event Type</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Seminar">Seminar</option>
+              <option value="Career Fair">Career Fair</option>
+              <option value="Networking">Networking</option>
+              <option value="Info Session">Info Session</option>
+            </select>
+
+            <select
+              className="filter-select"
+              value={filters.format}
+              onChange={(e) => setFilters({...filters, format: e.target.value})}
             >
-              Workshops
-            </div>
-            <div
-              className={`filter-chip ${filters.type === 'Career Fair' ? 'active' : ''}`}
-              onClick={() => setFilters({...filters, type: filters.type === 'Career Fair' ? '' : 'Career Fair'})}
-            >
-              Career Fairs
-            </div>
-            <div
-              className={`filter-chip ${filters.format === 'online' ? 'active' : ''}`}
-              onClick={() => setFilters({...filters, format: filters.format === 'online' ? '' : 'online'})}
-            >
-              Online
-            </div>
-            <div
-              className={`filter-chip ${filters.availableOnly ? 'active' : ''}`}
-              onClick={() => setFilters({...filters, availableOnly: !filters.availableOnly})}
-            >
-              Available Only
-            </div>
+              <option value="">Format</option>
+              <option value="In-Person">In-Person</option>
+              <option value="Online">Online</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
+
+            <label className="checkbox-filter">
+              <input
+                type="checkbox"
+                checked={filters.availableOnly}
+                onChange={(e) => setFilters({...filters, availableOnly: e.target.checked})}
+              />
+              <span>Available spots only</span>
+            </label>
+
+            {(filters.when || filters.type || filters.format || filters.availableOnly) && (
+              <button
+                className="clear-filters-btn"
+                onClick={() => setFilters({ when: '', type: '', format: '', location: '', availableOnly: false })}
+              >
+                <i className="fas fa-times"></i> Clear Filters
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -859,8 +891,6 @@ export default function EventsPage() {
               <div className="loading-spinner"></div>
               <p>Loading events...</p>
             </div>
-          ) : viewMode === 'calendar' ? (
-            <EventCalendar events={filteredEvents} onEventClick={handleEventClick} />
           ) : filteredEvents.length === 0 ? (
             <div className="no-results">
               <i className="fas fa-calendar-times no-results-icon"></i>

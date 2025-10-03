@@ -181,6 +181,7 @@ export default function AdminDashboardPage() {
   const [interviews, setInterviews] = useState<Interview[]>([])
   const [events, setEvents] = useState<Event[]>([])
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([])
+  const [selectedEventFilter, setSelectedEventFilter] = useState<string>('all')
   const [stats, setStats] = useState<Stats>({
     totalMessages: 0,
     unreadMessages: 0,
@@ -804,6 +805,49 @@ export default function AdminDashboardPage() {
       a.student_name?.toLowerCase().includes(query) ||
       a.student_email?.toLowerCase().includes(query)
     )
+  }
+
+  // Filter registrations by event
+  if (selectedEventFilter !== 'all') {
+    filteredRegistrations = filteredRegistrations.filter(r =>
+      r.event_id?.toString() === selectedEventFilter
+    )
+  }
+
+  // CSV Export function for registrations
+  const exportRegistrationsToCSV = () => {
+    if (filteredRegistrations.length === 0) {
+      alert('No registrations to export')
+      return
+    }
+
+    const headers = ['Student Name', 'Email', 'Phone', 'Event', 'Major', 'Year', 'Registration Date', 'Status', 'Waitlist']
+    const rows = filteredRegistrations.map(reg => [
+      reg.student_name || '',
+      reg.student_email || '',
+      reg.student_phone || '',
+      reg.events?.title || reg.event?.title || '',
+      reg.major || '',
+      reg.year || '',
+      new Date(reg.registration_date).toLocaleString(),
+      reg.status || '',
+      reg.on_waitlist ? `Yes (Position: ${reg.waitlist_position || 'N/A'})` : 'No'
+    ])
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `event-registrations-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   return (
@@ -1903,7 +1947,77 @@ export default function AdminDashboardPage() {
               overflow: 'hidden'
             }}>
               <div style={{ padding: '20px', borderBottom: '1px solid #e5e7eb' }}>
-                <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Event Registrations</h2>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>Event Registrations</h2>
+                  <button
+                    onClick={exportRegistrationsToCSV}
+                    style={{
+                      padding: '10px 20px',
+                      background: '#00A651',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Export to CSV
+                  </button>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <label style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>Filter by Event:</label>
+                  <select
+                    value={selectedEventFilter}
+                    onChange={(e) => setSelectedEventFilter(e.target.value)}
+                    style={{
+                      padding: '8px 12px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      minWidth: '250px'
+                    }}
+                  >
+                    <option value="all">All Events ({registrations.length})</option>
+                    {events.map(event => {
+                      const eventRegCount = registrations.filter(r => r.event_id === event.id).length
+                      return (
+                        <option key={event.id} value={event.id.toString()}>
+                          {event.title} ({eventRegCount})
+                        </option>
+                      )
+                    })}
+                  </select>
+                  {selectedEventFilter !== 'all' && (
+                    <button
+                      onClick={() => setSelectedEventFilter('all')}
+                      style={{
+                        padding: '8px 12px',
+                        background: '#f3f4f6',
+                        color: '#6b7280',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontSize: '13px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Clear Filter
+                    </button>
+                  )}
+                  <span style={{ marginLeft: 'auto', fontSize: '14px', color: '#6b7280' }}>
+                    Showing {filteredRegistrations.length} registration{filteredRegistrations.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
               </div>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
@@ -2291,7 +2405,15 @@ export default function AdminDashboardPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {events.map(event => (
+                        {events.map(event => {
+                          // Calculate dynamic status based on event date
+                          const today = new Date()
+                          today.setHours(0, 0, 0, 0)
+                          const eventDate = new Date(event.event_date)
+                          eventDate.setHours(0, 0, 0, 0)
+                          const dynamicStatus = eventDate < today ? 'Past' : 'Upcoming'
+
+                          return (
                           <tr key={event.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
                             <td style={{ padding: '16px 0' }}>
                               <div>
@@ -2348,15 +2470,14 @@ export default function AdminDashboardPage() {
                             </td>
                             <td style={{ padding: '16px 0' }}>
                               <span style={{
-                                background: event.status === 'upcoming' ? '#dcfce7' : event.status === 'ongoing' ? '#fef3c7' : '#fee2e2',
-                                color: event.status === 'upcoming' ? '#166534' : event.status === 'ongoing' ? '#92400e' : '#dc2626',
+                                background: dynamicStatus === 'Upcoming' ? '#dcfce7' : '#fee2e2',
+                                color: dynamicStatus === 'Upcoming' ? '#166534' : '#dc2626',
                                 padding: '4px 8px',
                                 borderRadius: '6px',
                                 fontSize: '12px',
-                                fontWeight: 500,
-                                textTransform: 'capitalize'
+                                fontWeight: 500
                               }}>
-                                {event.status}
+                                {dynamicStatus}
                               </span>
                             </td>
                             <td style={{ padding: '16px 0', textAlign: 'right' }}>
@@ -2428,7 +2549,8 @@ export default function AdminDashboardPage() {
                               </div>
                             </td>
                           </tr>
-                        ))}
+                          )
+                        })}
                       </tbody>
                     </table>
                   </div>
