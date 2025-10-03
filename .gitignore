@@ -48,3 +48,4 @@ temp/
 # TypeScript
 *.tsbuildinfo
 next-env.d.tsadmin-profile.json
+nul

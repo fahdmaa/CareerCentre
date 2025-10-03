@@ -5,6 +5,23 @@
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.3s ease;
+  border: none;
+  outline: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  text-decoration: none;
+}
+
+.star-border-container:focus {
+  outline: none;
+}
+
+.star-border-container:active {
+  outline: none;
 }
 
 .star-border-container:hover {
@@ -53,10 +70,15 @@
 }
 
 /* For secondary/outline buttons */
+.star-border-container.secondary {
+  border-radius: 30px;
+}
+
 .star-border-container.secondary .inner-content {
   background: white;
   color: #004A99;
-  border: 2px solid #004A99;
+  border: 1px solid #004A99;
+  border-radius: 30px;
 }
 
 .star-border-container.secondary:hover .inner-content {
@@ -65,9 +87,24 @@
 }
 
 /* For CTA white buttons */
+.star-border-container.cta-white {
+  border-radius: 30px;
+}
+
 .star-border-container.cta-white .inner-content {
   background: white;
   color: #00A651;
+  border: 1px solid rgba(0, 166, 81, 0.1);
+  border-radius: 30px;
+}
+
+.star-border-container.cta-white:hover .inner-content {
+  background: #f9fafb;
+}
+
+.star-border-container.cta-white:focus .inner-content,
+.star-border-container.cta-white:active .inner-content {
+  outline: none;
   border: 1px solid rgba(0, 166, 81, 0.1);
 }
 
@@ -83,11 +120,18 @@
 }
 
 /* Admin buttons */
+.star-border-container.admin-green {
+  border-radius: 30px;
+}
+
 .star-border-container.admin-green .inner-content {
   background: #00A651;
+  color: white;
   border: 1px solid #00A651;
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 30px;
+  font-weight: 600;
 }
 
 .star-border-container.admin-red .inner-content {

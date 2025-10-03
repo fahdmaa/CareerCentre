@@ -1,0 +1,186 @@
+/* Unified Form Theme - Curved & Modern */
+
+/* Form Inputs */
+.form-input-themed,
+input[type="text"].themed,
+input[type="email"].themed,
+input[type="tel"].themed,
+input[type="password"].themed,
+textarea.themed,
+select.themed {
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 30px;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+  background: white;
+}
+
+.form-input-themed:focus,
+input[type="text"].themed:focus,
+input[type="email"].themed:focus,
+input[type="tel"].themed:focus,
+input[type="password"].themed:focus,
+textarea.themed:focus,
+select.themed:focus {
+  border-color: #00A651;
+  box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
+}
+
+.form-input-themed:disabled,
+input.themed:disabled,
+textarea.themed:disabled,
+select.themed:disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Textarea specific */
+textarea.themed {
+  resize: vertical;
+  min-height: 120px;
+  padding: 14px 20px;
+}
+
+/* Form Labels */
+.form-label-themed {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Form Groups */
+.form-group-themed {
+  margin-bottom: 20px;
+}
+
+/* Submit Buttons */
+.btn-submit-themed {
+  padding: 14px 28px;
+  background: #00A651;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 140px;
+}
+
+.btn-submit-themed:hover:not(:disabled) {
+  background: #008741;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 166, 81, 0.3);
+}
+
+.btn-submit-themed:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Secondary/Cancel Buttons */
+.btn-secondary-themed {
+  padding: 14px 28px;
+  background: white;
+  color: #6b7280;
+  border: 2px solid #e5e7eb;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-secondary-themed:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+/* Error Messages */
+.error-message-themed {
+  padding: 12px 16px;
+  background: #fef2f2;
+  border: 1px solid #ef4444;
+  border-radius: 30px;
+  color: #dc2626;
+  font-size: 14px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Success Messages */
+.success-message-themed {
+  padding: 12px 16px;
+  background: #f0fdf4;
+  border: 1px solid #00A651;
+  border-radius: 30px;
+  color: #059669;
+  font-size: 14px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Form Container */
+.form-container-themed {
+  background: white;
+  padding: 30px;
+  border-radius: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Header */
+.form-header-themed {
+  background: linear-gradient(135deg, #00A651 0%, #008741 100%);
+  padding: 30px;
+  border-radius: 30px 30px 0 0;
+  color: white;
+  text-align: center;
+}
+
+.form-header-themed h1,
+.form-header-themed h2 {
+  color: white;
+  margin-bottom: 8px;
+}
+
+.form-header-themed p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .form-input-themed,
+  input.themed,
+  textarea.themed,
+  select.themed {
+    padding: 10px 16px;
+  }
+
+  .btn-submit-themed,
+  .btn-secondary-themed {
+    width: 100%;
+    padding: 12px 24px;
+  }
+}

@@ -93,6 +93,13 @@ interface Event {
   campus?: string
   host_org?: string
   image_url?: string
+  guest_speakers?: Array<{
+    name: string
+    occupation: string
+    bio: string
+    photo: string
+    linkedin: string
+  }>
   guest_speaker_name?: string
   guest_speaker_occupation?: string
   guest_speaker_bio?: string
@@ -188,6 +195,8 @@ export default function AdminDashboardPage() {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null)
   const [selectedApplication, setSelectedApplication] = useState<CohortApplication | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [eventToDelete, setEventToDelete] = useState<number | null>(null)
 
   // Profile management states
   const [showProfileDropdown, setShowProfileDropdown] = useState(false)
@@ -214,6 +223,7 @@ export default function AdminDashboardPage() {
   // Events management states
   const [showEventModal, setShowEventModal] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [eventSubmitSuccess, setEventSubmitSuccess] = useState(false)
   const [eventFormData, setEventFormData] = useState({
     title: '',
     description: '',
@@ -228,11 +238,15 @@ export default function AdminDashboardPage() {
     campus: '',
     host_org: '',
     image_url: '',
-    guest_speaker_name: '',
-    guest_speaker_occupation: '',
-    guest_speaker_bio: '',
-    guest_speaker_photo: '',
-    guest_speaker_linkedin: '',
+    guest_speakers: [
+      {
+        name: '',
+        occupation: '',
+        bio: '',
+        photo: '',
+        linkedin: ''
+      }
+    ],
     agenda: '',
     speakers: '',
     what_to_bring: '',
@@ -589,6 +603,25 @@ export default function AdminDashboardPage() {
   const openEventModal = (event?: Event) => {
     if (event) {
       setSelectedEvent(event)
+      // Use guest_speakers array if available, otherwise fall back to old single speaker format
+      let guestSpeakers
+      if (event.guest_speakers && Array.isArray(event.guest_speakers) && event.guest_speakers.length > 0) {
+        // New format: use the guest_speakers array
+        guestSpeakers = event.guest_speakers
+      } else if (event.guest_speaker_name) {
+        // Old format: convert single speaker to array
+        guestSpeakers = [{
+          name: event.guest_speaker_name || '',
+          occupation: event.guest_speaker_occupation || '',
+          bio: event.guest_speaker_bio || '',
+          photo: event.guest_speaker_photo || '',
+          linkedin: event.guest_speaker_linkedin || ''
+        }]
+      } else {
+        // No speakers
+        guestSpeakers = [{ name: '', occupation: '', bio: '', photo: '', linkedin: '' }]
+      }
+
       setEventFormData({
         title: event.title,
         description: event.description || '',
@@ -603,11 +636,7 @@ export default function AdminDashboardPage() {
         campus: event.campus || '',
         host_org: event.host_org || '',
         image_url: event.image_url || '',
-        guest_speaker_name: event.guest_speaker_name || '',
-        guest_speaker_occupation: event.guest_speaker_occupation || '',
-        guest_speaker_bio: event.guest_speaker_bio || '',
-        guest_speaker_photo: event.guest_speaker_photo || '',
-        guest_speaker_linkedin: event.guest_speaker_linkedin || '',
+        guest_speakers: guestSpeakers,
         agenda: event.agenda || '',
         speakers: event.speakers || '',
         what_to_bring: event.what_to_bring || '',
@@ -629,11 +658,7 @@ export default function AdminDashboardPage() {
         campus: '',
         host_org: '',
         image_url: '',
-        guest_speaker_name: '',
-        guest_speaker_occupation: '',
-        guest_speaker_bio: '',
-        guest_speaker_photo: '',
-        guest_speaker_linkedin: '',
+        guest_speakers: [{ name: '', occupation: '', bio: '', photo: '', linkedin: '' }],
         agenda: '',
         speakers: '',
         what_to_bring: '',
@@ -646,6 +671,7 @@ export default function AdminDashboardPage() {
   const closeEventModal = () => {
     setShowEventModal(false)
     setSelectedEvent(null)
+    setEventSubmitSuccess(false)
   }
 
   const handleEventSubmit = async (e: React.FormEvent) => {
@@ -655,9 +681,18 @@ export default function AdminDashboardPage() {
       const token = localStorage.getItem('admin-token')
       const isEditing = selectedEvent !== null
 
+      // Prepare event data with guest speakers as JSON object (Supabase will handle JSONB conversion)
       const eventData = {
         ...eventFormData,
-        capacity: parseInt(eventFormData.capacity)
+        capacity: parseInt(eventFormData.capacity),
+        // Send as object array - Supabase JSONB will handle it
+        guest_speakers: eventFormData.guest_speakers,
+        // Keep backward compatibility with old single speaker fields
+        guest_speaker_name: eventFormData.guest_speakers[0]?.name || '',
+        guest_speaker_occupation: eventFormData.guest_speakers[0]?.occupation || '',
+        guest_speaker_bio: eventFormData.guest_speakers[0]?.bio || '',
+        guest_speaker_photo: eventFormData.guest_speakers[0]?.photo || '',
+        guest_speaker_linkedin: eventFormData.guest_speakers[0]?.linkedin || ''
       }
 
       const requestBody: any = isEditing
@@ -675,8 +710,15 @@ export default function AdminDashboardPage() {
       })
 
       if (response.ok) {
-        await fetchAllData()
-        closeEventModal()
+        // Show success message first
+        setEventSubmitSuccess(true)
+
+        // Close modal with animation after 1.5 seconds, then refresh data
+        setTimeout(() => {
+          closeEventModal()
+          // Fetch updated data after modal closes
+          fetchAllData()
+        }, 1500)
       } else {
         const errorData = await response.json()
         console.error('Failed to save event:', errorData)
@@ -687,13 +729,16 @@ export default function AdminDashboardPage() {
   }
 
   const deleteEvent = async (eventId: number) => {
-    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
-      return
-    }
+    setEventToDelete(eventId)
+    setShowDeleteConfirm(true)
+  }
+
+  const confirmDeleteEvent = async () => {
+    if (!eventToDelete) return
 
     try {
       const token = localStorage.getItem('admin-token')
-      const response = await fetch(`/api/admin/events?id=${eventId}`, {
+      const response = await fetch(`/api/admin/events?id=${eventToDelete}`, {
         method: 'DELETE',
         headers: {
           ...(token && { 'Authorization': `Bearer ${token}` })
@@ -702,6 +747,8 @@ export default function AdminDashboardPage() {
       })
 
       if (response.ok) {
+        setShowDeleteConfirm(false)
+        setEventToDelete(null)
         await fetchAllData()
       } else {
         const errorData = await response.json()
@@ -709,27 +756,6 @@ export default function AdminDashboardPage() {
       }
     } catch (error) {
       console.error('Error deleting event:', error)
-    }
-  }
-
-  const filteredData = () => {
-    if (!searchQuery) return { messages, registrations, applications }
-
-    const query = searchQuery.toLowerCase()
-    return {
-      messages: messages.filter(m =>
-        m.sender_name?.toLowerCase().includes(query) ||
-        m.sender_email?.toLowerCase().includes(query) ||
-        m.subject?.toLowerCase().includes(query)
-      ),
-      registrations: registrations.filter(r =>
-        r.student_name?.toLowerCase().includes(query) ||
-        r.student_email?.toLowerCase().includes(query)
-      ),
-      applications: applications.filter(a =>
-        a.student_name?.toLowerCase().includes(query) ||
-        a.student_email?.toLowerCase().includes(query)
-      )
     }
   }
 
@@ -758,7 +784,27 @@ export default function AdminDashboardPage() {
     )
   }
 
-  const { messages: filteredMessages, registrations: filteredRegistrations, applications: filteredApplications } = filteredData()
+  // Filter data based on search query
+  let filteredMessages = messages
+  let filteredRegistrations = registrations
+  let filteredApplications = applications
+
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase()
+    filteredMessages = messages.filter(m =>
+      m.sender_name?.toLowerCase().includes(query) ||
+      m.sender_email?.toLowerCase().includes(query) ||
+      m.subject?.toLowerCase().includes(query)
+    )
+    filteredRegistrations = registrations.filter(r =>
+      r.student_name?.toLowerCase().includes(query) ||
+      r.student_email?.toLowerCase().includes(query)
+    )
+    filteredApplications = applications.filter(a =>
+      a.student_name?.toLowerCase().includes(query) ||
+      a.student_email?.toLowerCase().includes(query)
+    )
+  }
 
   return (
     <div style={{
@@ -906,6 +952,22 @@ export default function AdminDashboardPage() {
               badge: stats.unreadMessages
             },
             {
+              id: 'events',
+              label: 'Events',
+              icon: (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                  <circle cx="8" cy="14" r="1" />
+                  <circle cx="12" cy="14" r="1" />
+                  <circle cx="16" cy="14" r="1" />
+                </svg>
+              ),
+              badge: null
+            },
+            {
               id: 'registrations',
               label: 'Event Registrations',
               icon: (
@@ -943,22 +1005,6 @@ export default function AdminDashboardPage() {
               badge: stats.scheduledInterviews
             },
             {
-              id: 'events',
-              label: 'Events',
-              icon: (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                  <circle cx="8" cy="14" r="1" />
-                  <circle cx="12" cy="14" r="1" />
-                  <circle cx="16" cy="14" r="1" />
-                </svg>
-              ),
-              badge: null
-            },
-            {
               id: 'activities',
               label: 'Recent Activities',
               icon: (
@@ -992,7 +1038,8 @@ export default function AdminDashboardPage() {
                   alignItems: 'center',
                   justifyContent: isSidebarCollapsed ? 'center' : 'space-between',
                   transition: 'all 0.3s',
-                  position: 'relative'
+                  position: 'relative',
+                  outline: 'none'
                 }}
                 onMouseEnter={(e) => {
                   if (activeSection !== item.id) {
@@ -1138,6 +1185,38 @@ export default function AdminDashboardPage() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            {/* Refresh button for messages section */}
+            {activeSection === 'messages' && (
+              <button
+                onClick={fetchAllData}
+                style={{
+                  padding: '8px 16px',
+                  background: '#00A651',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  transition: 'background 0.3s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#008c44'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#00A651'
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                </svg>
+                Refresh
+              </button>
+            )}
+
             <input
               type="text"
               placeholder="Search..."
@@ -2281,16 +2360,30 @@ export default function AdminDashboardPage() {
                               </span>
                             </td>
                             <td style={{ padding: '16px 0', textAlign: 'right' }}>
-                              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
                                 <button
                                   onClick={() => openEventModal(event)}
                                   style={{
-                                    background: '#f3f4f6',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    padding: '6px',
+                                    background: 'white',
+                                    border: '2px solid #00A651',
+                                    borderRadius: '30px',
+                                    padding: '8px 16px',
                                     cursor: 'pointer',
-                                    color: '#374151'
+                                    color: '#00A651',
+                                    fontSize: '13px',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    transition: 'all 0.3s'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = '#00A651'
+                                    e.currentTarget.style.color = 'white'
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'white'
+                                    e.currentTarget.style.color = '#00A651'
                                   }}
                                   title="Edit Event"
                                 >
@@ -2298,16 +2391,31 @@ export default function AdminDashboardPage() {
                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                   </svg>
+                                  Edit
                                 </button>
                                 <button
                                   onClick={() => deleteEvent(event.id)}
                                   style={{
-                                    background: '#fee2e2',
-                                    border: 'none',
-                                    borderRadius: '6px',
-                                    padding: '6px',
+                                    background: 'white',
+                                    border: '2px solid #ef4444',
+                                    borderRadius: '30px',
+                                    padding: '8px 16px',
                                     cursor: 'pointer',
-                                    color: '#dc2626'
+                                    color: '#ef4444',
+                                    fontSize: '13px',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    transition: 'all 0.3s'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = '#ef4444'
+                                    e.currentTarget.style.color = 'white'
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'white'
+                                    e.currentTarget.style.color = '#ef4444'
                                   }}
                                   title="Delete Event"
                                 >
@@ -2315,6 +2423,7 @@ export default function AdminDashboardPage() {
                                     <polyline points="3,6 5,6 21,6"></polyline>
                                     <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
                                   </svg>
+                                  Delete
                                 </button>
                               </div>
                             </td>
@@ -2760,18 +2869,43 @@ export default function AdminDashboardPage() {
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 1000,
-          padding: '20px'
+          padding: '20px',
+          animation: 'fadeIn 0.2s ease-out'
         }}>
           <div style={{
             backgroundColor: 'white',
-            borderRadius: '16px',
+            borderRadius: '20px',
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             width: '100%',
             maxWidth: '800px',
             maxHeight: '90vh',
-            overflow: 'auto',
-            position: 'relative'
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            position: 'relative',
+            animation: 'slideDown 0.3s ease-out'
           }}>
+            <style dangerouslySetInnerHTML={{
+              __html: `
+                .event-modal-body::-webkit-scrollbar {
+                  width: 8px;
+                }
+                .event-modal-body::-webkit-scrollbar-track {
+                  background: transparent;
+                }
+                .event-modal-body::-webkit-scrollbar-thumb {
+                  background: rgba(0, 166, 81, 0.3);
+                  borderRadius: 20px;
+                }
+                .event-modal-body::-webkit-scrollbar-thumb:hover {
+                  background: rgba(0, 166, 81, 0.5);
+                }
+                .event-modal-body {
+                  scrollbar-width: thin;
+                  scrollbar-color: rgba(0, 166, 81, 0.3) transparent;
+                }
+              `
+            }} />
             {/* Modal Header */}
             <div style={{
               padding: '24px 32px',
@@ -2779,11 +2913,9 @@ export default function AdminDashboardPage() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              position: 'sticky',
-              top: 0,
               backgroundColor: 'white',
-              borderRadius: '16px 16px 0 0',
-              zIndex: 10
+              borderRadius: '20px 20px 0 0',
+              flexShrink: 0
             }}>
               <h2 style={{
                 fontSize: '24px',
@@ -2814,8 +2946,69 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
+            {/* Success Message Overlay */}
+            {eventSubmitSuccess && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+                borderRadius: '20px',
+                animation: 'fadeIn 0.3s ease-in-out'
+              }}>
+                <div style={{
+                  width: '80px',
+                  height: '80px',
+                  borderRadius: '50%',
+                  backgroundColor: '#00A651',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '24px',
+                  animation: 'scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+                }}>
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+                <h3 style={{
+                  fontSize: '24px',
+                  fontWeight: 600,
+                  color: '#1a1a1a',
+                  marginBottom: '8px',
+                  animation: 'slideUp 0.5s ease-out 0.2s both'
+                }}>
+                  {selectedEvent ? 'Event Updated!' : 'Event Created!'}
+                </h3>
+                <p style={{
+                  fontSize: '16px',
+                  color: '#6b7280',
+                  animation: 'slideUp 0.5s ease-out 0.3s both'
+                }}>
+                  {selectedEvent ? 'The event has been successfully updated.' : 'The event has been successfully created.'}
+                </p>
+              </div>
+            )}
+
             {/* Modal Body */}
-            <form onSubmit={handleEventSubmit} style={{ padding: '32px' }}>
+            <form onSubmit={handleEventSubmit} style={{
+              display: 'flex',
+              flexDirection: 'column',
+              flex: 1,
+              overflow: 'hidden'
+            }}>
+              <div className="event-modal-body" style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '32px'
+              }}>
               {/* Basic Information */}
               <div style={{ marginBottom: '32px' }}>
                 <h3 style={{
@@ -2856,7 +3049,7 @@ export default function AdminDashboardPage() {
                         width: '100%',
                         padding: '12px 16px',
                         border: '2px solid #e5e7eb',
-                        borderRadius: '8px',
+                        borderRadius: '30px',
                         fontSize: '14px',
                         transition: 'border-color 0.3s'
                       }}
@@ -3112,25 +3305,40 @@ export default function AdminDashboardPage() {
                       <option value="off-campus">Off Campus</option>
                     </select>
                   </div>
+                  {/* Modern Toggle Switch */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingTop: '30px' }}>
-                    <input
-                      type="checkbox"
-                      id="featured"
-                      checked={eventFormData.featured}
-                      onChange={(e) => setEventFormData({...eventFormData, featured: e.target.checked})}
-                      style={{
-                        width: '18px',
-                        height: '18px',
-                        accentColor: '#00A651'
-                      }}
-                    />
-                    <label htmlFor="featured" style={{
-                      fontSize: '14px',
-                      fontWeight: 500,
-                      color: '#374151',
-                      cursor: 'pointer'
-                    }}>
-                      Featured Event
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                      <div
+                        onClick={() => setEventFormData({...eventFormData, featured: !eventFormData.featured})}
+                        style={{
+                          position: 'relative',
+                          width: '48px',
+                          height: '26px',
+                          backgroundColor: eventFormData.featured ? '#00A651' : '#d1d5db',
+                          borderRadius: '30px',
+                          transition: 'background-color 0.3s ease',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <div style={{
+                          position: 'absolute',
+                          top: '3px',
+                          left: eventFormData.featured ? '25px' : '3px',
+                          width: '20px',
+                          height: '20px',
+                          backgroundColor: 'white',
+                          borderRadius: '50%',
+                          transition: 'left 0.3s ease',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                        }}></div>
+                      </div>
+                      <span style={{
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        color: '#374151'
+                      }}>
+                        Featured Event
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -3240,6 +3448,346 @@ export default function AdminDashboardPage() {
                       />
                     </div>
                   </div>
+
+                  {/* Guest Speakers Section */}
+                  <div style={{
+                    marginTop: '24px',
+                    padding: '20px',
+                    background: '#f9fafb',
+                    borderRadius: '12px',
+                    border: '1px solid #e5e7eb'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                      <h4 style={{
+                        fontSize: '15px',
+                        fontWeight: 600,
+                        color: '#1f2937',
+                        margin: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Guest Speakers (Optional)
+                      </h4>
+                      {eventFormData.guest_speakers.length < 4 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEventFormData({
+                              ...eventFormData,
+                              guest_speakers: [...eventFormData.guest_speakers, { name: '', occupation: '', bio: '', photo: '', linkedin: '' }]
+                            })
+                          }}
+                          style={{
+                            padding: '8px 16px',
+                            background: '#00A651',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '20px',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            transition: 'background 0.3s'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = '#008741'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = '#00A651'}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                          </svg>
+                          Add Speaker
+                        </button>
+                      )}
+                    </div>
+                    {eventFormData.guest_speakers.map((speaker, index) => (
+                      <div key={index} style={{
+                        marginBottom: index < eventFormData.guest_speakers.length - 1 ? '24px' : '0',
+                        paddingBottom: index < eventFormData.guest_speakers.length - 1 ? '24px' : '0',
+                        borderBottom: index < eventFormData.guest_speakers.length - 1 ? '1px solid #e5e7eb' : 'none'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                          <span style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280' }}>
+                            Speaker #{index + 1}
+                          </span>
+                          {eventFormData.guest_speakers.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEventFormData({
+                                  ...eventFormData,
+                                  guest_speakers: eventFormData.guest_speakers.filter((_, i) => i !== index)
+                                })
+                              }}
+                              style={{
+                                padding: '4px 8px',
+                                background: 'transparent',
+                                color: '#ef4444',
+                                border: '1px solid #ef4444',
+                                borderRadius: '12px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#ef4444'
+                                e.currentTarget.style.color = 'white'
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'transparent'
+                                e.currentTarget.style.color = '#ef4444'
+                              }}
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+                          <div>
+                            <label style={{
+                              display: 'block',
+                              fontSize: '13px',
+                              fontWeight: 500,
+                              color: '#374151',
+                              marginBottom: '6px'
+                            }}>
+                              Name
+                            </label>
+                            <input
+                              type="text"
+                              value={speaker.name}
+                              onChange={(e) => {
+                                const newSpeakers = [...eventFormData.guest_speakers]
+                                newSpeakers[index].name = e.target.value
+                                setEventFormData({...eventFormData, guest_speakers: newSpeakers})
+                              }}
+                              style={{
+                                width: '100%',
+                                padding: '10px 14px',
+                                border: '2px solid #e5e7eb',
+                                borderRadius: '30px',
+                                fontSize: '13px',
+                                transition: 'border-color 0.3s'
+                              }}
+                              placeholder="John Doe"
+                              onFocus={(e) => e.target.style.borderColor = '#00A651'}
+                              onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                            />
+                          </div>
+                          <div>
+                            <label style={{
+                              display: 'block',
+                              fontSize: '13px',
+                              fontWeight: 500,
+                              color: '#374151',
+                              marginBottom: '6px'
+                            }}>
+                              Title/Occupation
+                            </label>
+                            <input
+                              type="text"
+                              value={speaker.occupation}
+                              onChange={(e) => {
+                                const newSpeakers = [...eventFormData.guest_speakers]
+                                newSpeakers[index].occupation = e.target.value
+                                setEventFormData({...eventFormData, guest_speakers: newSpeakers})
+                              }}
+                              style={{
+                                width: '100%',
+                                padding: '10px 14px',
+                                border: '2px solid #e5e7eb',
+                                borderRadius: '30px',
+                                fontSize: '13px',
+                                transition: 'border-color 0.3s'
+                              }}
+                              placeholder="CEO at Company"
+                              onFocus={(e) => e.target.style.borderColor = '#00A651'}
+                              onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                            />
+                          </div>
+                        </div>
+                        <div style={{ marginTop: '12px' }}>
+                          <label style={{
+                            display: 'block',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            color: '#374151',
+                            marginBottom: '6px'
+                          }}>
+                            Photo (Optional)
+                          </label>
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/jpg,image/png,image/webp"
+                              id={`speaker-photo-${index}`}
+                              style={{ display: 'none' }}
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0]
+                                if (!file) return
+
+                                // Show loading state
+                                const newSpeakers = [...eventFormData.guest_speakers]
+                                const originalPhoto = newSpeakers[index].photo
+                                newSpeakers[index].photo = 'uploading...'
+                                setEventFormData({...eventFormData, guest_speakers: newSpeakers})
+
+                                try {
+                                  const formData = new FormData()
+                                  formData.append('file', file)
+
+                                  const response = await fetch('/api/upload/speaker-photo', {
+                                    method: 'POST',
+                                    body: formData
+                                  })
+
+                                  if (!response.ok) {
+                                    const error = await response.json()
+                                    throw new Error(error.error || 'Upload failed')
+                                  }
+
+                                  const data = await response.json()
+                                  const updatedSpeakers = [...eventFormData.guest_speakers]
+                                  updatedSpeakers[index].photo = data.url
+                                  setEventFormData({...eventFormData, guest_speakers: updatedSpeakers})
+                                } catch (error: any) {
+                                  alert(`Failed to upload image: ${error.message}`)
+                                  // Restore original photo on error
+                                  const restoredSpeakers = [...eventFormData.guest_speakers]
+                                  restoredSpeakers[index].photo = originalPhoto
+                                  setEventFormData({...eventFormData, guest_speakers: restoredSpeakers})
+                                }
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                document.getElementById(`speaker-photo-${index}`)?.click()
+                              }}
+                              style={{
+                                flex: 1,
+                                padding: '10px 14px',
+                                border: '2px solid #00A651',
+                                borderRadius: '30px',
+                                fontSize: '13px',
+                                fontWeight: 500,
+                                color: '#00A651',
+                                background: 'white',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#00A651'
+                                e.currentTarget.style.color = 'white'
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'white'
+                                e.currentTarget.style.color = '#00A651'
+                              }}
+                            >
+                              {speaker.photo && speaker.photo !== 'uploading...' ? '📷 Change Photo' : '📷 Upload Photo'}
+                            </button>
+                            {speaker.photo && speaker.photo !== 'uploading...' && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newSpeakers = [...eventFormData.guest_speakers]
+                                  newSpeakers[index].photo = ''
+                                  setEventFormData({...eventFormData, guest_speakers: newSpeakers})
+                                }}
+                                style={{
+                                  padding: '10px 14px',
+                                  border: '2px solid #ef4444',
+                                  borderRadius: '30px',
+                                  fontSize: '13px',
+                                  fontWeight: 500,
+                                  color: '#ef4444',
+                                  background: 'white',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.3s'
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = '#ef4444'
+                                  e.currentTarget.style.color = 'white'
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background = 'white'
+                                  e.currentTarget.style.color = '#ef4444'
+                                }}
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </div>
+                          {speaker.photo && speaker.photo === 'uploading...' && (
+                            <div style={{ marginTop: '8px', fontSize: '12px', color: '#00A651', fontWeight: 500 }}>
+                              ⏳ Uploading...
+                            </div>
+                          )}
+                          {speaker.photo && speaker.photo !== 'uploading...' && (
+                            <div style={{ marginTop: '8px', fontSize: '11px', color: '#6b7280' }}>
+                              Preview:
+                              <img
+                                src={speaker.photo}
+                                alt="Speaker preview"
+                                style={{
+                                  display: 'block',
+                                  marginTop: '4px',
+                                  width: '60px',
+                                  height: '60px',
+                                  borderRadius: '50%',
+                                  objectFit: 'cover',
+                                  border: '2px solid #00A651'
+                                }}
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <div style={{ marginTop: '12px' }}>
+                          <label style={{
+                            display: 'block',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            color: '#374151',
+                            marginBottom: '6px'
+                          }}>
+                            LinkedIn URL (Optional)
+                          </label>
+                          <input
+                            type="url"
+                            value={speaker.linkedin}
+                            onChange={(e) => {
+                              const newSpeakers = [...eventFormData.guest_speakers]
+                              newSpeakers[index].linkedin = e.target.value
+                              setEventFormData({...eventFormData, guest_speakers: newSpeakers})
+                            }}
+                            style={{
+                              width: '100%',
+                              padding: '10px 14px',
+                              border: '2px solid #e5e7eb',
+                              borderRadius: '30px',
+                              fontSize: '13px',
+                              transition: 'border-color 0.3s'
+                            }}
+                            placeholder="https://linkedin.com/in/..."
+                            onFocus={(e) => e.target.style.borderColor = '#00A651'}
+                            onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
                   {eventFormData.event_format === 'online' || eventFormData.event_format === 'hybrid' ? (
                     <div>
                       <label style={{
@@ -3259,7 +3807,7 @@ export default function AdminDashboardPage() {
                           width: '100%',
                           padding: '12px 16px',
                           border: '2px solid #e5e7eb',
-                          borderRadius: '8px',
+                          borderRadius: '30px',
                           fontSize: '14px',
                           transition: 'border-color 0.3s'
                         }}
@@ -3271,17 +3819,17 @@ export default function AdminDashboardPage() {
                   ) : null}
                 </div>
               </div>
+              </div>
 
               {/* Modal Footer */}
               <div style={{
                 display: 'flex',
                 gap: '12px',
-                paddingTop: '24px',
+                padding: '20px 32px',
                 borderTop: '1px solid #e5e7eb',
-                position: 'sticky',
-                bottom: 0,
                 backgroundColor: 'white',
-                marginTop: '32px'
+                borderRadius: '0 0 20px 20px',
+                flexShrink: 0
               }}>
                 <button
                   type="submit"
@@ -3291,7 +3839,7 @@ export default function AdminDashboardPage() {
                     background: '#00A651',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '8px',
+                    borderRadius: '30px',
                     fontSize: '16px',
                     fontWeight: 600,
                     cursor: 'pointer',
@@ -3299,14 +3847,12 @@ export default function AdminDashboardPage() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '8px'
+                    outline: 'none'
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.background = '#008741'}
                   onMouseLeave={(e) => e.currentTarget.style.background = '#00A651'}
+                  onFocus={(e) => e.currentTarget.style.outline = 'none'}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                  </svg>
                   {selectedEvent ? 'Update Event' : 'Create Event'}
                 </button>
                 <button
@@ -3318,7 +3864,7 @@ export default function AdminDashboardPage() {
                     background: 'white',
                     color: '#6b7280',
                     border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
+                    borderRadius: '30px',
                     fontSize: '16px',
                     fontWeight: 600,
                     cursor: 'pointer',
@@ -3354,6 +3900,16 @@ export default function AdminDashboardPage() {
             opacity: 1;
           }
         }
+        @keyframes scaleIn {
+          from {
+            transform: scale(0);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
         @keyframes slideUp {
           from {
             transform: translateY(20px);
@@ -3375,6 +3931,156 @@ export default function AdminDashboardPage() {
           }
         }
       `}</style>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            animation: 'fadeIn 0.2s ease-out'
+          }}
+          onClick={() => {
+            setShowDeleteConfirm(false)
+            setEventToDelete(null)
+          }}
+        >
+          <div
+            style={{
+              background: 'white',
+              borderRadius: '16px',
+              width: '90%',
+              maxWidth: '450px',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+              animation: 'slideDown 0.3s ease-out',
+              overflow: 'hidden'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div style={{
+              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+              padding: '24px',
+              color: 'white'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </div>
+                <div>
+                  <h3 style={{
+                    fontSize: '20px',
+                    fontWeight: 700,
+                    margin: 0,
+                    marginBottom: '4px'
+                  }}>Delete Event</h3>
+                  <p style={{
+                    fontSize: '14px',
+                    margin: 0,
+                    opacity: 0.9
+                  }}>This action cannot be undone</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div style={{ padding: '24px' }}>
+              <p style={{
+                fontSize: '15px',
+                lineHeight: '1.6',
+                color: '#4b5563',
+                margin: 0
+              }}>
+                Are you sure you want to delete this event? All associated data including registrations and attendee information will be permanently removed from the system.
+              </p>
+            </div>
+
+            {/* Footer */}
+            <div style={{
+              padding: '20px 24px',
+              background: '#f9fafb',
+              display: 'flex',
+              gap: '12px',
+              justifyContent: 'flex-end'
+            }}>
+              <button
+                onClick={() => {
+                  setShowDeleteConfirm(false)
+                  setEventToDelete(null)
+                }}
+                style={{
+                  padding: '10px 24px',
+                  borderRadius: '30px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  border: '2px solid #e5e7eb',
+                  background: 'white',
+                  color: '#6b7280'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#f3f4f6'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'white'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteEvent}
+                style={{
+                  padding: '10px 24px',
+                  borderRadius: '30px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  border: 'none',
+                  background: '#ef4444',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#dc2626'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#ef4444'
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
+                </svg>
+                Delete Event
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

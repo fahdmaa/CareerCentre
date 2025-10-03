@@ -232,6 +232,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
+
+    // Log the received data for debugging
+    console.log('=== EVENT CREATION REQUEST ===')
+    console.log('Guest speakers received:', JSON.stringify(body.guest_speakers, null, 2))
+
     const {
       title,
       description,
@@ -247,6 +252,7 @@ export async function POST(request: NextRequest) {
       host_org,
       image_url,
       featured,
+      guest_speakers,
       guest_speaker_name,
       guest_speaker_occupation,
       guest_speaker_bio,
@@ -303,42 +309,66 @@ export async function POST(request: NextRequest) {
       }, { status: 201 })
     }
 
+    // Prepare guest speakers for JSONB - ensure it's an array
+    let guestSpeakersForDb = null
+    if (guest_speakers && Array.isArray(guest_speakers) && guest_speakers.length > 0) {
+      // Filter out empty speakers (where all fields are empty)
+      const validSpeakers = guest_speakers.filter((speaker: any) =>
+        speaker.name || speaker.occupation || speaker.bio || speaker.linkedin || speaker.photo
+      )
+      guestSpeakersForDb = validSpeakers.length > 0 ? validSpeakers : null
+    }
+
+    // Prepare event data for insertion
+    const eventToInsert = {
+      title,
+      description,
+      event_date,
+      event_time,
+      location,
+      capacity,
+      spots_taken: 0,
+      event_type: event_type || 'workshop',
+      event_format: event_format || 'on-campus',
+      status: 'upcoming',
+      featured: featured || false,
+      city,
+      campus,
+      tags,
+      host_org,
+      image_url,
+      guest_speakers: guestSpeakersForDb,
+      guest_speaker_name,
+      guest_speaker_occupation,
+      guest_speaker_bio,
+      guest_speaker_photo,
+      guest_speaker_linkedin,
+      agenda,
+      speakers,
+      what_to_bring,
+      meeting_link
+    }
+
+    console.log('Data being inserted:', JSON.stringify({
+      title,
+      guest_speakers_received: guest_speakers,
+      guest_speakers_processed: guestSpeakersForDb,
+      guest_speakers_final: eventToInsert.guest_speakers
+    }, null, 2))
+
     // Create event in Supabase
     const { data, error } = await supabase
       .from('events')
-      .insert({
-        title,
-        description,
-        event_date,
-        event_time,
-        location,
-        capacity,
-        spots_taken: 0,
-        event_type: event_type || 'workshop',
-        event_format: event_format || 'on-campus',
-        status: 'upcoming',
-        featured: featured || false,
-        city,
-        campus,
-        tags,
-        host_org,
-        image_url,
-        guest_speaker_name,
-        guest_speaker_occupation,
-        guest_speaker_bio,
-        guest_speaker_photo,
-        guest_speaker_linkedin,
-        agenda,
-        speakers,
-        what_to_bring,
-        meeting_link
-      })
+      .insert(eventToInsert)
       .select()
       .single()
 
     if (error) {
+      console.error('Supabase insert error:', error)
       throw error
     }
+
+    console.log('Event created successfully. Saved guest_speakers:', JSON.stringify(data.guest_speakers, null, 2))
 
     return NextResponse.json({
       success: true,
@@ -366,7 +396,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { eventId, ...updateData } = body
+    const { eventId, guest_speakers, capacity, ...updateData } = body
 
     if (!eventId) {
       return NextResponse.json(
@@ -382,9 +412,21 @@ export async function PUT(request: NextRequest) {
         event: {
           id: eventId,
           ...updateData,
+          guest_speakers,
+          capacity,
           updated_at: new Date().toISOString()
         }
       })
+    }
+
+    // Prepare guest speakers for JSONB - ensure it's an array
+    let guestSpeakersForDb = null
+    if (guest_speakers && Array.isArray(guest_speakers) && guest_speakers.length > 0) {
+      // Filter out empty speakers (where all fields are empty)
+      const validSpeakers = guest_speakers.filter((speaker: any) =>
+        speaker.name || speaker.occupation || speaker.bio || speaker.linkedin || speaker.photo
+      )
+      guestSpeakersForDb = validSpeakers.length > 0 ? validSpeakers : null
     }
 
     // Update event in Supabase
@@ -392,6 +434,8 @@ export async function PUT(request: NextRequest) {
       .from('events')
       .update({
         ...updateData,
+        capacity: capacity ? parseInt(capacity) : updateData.capacity,
+        guest_speakers: guestSpeakersForDb,
         updated_at: new Date().toISOString()
       })
       .eq('id', eventId)
@@ -399,6 +443,7 @@ export async function PUT(request: NextRequest) {
       .single()
 
     if (error) {
+      console.error('Supabase update error:', error)
       throw error
     }
 

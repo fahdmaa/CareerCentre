@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import '../../form-theme.css'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -55,44 +56,49 @@ export default function AdminLoginPage() {
             <p>Sign in to access the dashboard</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="login-form">
+          <form onSubmit={handleSubmit} className="login-form" style={{ padding: '30px' }}>
             {error && (
-              <div className="error-message">
+              <div className="error-message-themed">
                 <i className="fas fa-exclamation-circle"></i> {error}
               </div>
             )}
 
-            <div className="form-group">
-              <label htmlFor="username">
+            <div className="form-group-themed">
+              <label htmlFor="username" className="form-label-themed">
                 <i className="fas fa-user"></i> Username
               </label>
               <input
                 type="text"
                 id="username"
+                className="themed"
                 value={formData.username}
                 onChange={(e) => setFormData({...formData, username: e.target.value})}
                 required
                 disabled={isLoading}
+                placeholder="Enter your username"
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="password">
+            <div className="form-group-themed">
+              <label htmlFor="password" className="form-label-themed">
                 <i className="fas fa-lock"></i> Password
               </label>
               <input
                 type="password"
                 id="password"
+                className="themed"
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 required
                 disabled={isLoading}
+                placeholder="Enter your password"
               />
             </div>
 
-            <button 
-              type="submit" 
-              className="btn btn-primary btn-block"
+            <button
+              type="submit"
+              className="btn-submit-themed"
+              style={{ width: '100%', marginTop: '10px' }}
               disabled={isLoading}
             >
               {isLoading ? (

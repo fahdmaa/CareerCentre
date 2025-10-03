@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 
 interface Event {
@@ -25,6 +25,13 @@ interface Event {
   speakers?: string[]
   what_to_bring?: string
   meeting_link?: string
+  guest_speakers?: Array<{
+    name: string
+    occupation: string
+    bio: string
+    photo: string
+    linkedin: string
+  }>
   guest_speaker_name?: string
   guest_speaker_occupation?: string
   guest_speaker_bio?: string
@@ -36,29 +43,108 @@ interface EventDetailsModalProps {
   event: Event
   onClose: () => void
   onRSVP: () => void
+  onSuccess?: () => void
 }
 
-export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetailsModalProps) {
+export default function EventDetailsModal({ event, onClose, onRSVP, onSuccess }: EventDetailsModalProps) {
+  const [isClosing, setIsClosing] = useState(false)
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false)
+  const [formData, setFormData] = useState({
+    studentName: '',
+    studentEmail: '',
+    studentYear: '',
+    studentProgram: ''
+  })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
+
   const spotsLeft = event.capacity - event.spots_taken
   const isWaitlist = spotsLeft <= 0
+
+  // Hide navigation when modal opens
+  useEffect(() => {
+    const nav = document.querySelector('.pill-navbar')
+    if (nav) {
+      (nav as HTMLElement).style.display = 'none'
+    }
+    return () => {
+      if (nav) {
+        (nav as HTMLElement).style.display = ''
+      }
+    }
+  }, [])
 
   const handleRegisterClick = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    setShowRegistrationForm(true)
+  }
 
-    console.log('Register Now button clicked in EventDetailsModal')
-    alert('Register button clicked! Check console for details.')
-    console.log('Event details:', event)
-    console.log('onRSVP function:', onRSVP)
-    console.log('Type of onRSVP:', typeof onRSVP)
+  const handleSubmitRegistration = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
 
-    if (typeof onRSVP === 'function') {
-      console.log('Calling onRSVP function...')
-      onRSVP()
-    } else {
-      console.error('onRSVP is not a function!', onRSVP)
-      alert('Error: onRSVP is not properly defined')
+    try {
+      const response = await fetch('/api/public/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event_id: event.id,
+          studentName: formData.studentName,
+          studentEmail: formData.studentEmail,
+          studentPhone: '',
+          studentMajor: formData.studentProgram || 'Not specified',
+          yearOfStudy: formData.studentYear || 'Not specified'
+        })
+      })
+
+      const data = await response.json()
+      console.log('Registration response:', { status: response.ok, data })
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed')
+      }
+
+      const message = data.on_waitlist && data.waitlist_position
+        ? `You're on the waitlist! Position #${data.waitlist_position}. We'll notify you if a spot opens.`
+        : "You're registered! Check your email for confirmation details."
+
+      console.log('Setting success message:', message)
+      setSuccessMessage(message)
+
+      // Call onSuccess to refresh events list
+      if (onSuccess) {
+        console.log('Calling onSuccess to refresh events')
+        onSuccess()
+      }
+
+      // Close modal after showing success message
+      setTimeout(() => {
+        console.log('Auto-closing modal')
+        handleClose()
+      }, 2500)
+    } catch (error: any) {
+      console.error('RSVP error:', error)
+      setError(error.message || 'Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
     }
+  }
+
+  const handleClose = () => {
+    setIsClosing(true)
+
+    // Show navigation again
+    const nav = document.querySelector('.pill-navbar')
+    if (nav) {
+      (nav as HTMLElement).style.display = ''
+    }
+
+    setTimeout(() => {
+      onClose()
+    }, 200)
   }
 
   const formatDate = (dateString: string) => {
@@ -114,58 +200,53 @@ export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetai
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.7)',
+      background: 'rgba(0, 0, 0, 0.6)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 1000,
       padding: '20px',
-      animation: 'fadeIn 0.3s ease'
+      transition: 'opacity 0.2s ease-out',
+      opacity: isClosing ? 0 : 1
     },
     container: {
       background: 'white',
       borderRadius: '16px',
       width: '100%',
-      maxWidth: '800px',
-      maxHeight: '90vh',
+      maxWidth: '700px',
+      maxHeight: '85vh',
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column' as const,
-      boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+      boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+      position: 'relative' as const,
+      transition: 'transform 0.2s ease-out, opacity 0.2s ease-out',
+      transform: isClosing ? 'translateY(20px)' : 'translateY(0)',
+      opacity: isClosing ? 0 : 1
     },
     header: {
-      position: 'relative' as const,
-      height: '250px',
-      background: 'linear-gradient(135deg, #00A651, #00C853)',
-      overflow: 'hidden'
-    },
-    headerOverlay: {
-      position: 'absolute' as const,
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6))',
-      display: 'flex',
-      flexDirection: 'column' as const,
-      justifyContent: 'flex-end',
-      padding: '24px'
+      background: 'linear-gradient(135deg, #00A651 0%, #00C853 100%)',
+      padding: '32px 32px 24px',
+      color: 'white',
+      position: 'relative' as const
     },
     closeBtn: {
       position: 'absolute' as const,
-      top: '20px',
-      right: '20px',
+      top: '16px',
+      right: '16px',
       width: '36px',
       height: '36px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'rgba(255, 255, 255, 0.9)',
+      background: 'rgba(255, 255, 255, 0.2)',
       border: 'none',
       borderRadius: '50%',
       cursor: 'pointer',
       transition: 'all 0.3s',
-      zIndex: 10
+      zIndex: 10,
+      fontSize: '16px',
+      color: 'white'
     },
     badges: {
       display: 'flex',
@@ -175,85 +256,80 @@ export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetai
     badge: {
       padding: '6px 12px',
       borderRadius: '20px',
-      fontSize: '12px',
+      fontSize: '11px',
       fontWeight: '600',
       color: 'white',
-      backdropFilter: 'blur(8px)',
+      background: 'rgba(255, 255, 255, 0.2)',
       display: 'inline-flex',
       alignItems: 'center',
       gap: '6px'
     },
     title: {
-      fontSize: '28px',
+      fontSize: '26px',
       fontWeight: '700',
       color: 'white',
-      marginBottom: '8px'
+      marginBottom: '8px',
+      lineHeight: '1.3'
     },
     subtitle: {
       fontSize: '14px',
       color: 'rgba(255, 255, 255, 0.9)',
       display: 'flex',
       alignItems: 'center',
-      gap: '4px'
+      gap: '6px'
     },
     body: {
       flex: 1,
       overflowY: 'auto' as const,
-      padding: '32px'
+      padding: '24px 32px 100px'
     },
     infoGrid: {
       display: 'grid',
       gridTemplateColumns: 'repeat(2, 1fr)',
-      gap: '24px',
-      marginBottom: '32px'
+      gap: '16px',
+      marginBottom: '24px',
+      paddingBottom: '24px',
+      borderBottom: '1px solid #f0f0f0'
     },
     infoItem: {
       display: 'flex',
-      alignItems: 'flex-start',
-      gap: '12px'
-    },
-    infoIcon: {
-      width: '40px',
-      height: '40px',
-      background: '#f3f4f6',
-      borderRadius: '8px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: '#00A651',
-      flexShrink: 0
-    },
-    infoContent: {
-      flex: 1
+      flexDirection: 'column' as const,
+      gap: '6px'
     },
     infoLabel: {
-      fontSize: '12px',
-      color: '#6b7280',
+      fontSize: '11px',
+      color: '#999',
       textTransform: 'uppercase' as const,
       letterSpacing: '0.5px',
-      marginBottom: '4px'
+      fontWeight: '600'
     },
     infoValue: {
-      fontSize: '15px',
-      color: '#1f2937',
-      fontWeight: '500'
-    },
-    section: {
-      marginBottom: '32px'
-    },
-    sectionTitle: {
-      fontSize: '18px',
-      fontWeight: '600',
-      color: '#1f2937',
-      marginBottom: '12px',
+      fontSize: '14px',
+      color: '#333',
+      fontWeight: '500',
       display: 'flex',
       alignItems: 'center',
       gap: '8px'
     },
+    infoIcon: {
+      color: '#00A651',
+      fontSize: '16px'
+    },
+    section: {
+      marginBottom: '24px'
+    },
+    sectionTitle: {
+      fontSize: '13px',
+      fontWeight: '700',
+      color: '#00A651',
+      marginBottom: '12px',
+      textTransform: 'uppercase' as const,
+      letterSpacing: '0.5px'
+    },
     description: {
-      fontSize: '15px',
+      fontSize: '14px',
       lineHeight: '1.6',
-      color: '#4b5563'
+      color: '#666'
     },
     capacitySection: {
       background: '#f9fafb',
@@ -301,23 +377,22 @@ export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetai
       gap: '8px'
     },
     footer: {
-      padding: '24px 32px',
-      borderTop: '1px solid #e5e7eb',
+      padding: '20px 32px',
+      background: 'white',
+      borderTop: '1px solid #f0f0f0',
       display: 'flex',
-      gap: '16px',
-      background: 'white'
+      gap: '12px'
     },
     btnSecondary: {
-      flex: 1,
-      padding: '14px 24px',
-      borderRadius: '8px',
-      fontSize: '16px',
+      padding: '14px 28px',
+      borderRadius: '30px',
+      fontSize: '14px',
       fontWeight: '600',
       cursor: 'pointer',
       transition: 'all 0.3s',
-      border: '1px solid #d1d5db',
+      border: '2px solid #e5e7eb',
       background: 'white',
-      color: '#6b7280',
+      color: '#666',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -325,9 +400,9 @@ export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetai
     },
     btnPrimary: {
       flex: 1,
-      padding: '14px 24px',
-      borderRadius: '8px',
-      fontSize: '16px',
+      padding: '14px 28px',
+      borderRadius: '30px',
+      fontSize: '14px',
       fontWeight: '600',
       cursor: 'pointer',
       transition: 'all 0.3s',
@@ -339,17 +414,67 @@ export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetai
       justifyContent: 'center',
       gap: '8px'
     },
+    speakerSection: {
+      marginTop: 'auto'
+    },
+    speakerTitle: {
+      fontSize: '11px',
+      color: 'rgba(255, 255, 255, 0.7)',
+      textTransform: 'uppercase' as const,
+      letterSpacing: '0.5px',
+      marginBottom: '12px',
+      fontWeight: '600'
+    },
+    speakerItem: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      padding: '12px',
+      borderRadius: '12px',
+      background: 'rgba(255, 255, 255, 0.15)',
+      backdropFilter: 'blur(10px)',
+      marginBottom: '8px'
+    },
+    speakerAvatarSmall: {
+      width: '44px',
+      height: '44px',
+      borderRadius: '50%',
+      background: 'white',
+      color: '#00A651',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '16px',
+      fontWeight: '700',
+      flexShrink: 0
+    },
+    speakerInfo: {
+      flex: 1,
+      minWidth: 0
+    },
+    speakerName: {
+      fontSize: '14px',
+      fontWeight: '600',
+      color: 'white',
+      marginBottom: '2px'
+    },
+    speakerRole: {
+      fontSize: '12px',
+      color: 'rgba(255, 255, 255, 0.8)',
+      fontWeight: '400'
+    },
     tagsContainer: {
       display: 'flex',
       gap: '8px',
       flexWrap: 'wrap' as const
     },
     tag: {
-      padding: '6px 12px',
-      background: '#f3f4f6',
-      borderRadius: '16px',
+      padding: '8px 16px',
+      background: 'rgba(0, 166, 81, 0.1)',
+      borderRadius: '20px',
       fontSize: '13px',
-      color: '#4b5563'
+      color: '#00A651',
+      fontWeight: '500'
     },
     speakersGrid: {
       display: 'grid',
@@ -378,253 +503,217 @@ export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetai
   }
 
   return (
-    <div style={styles.overlay} onClick={onClose}>
-      <div style={styles.container} onClick={(e) => e.stopPropagation()}>
+    <>
+      <style>{`
+        @keyframes bounceIn {
+          0% {
+            opacity: 0;
+            transform: scale(0.9) translateY(-10px);
+          }
+          50% {
+            transform: scale(1.02) translateY(0);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+      `}</style>
+      <div style={styles.overlay} onClick={handleClose}>
+        <div style={styles.container} onClick={(e) => e.stopPropagation()}>
+          <button style={styles.closeBtn} onClick={handleClose}>
+            <i className="fas fa-times"></i>
+          </button>
+
         <div style={styles.header}>
-          {event.image_url && (
-            <Image
-              src={event.image_url}
-              alt={event.title}
-              fill
-              style={{ objectFit: 'cover', opacity: 0.9 }}
-            />
-          )}
-          <div style={styles.headerOverlay}>
-            <button style={styles.closeBtn} onClick={onClose}>
-              <i className="fas fa-times"></i>
-            </button>
-            <div style={styles.badges}>
-              <span style={{ ...styles.badge, backgroundColor: getFormatColor(event.event_format) }}>
-                <i className={`fas ${getFormatIcon(event.event_format)}`}></i>
-                {event.event_format}
-              </span>
-              <span style={{ ...styles.badge, backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-                <i className={`fas ${getTypeIcon(event.event_type)}`}></i>
-                {event.event_type}
-              </span>
-            </div>
-            <h2 style={styles.title}>{event.title}</h2>
-            {event.host_org && (
-              <div style={styles.subtitle}>
-                <i className="fas fa-building"></i>
-                Hosted by {event.host_org}
-              </div>
-            )}
+          <div style={styles.badges}>
+            <span style={styles.badge}>
+              <i className={`fas ${getFormatIcon(event.event_format)}`}></i>
+              {event.event_format}
+            </span>
+            <span style={styles.badge}>
+              <i className={`fas ${getTypeIcon(event.event_type)}`}></i>
+              {event.event_type}
+            </span>
           </div>
+          <h2 style={styles.title}>{event.title}</h2>
+          {event.host_org && (
+            <div style={styles.subtitle}>
+              <i className="fas fa-building"></i>
+              Hosted by {event.host_org}
+            </div>
+          )}
         </div>
 
-        <div style={styles.body}>
-          <div style={styles.infoGrid}>
+        {!showRegistrationForm && (
+          <div style={styles.body}>
+            {/* Event Info Grid */}
+            <div style={styles.infoGrid}>
             <div style={styles.infoItem}>
-              <div style={styles.infoIcon}>
-                <i className="far fa-calendar"></i>
-              </div>
-              <div style={styles.infoContent}>
-                <div style={styles.infoLabel}>Date</div>
-                <div style={styles.infoValue}>{formatDate(event.event_date)}</div>
+              <div style={styles.infoLabel}>DATE</div>
+              <div style={styles.infoValue}>
+                <i className="far fa-calendar" style={styles.infoIcon}></i>
+                {formatDate(event.event_date)}
               </div>
             </div>
-
             <div style={styles.infoItem}>
-              <div style={styles.infoIcon}>
-                <i className="far fa-clock"></i>
-              </div>
-              <div style={styles.infoContent}>
-                <div style={styles.infoLabel}>Time</div>
-                <div style={styles.infoValue}>{formatTime(event.event_time)}</div>
+              <div style={styles.infoLabel}>TIME</div>
+              <div style={styles.infoValue}>
+                <i className="far fa-clock" style={styles.infoIcon}></i>
+                {formatTime(event.event_time)}
               </div>
             </div>
-
             <div style={styles.infoItem}>
-              <div style={styles.infoIcon}>
-                <i className="fas fa-map-marker-alt"></i>
-              </div>
-              <div style={styles.infoContent}>
-                <div style={styles.infoLabel}>Location</div>
-                <div style={styles.infoValue}>
-                  {event.location}
-                  {event.campus && `, ${event.campus}`}
-                  {event.city && `, ${event.city}`}
-                </div>
+              <div style={styles.infoLabel}>LOCATION</div>
+              <div style={styles.infoValue}>
+                <i className="fas fa-map-marker-alt" style={styles.infoIcon}></i>
+                {event.location}
               </div>
             </div>
-
             <div style={styles.infoItem}>
-              <div style={styles.infoIcon}>
-                <i className="fas fa-users"></i>
-              </div>
-              <div style={styles.infoContent}>
-                <div style={styles.infoLabel}>Capacity</div>
-                <div style={styles.infoValue}>
-                  {event.spots_taken} / {event.capacity} registered
-                </div>
+              <div style={styles.infoLabel}>CAPACITY</div>
+              <div style={styles.infoValue}>
+                <i className="fas fa-users" style={styles.infoIcon}></i>
+                {spotsLeft > 0 ? `${spotsLeft} spots left` : 'Full - Waitlist'}
               </div>
             </div>
           </div>
+
+          {/* Guest Speakers */}
+          {((event.guest_speakers && event.guest_speakers.length > 0) || event.guest_speaker_name) && (
+            <div style={styles.section}>
+              <h3 style={styles.sectionTitle}>
+                {event.guest_speakers && event.guest_speakers.length > 1 ? 'Guest Speakers' : 'Guest Speaker'}
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {/* Show new guest_speakers array if available */}
+                {event.guest_speakers && event.guest_speakers.length > 0 ? (
+                  event.guest_speakers.map((speaker, index) => (
+                    <div key={index} style={{
+                      background: '#f9fafb',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px'
+                    }}>
+                      {speaker.photo ? (
+                        <img
+                          src={speaker.photo}
+                          alt={speaker.name}
+                          style={{
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '50%',
+                            objectFit: 'cover',
+                            flexShrink: 0,
+                            border: '2px solid #00A651'
+                          }}
+                          onError={(e) => {
+                            // Fallback to initials if image fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const fallback = target.nextElementSibling as HTMLElement;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
+                        />
+                      ) : null}
+                      <div style={{
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #00A651, #00C853)',
+                        color: 'white',
+                        display: speaker.photo ? 'none' : 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '18px',
+                        fontWeight: '700',
+                        flexShrink: 0
+                      }}>
+                        {speaker.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#333', marginBottom: '2px' }}>
+                          {speaker.name}
+                        </div>
+                        {speaker.occupation && (
+                          <div style={{ fontSize: '13px', color: '#00A651', fontWeight: '500', marginBottom: '4px' }}>
+                            {speaker.occupation}
+                          </div>
+                        )}
+                        {speaker.linkedin && (
+                          <a
+                            href={speaker.linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ fontSize: '12px', color: '#0077b5', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                          >
+                            <i className="fab fa-linkedin"></i>
+                            LinkedIn Profile
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : event.guest_speaker_name ? (
+                  /* Fallback to old single speaker format */
+                  <div style={{
+                    background: '#f9fafb',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
+                  }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #00A651, #00C853)',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      flexShrink: 0
+                    }}>
+                      {event.guest_speaker_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: '600', color: '#333' }}>
+                        {event.guest_speaker_name}
+                      </div>
+                      {event.guest_speaker_occupation && (
+                        <div style={{ fontSize: '13px', color: '#00A651', fontWeight: '500' }}>
+                          {event.guest_speaker_occupation}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          )}
 
           {event.description && (
             <div style={styles.section}>
-              <h3 style={styles.sectionTitle}>
-                <i className="fas fa-info-circle"></i>
-                About this event
-              </h3>
+              <h3 style={styles.sectionTitle}>About this event</h3>
               <p style={styles.description}>{event.description}</p>
-            </div>
-          )}
-
-          {event.guest_speaker_name && (
-            <div style={styles.section}>
-              <h3 style={styles.sectionTitle}>
-                <i className="fas fa-user-tie"></i>
-                Guest Speaker
-              </h3>
-              <div style={{
-                display: 'flex',
-                gap: '20px',
-                alignItems: 'flex-start',
-                background: '#f9fafb',
-                padding: '20px',
-                borderRadius: '12px'
-              }}>
-                {event.guest_speaker_photo && (
-                  <div style={{
-                    width: '100px',
-                    height: '100px',
-                    borderRadius: '50%',
-                    overflow: 'hidden',
-                    flexShrink: 0,
-                    background: '#e5e7eb'
-                  }}>
-                    <Image
-                      src={event.guest_speaker_photo}
-                      alt={event.guest_speaker_name}
-                      width={100}
-                      height={100}
-                      style={{ objectFit: 'cover' }}
-                    />
-                  </div>
-                )}
-                {!event.guest_speaker_photo && (
-                  <div style={{
-                    width: '100px',
-                    height: '100px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #00A651, #00C853)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    fontSize: '32px',
-                    fontWeight: 'bold',
-                    flexShrink: 0
-                  }}>
-                    {event.guest_speaker_name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                  </div>
-                )}
-                <div style={{ flex: 1 }}>
-                  <h4 style={{
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: '#1f2937',
-                    marginBottom: '4px'
-                  }}>
-                    {event.guest_speaker_name}
-                  </h4>
-                  <p style={{
-                    fontSize: '16px',
-                    color: '#00A651',
-                    fontWeight: '500',
-                    marginBottom: '12px'
-                  }}>
-                    {event.guest_speaker_occupation}
-                  </p>
-                  {event.guest_speaker_bio && (
-                    <p style={{
-                      fontSize: '14px',
-                      color: '#4b5563',
-                      lineHeight: '1.5',
-                      marginBottom: '12px'
-                    }}>
-                      {event.guest_speaker_bio}
-                    </p>
-                  )}
-                  {event.guest_speaker_linkedin && (
-                    <a
-                      href={event.guest_speaker_linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        padding: '6px 14px',
-                        background: '#0077b5',
-                        color: 'white',
-                        borderRadius: '6px',
-                        textDecoration: 'none',
-                        fontSize: '14px',
-                        fontWeight: '500',
-                        transition: 'background 0.3s'
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = '#005885'}
-                      onMouseLeave={(e) => e.currentTarget.style.background = '#0077b5'}
-                    >
-                      <i className="fab fa-linkedin"></i>
-                      Connect on LinkedIn
-                    </a>
-                  )}
-                </div>
-              </div>
             </div>
           )}
 
           {event.agenda && (
             <div style={styles.section}>
-              <h3 style={styles.sectionTitle}>
-                <i className="fas fa-list-ul"></i>
-                Agenda
-              </h3>
+              <h3 style={styles.sectionTitle}>Agenda</h3>
               <div style={styles.description}>{event.agenda}</div>
-            </div>
-          )}
-
-          {event.speakers && event.speakers.length > 0 && (
-            <div style={styles.section}>
-              <h3 style={styles.sectionTitle}>
-                <i className="fas fa-microphone"></i>
-                Speakers
-              </h3>
-              <div style={styles.speakersGrid}>
-                {event.speakers.map((speaker, index) => (
-                  <div key={index} style={styles.speakerCard}>
-                    <div style={styles.speakerAvatar}>
-                      {speaker.charAt(0).toUpperCase()}
-                    </div>
-                    <div style={{ fontSize: '14px', fontWeight: '500', color: '#1f2937' }}>
-                      {speaker}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {event.what_to_bring && (
-            <div style={styles.section}>
-              <h3 style={styles.sectionTitle}>
-                <i className="fas fa-backpack"></i>
-                What to bring
-              </h3>
-              <p style={styles.description}>{event.what_to_bring}</p>
             </div>
           )}
 
           {event.tags && event.tags.length > 0 && (
             <div style={styles.section}>
-              <h3 style={styles.sectionTitle}>
-                <i className="fas fa-tags"></i>
-                Tags
-              </h3>
+              <h3 style={styles.sectionTitle}>Tags</h3>
               <div style={styles.tagsContainer}>
                 {event.tags.map((tag, index) => (
                   <span key={index} style={styles.tag}>#{tag}</span>
@@ -632,60 +721,182 @@ export default function EventDetailsModal({ event, onClose, onRSVP }: EventDetai
               </div>
             </div>
           )}
-
-          <div style={styles.capacitySection}>
-            <div style={styles.capacityHeader}>
-              <span style={styles.capacityTitle}>Registration Status</span>
-              <span style={styles.capacityNumbers}>
-                {spotsLeft > 0 ? `${spotsLeft} spots remaining` : 'Event full'}
-              </span>
-            </div>
-            <div style={styles.capacityBar}>
-              <div style={styles.capacityFill}></div>
-            </div>
-            {isWaitlist && (
-              <div style={styles.waitlistNotice}>
-                <i className="fas fa-exclamation-circle"></i>
-                This event is full. You can join the waitlist.
-              </div>
-            )}
           </div>
+        )}
 
-          {event.meeting_link && event.event_format.toLowerCase() !== 'on-campus' && (
-            <div style={styles.section}>
-              <h3 style={styles.sectionTitle}>
-                <i className="fas fa-link"></i>
-                Meeting Link
+        {!showRegistrationForm ? (
+          <div style={styles.footer}>
+            <button
+              type="button"
+              style={styles.btnSecondary}
+              onClick={handleClose}
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              style={styles.btnPrimary}
+              onClick={handleRegisterClick}
+            >
+              {isWaitlist ? 'Join Waitlist' : 'Register Now'}
+            </button>
+          </div>
+        ) : (
+          <>
+            <div style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: '32px',
+              paddingBottom: '100px',
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgba(0, 166, 81, 0.3) transparent'
+            } as React.CSSProperties}>
+              <h3 style={{fontSize: '20px', fontWeight: '700', color: '#00A651', marginBottom: '8px'}}>
+                {isWaitlist ? 'Join Waitlist' : 'Complete Registration'}
               </h3>
-              <p style={styles.description}>
-                A meeting link will be provided to registered participants before the event.
+              <p style={{fontSize: '14px', color: '#6b7280', marginBottom: '28px'}}>
+                Please fill in your details to register for this event
               </p>
-            </div>
-          )}
-        </div>
 
-        <div style={styles.footer}>
-          <button
-            type="button"
-            style={styles.btnSecondary}
-            onClick={onClose}
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            style={styles.btnPrimary}
-            onClick={handleRegisterClick}
-            onMouseDown={(e) => {
-              console.log('Button mousedown event triggered')
-              e.stopPropagation()
-            }}
-          >
-            <i className={`fas ${isWaitlist ? 'fa-clock' : 'fa-check'}`}></i>
-            {isWaitlist ? 'Join Waitlist' : 'Register Now'}
-          </button>
-        </div>
+              {error && (
+                <div style={{background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '14px 16px', marginBottom: '24px', color: '#991b1b', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px'}}>
+                  <i className="fas fa-exclamation-circle"></i>
+                  {error}
+                </div>
+              )}
+
+              {successMessage && (
+                <div style={{
+                  background: 'linear-gradient(135deg, #00A651 0%, #00C853 100%)',
+                  borderRadius: '12px',
+                  padding: '20px 24px',
+                  marginBottom: '24px',
+                  color: 'white',
+                  fontSize: '15px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  boxShadow: '0 4px 12px rgba(0, 166, 81, 0.3)',
+                  animation: 'bounceIn 0.5s ease-out'
+                }}>
+                  <div style={{
+                    width: '40px',
+                    height: '40px',
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '20px',
+                    flexShrink: 0
+                  }}>
+                    <i className="fas fa-check"></i>
+                  </div>
+                  <div style={{flex: 1}}>
+                    <div style={{fontWeight: '600', marginBottom: '4px'}}>Success!</div>
+                    <div style={{fontSize: '14px', opacity: 0.95}}>{successMessage}</div>
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmitRegistration} style={{opacity: successMessage ? 0.5 : 1, pointerEvents: successMessage ? 'none' : 'auto', transition: 'opacity 0.3s'}}>
+                <div style={{marginBottom: '24px'}}>
+                  <label style={{display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px'}}>
+                    Full Name <span style={{color: '#ef4444'}}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    disabled={!!successMessage}
+                    value={formData.studentName}
+                    onChange={(e) => setFormData({...formData, studentName: e.target.value})}
+                    style={{width: '100%', padding: '12px 16px', border: '2px solid #e5e7eb', borderRadius: '8px', fontSize: '15px', transition: 'all 0.3s', outline: 'none'}}
+                    placeholder="Enter your full name"
+                    onFocus={(e) => e.currentTarget.style.borderColor = '#00A651'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+
+                <div style={{marginBottom: '24px'}}>
+                  <label style={{display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px'}}>
+                    EMSI Email <span style={{color: '#ef4444'}}>*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.studentEmail}
+                    onChange={(e) => setFormData({...formData, studentEmail: e.target.value})}
+                    style={{width: '100%', padding: '12px 16px', border: '2px solid #e5e7eb', borderRadius: '8px', fontSize: '15px', transition: 'all 0.3s', outline: 'none'}}
+                    placeholder="your.name@emsi.ma"
+                    onFocus={(e) => e.currentTarget.style.borderColor = '#00A651'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                  />
+                </div>
+
+                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px'}}>
+                  <div>
+                    <label style={{display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px'}}>
+                      Year of Study
+                    </label>
+                    <select
+                      value={formData.studentYear}
+                      onChange={(e) => setFormData({...formData, studentYear: e.target.value})}
+                      style={{width: '100%', padding: '12px 16px', border: '2px solid #e5e7eb', borderRadius: '8px', fontSize: '15px', transition: 'all 0.3s', outline: 'none', background: 'white'}}
+                      onFocus={(e) => e.currentTarget.style.borderColor = '#00A651'}
+                      onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                    >
+                      <option value="">Select year</option>
+                      <option value="1st year">1st year</option>
+                      <option value="2nd year">2nd year</option>
+                      <option value="3rd year">3rd year</option>
+                      <option value="4th year">4th year</option>
+                      <option value="5th year">5th year</option>
+                      <option value="Alumni">Alumni</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{display: 'block', fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px'}}>
+                      Program/Major
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.studentProgram}
+                      onChange={(e) => setFormData({...formData, studentProgram: e.target.value})}
+                      style={{width: '100%', padding: '12px 16px', border: '2px solid #e5e7eb', borderRadius: '8px', fontSize: '15px', transition: 'all 0.3s', outline: 'none'}}
+                      placeholder="e.g., Computer Science"
+                      onFocus={(e) => e.currentTarget.style.borderColor = '#00A651'}
+                      onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div style={{padding: '20px 32px', background: 'white', borderTop: '1px solid #f0f0f0', display: 'flex', gap: '12px'}}>
+              <button
+                type="button"
+                onClick={() => setShowRegistrationForm(false)}
+                style={{flex: 1, padding: '14px 24px', background: 'white', border: '2px solid #e5e7eb', borderRadius: '30px', fontSize: '15px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.3s', color: '#6b7280'}}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'white'}
+              >
+                Back
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                onClick={handleSubmitRegistration}
+                style={{flex: 1, padding: '14px 24px', background: '#00A651', color: 'white', border: 'none', borderRadius: '30px', fontSize: '15px', fontWeight: '600', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, transition: 'all 0.3s'}}
+                onMouseEnter={(e) => !loading && (e.currentTarget.style.background = '#008a43')}
+                onMouseLeave={(e) => !loading && (e.currentTarget.style.background = '#00A651')}
+              >
+                {loading ? 'Submitting...' : (isWaitlist ? 'Join Waitlist' : 'Confirm Registration')}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
+    </>
   )
 }

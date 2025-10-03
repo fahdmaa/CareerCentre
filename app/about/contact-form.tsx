@@ -17,6 +17,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const [isClosing, setIsClosing] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,7 +36,11 @@ export default function ContactForm({ onClose }: ContactFormProps) {
 
       if (response.ok) {
         setSubmitStatus('success')
-        // Reset form after successful submission
+        // Start fade out animation after 2.5 seconds
+        setTimeout(() => {
+          setIsClosing(true)
+        }, 2500)
+        // Close modal after fade out completes
         setTimeout(() => {
           setFormData({
             sender_name: '',
@@ -45,7 +50,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
             message: ''
           })
           onClose()
-        }, 2000)
+        }, 3000)
       } else {
         const data = await response.json()
         setErrorMessage(data.error || 'Failed to send message')
@@ -60,36 +65,43 @@ export default function ContactForm({ onClose }: ContactFormProps) {
   }
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0, 0, 0, 0.7)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      padding: '20px',
-      animation: 'fadeIn 0.3s ease'
-    }}>
-      <div style={{
-        background: 'white',
-        borderRadius: '20px',
-        width: '100%',
-        maxWidth: '600px',
-        maxHeight: '90vh',
-        overflow: 'auto',
-        boxShadow: '0 25px 50px rgba(0, 0, 0, 0.25)',
-        animation: 'slideUp 0.3s ease'
-      }}>
+    <div
+      className={isClosing ? 'modal-backdrop closing' : 'modal-backdrop'}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0, 0, 0, 0.7)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+        padding: '20px'
+      }}
+    >
+      <div
+        className={isClosing ? 'modal-content closing' : 'modal-content'}
+        style={{
+          background: 'white',
+          borderRadius: '30px',
+          width: '100%',
+          maxWidth: '600px',
+          maxHeight: '90vh',
+          overflow: 'hidden',
+          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.25)',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
         {/* Header with Green Theme */}
         <div style={{
           background: 'linear-gradient(135deg, #00A651 0%, #008741 100%)',
           padding: '30px',
-          borderRadius: '20px 20px 0 0',
-          position: 'relative'
+          borderRadius: '30px 30px 0 0',
+          position: 'relative',
+          flexShrink: 0
         }}>
           <button
             onClick={onClose}
@@ -147,53 +159,51 @@ export default function ContactForm({ onClose }: ContactFormProps) {
         </div>
 
         {/* Form Body */}
-        <div style={{ padding: '30px' }}>
-          {submitStatus === 'success' && (
-            <div style={{
-              padding: '12px 16px',
-              background: '#10b98120',
-              border: '1px solid #10b981',
-              borderRadius: '8px',
-              marginBottom: '20px',
-              color: '#059669',
-              fontSize: '14px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                <polyline points="22 4 12 14.01 9 11.01" />
-              </svg>
-              Message sent successfully! We&apos;ll get back to you soon.
+        <div className="form-body" style={{ padding: '30px', overflowY: 'auto', flex: 1 }}>
+          {submitStatus === 'success' ? (
+            <div className="success-message">
+              <div className="success-icon">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#00A651" strokeWidth="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              </div>
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: 700,
+                color: '#00A651',
+                marginBottom: '12px'
+              }}>Message Sent Successfully!</h3>
+              <p style={{
+                fontSize: '16px',
+                color: '#6b7280',
+                marginBottom: '24px',
+                lineHeight: '1.6'
+              }}>
+                Thank you for reaching out. We&apos;ve received your message and will get back to you as soon as possible.
+              </p>
             </div>
-          )}
-
-          {submitStatus === 'error' && (
-            <div style={{
-              padding: '12px 16px',
-              background: '#ef444420',
-              border: '1px solid #ef4444',
-              borderRadius: '8px',
-              marginBottom: '20px',
-              color: '#dc2626',
-              fontSize: '14px'
-            }}>
-              {errorMessage}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit}>
-            {/* Name and Email Row */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-              <div>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  color: '#374151'
+          ) : (
+            <>
+              {submitStatus === 'error' && (
+                <div style={{
+                  padding: '12px 16px',
+                  background: '#ef444420',
+                  border: '1px solid #ef4444',
+                  borderRadius: '8px',
+                  marginBottom: '20px',
+                  color: '#dc2626',
+                  fontSize: '14px'
                 }}>
+                  {errorMessage}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit}>
+            {/* Name and Email Row */}
+            <div className="form-row">
+              <div className="form-group">
+                <label className="form-label">
                   Your Name <span style={{ color: '#ef4444' }}>*</span>
                 </label>
                 <input
@@ -201,29 +211,13 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                   required
                   value={formData.sender_name}
                   onChange={(e) => setFormData({ ...formData, sender_name: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'border-color 0.3s'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#00A651'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  className="form-input"
                   placeholder="John Doe"
                 />
               </div>
 
-              <div>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  color: '#374151'
-                }}>
+              <div className="form-group">
+                <label className="form-label">
                   Email Address <span style={{ color: '#ef4444' }}>*</span>
                 </label>
                 <input
@@ -231,61 +225,29 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                   required
                   value={formData.sender_email}
                   onChange={(e) => setFormData({ ...formData, sender_email: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    transition: 'border-color 0.3s'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#00A651'}
-                  onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  className="form-input"
                   placeholder="john@example.com"
                 />
               </div>
             </div>
 
             {/* Phone Number */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: 500,
-                color: '#374151'
-              }}>
+            <div className="form-group">
+              <label className="form-label">
                 Phone Number (Optional)
               </label>
               <input
                 type="tel"
                 value={formData.sender_phone}
                 onChange={(e) => setFormData({ ...formData, sender_phone: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '10px 14px',
-                  border: '2px solid #e5e7eb',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  transition: 'border-color 0.3s'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#00A651'}
-                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                className="form-input"
                 placeholder="+212 6XX XXX XXX"
               />
             </div>
 
             {/* Subject */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: 500,
-                color: '#374151'
-              }}>
+            <div className="form-group">
+              <label className="form-label">
                 Subject <span style={{ color: '#ef4444' }}>*</span>
               </label>
               <input
@@ -293,30 +255,14 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                 required
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '10px 14px',
-                  border: '2px solid #e5e7eb',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  transition: 'border-color 0.3s'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#00A651'}
-                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                className="form-input"
                 placeholder="How can we help you?"
               />
             </div>
 
             {/* Message */}
-            <div style={{ marginBottom: '25px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                fontSize: '14px',
-                fontWeight: 500,
-                color: '#374151'
-              }}>
+            <div className="form-group">
+              <label className="form-label">
                 Message <span style={{ color: '#ef4444' }}>*</span>
               </label>
               <textarea
@@ -324,46 +270,17 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 rows={5}
-                style={{
-                  width: '100%',
-                  padding: '10px 14px',
-                  border: '2px solid #e5e7eb',
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  transition: 'border-color 0.3s',
-                  resize: 'vertical',
-                  fontFamily: 'inherit'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#00A651'}
-                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                className="form-input form-textarea"
                 placeholder="Tell us more about your inquiry..."
               />
             </div>
 
             {/* Submit Button */}
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div className="form-buttons">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                style={{
-                  flex: 1,
-                  padding: '12px 24px',
-                  background: isSubmitting ? '#9ca3af' : '#00A651',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '15px',
-                  fontWeight: 600,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.3s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px'
-                }}
-                onMouseEnter={(e) => !isSubmitting && (e.currentTarget.style.background = '#008741')}
-                onMouseLeave={(e) => !isSubmitting && (e.currentTarget.style.background = '#00A651')}
+                className="btn-submit"
               >
                 {isSubmitting ? (
                   <>
@@ -391,34 +308,213 @@ export default function ContactForm({ onClose }: ContactFormProps) {
               <button
                 type="button"
                 onClick={onClose}
-                style={{
-                  padding: '12px 24px',
-                  background: 'white',
-                  color: '#6b7280',
-                  border: '2px solid #e5e7eb',
-                  borderRadius: '8px',
-                  fontSize: '15px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#f3f4f6'
-                  e.currentTarget.style.borderColor = '#d1d5db'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'white'
-                  e.currentTarget.style.borderColor = '#e5e7eb'
-                }}
+                className="btn-cancel"
               >
                 Cancel
               </button>
             </div>
           </form>
+            </>
+          )}
         </div>
       </div>
 
-      <style jsx>{`
+      <style jsx global>{`
+        /* Modal Backdrop Animations */
+        .modal-backdrop {
+          animation: fadeIn 0.3s ease;
+        }
+
+        .modal-backdrop.closing {
+          animation: fadeOut 0.5s ease forwards;
+        }
+
+        /* Modal Content Animations */
+        .modal-content {
+          animation: slideUp 0.3s ease;
+        }
+
+        .modal-content.closing {
+          animation: slideDown 0.5s ease forwards;
+        }
+
+        /* Success Message */
+        .success-message {
+          text-align: center;
+          padding: 60px 20px;
+          animation: successFadeIn 0.5s ease-out;
+        }
+
+        .success-icon {
+          width: 100px;
+          height: 100px;
+          background: rgba(0, 166, 81, 0.1);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 24px;
+          animation: successScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes successFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes successScale {
+          0% {
+            transform: scale(0);
+            opacity: 0;
+          }
+          50% {
+            transform: scale(1.1);
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+
+        /* Custom Scrollbar Styling for Form Body */
+        .form-body::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .form-body::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        .form-body::-webkit-scrollbar-thumb {
+          background: rgba(0, 166, 81, 0.2);
+          border-radius: 3px;
+          transition: all 0.3s ease;
+        }
+
+        .form-body::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 166, 81, 0.4);
+        }
+
+        /* Firefox Scrollbar */
+        .form-body {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(0, 166, 81, 0.2) transparent;
+        }
+
+        .form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+          margin-bottom: 20px;
+        }
+
+        .form-group {
+          margin-bottom: 20px;
+        }
+
+        .form-label {
+          display: block;
+          margin-bottom: 8px;
+          font-size: 14px;
+          font-weight: 500;
+          color: #374151;
+        }
+
+        .form-input {
+          width: 100%;
+          padding: 12px 16px;
+          border: 2px solid #e5e7eb;
+          border-radius: 30px;
+          fontSize: 15px;
+          outline: none;
+          transition: all 0.3s ease;
+          font-family: inherit;
+          box-sizing: border-box;
+        }
+
+        .form-input:focus {
+          border-color: #00A651;
+          box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.1);
+        }
+
+        .form-textarea {
+          resize: vertical;
+          min-height: 120px;
+        }
+
+        .form-buttons {
+          display: flex;
+          gap: 12px;
+          margin-top: 25px;
+        }
+
+        .btn-submit {
+          flex: 1;
+          padding: 14px 28px;
+          background: #00A651;
+          color: white;
+          border: none;
+          border-radius: 30px;
+          fontSize: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+          background: #008741;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(0, 166, 81, 0.3);
+        }
+
+        .btn-submit:disabled {
+          background: #9ca3af;
+          cursor: not-allowed;
+        }
+
+        .btn-cancel {
+          padding: 14px 28px;
+          background: white;
+          color: #6b7280;
+          border: 2px solid #e5e7eb;
+          border-radius: 30px;
+          fontSize: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+          background: #f3f4f6;
+          border-color: #d1d5db;
+        }
+
+        @media (max-width: 640px) {
+          .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+          }
+
+          .form-buttons {
+            flex-direction: column-reverse;
+          }
+
+          .btn-submit,
+          .btn-cancel {
+            width: 100%;
+          }
+        }
+
         @keyframes fadeIn {
           from {
             opacity: 0;
@@ -427,6 +523,16 @@ export default function ContactForm({ onClose }: ContactFormProps) {
             opacity: 1;
           }
         }
+
+        @keyframes fadeOut {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
+        }
+
         @keyframes slideUp {
           from {
             transform: translateY(20px);
@@ -437,6 +543,18 @@ export default function ContactForm({ onClose }: ContactFormProps) {
             opacity: 1;
           }
         }
+
+        @keyframes slideDown {
+          from {
+            transform: translateY(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateY(30px);
+            opacity: 0;
+          }
+        }
+
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }

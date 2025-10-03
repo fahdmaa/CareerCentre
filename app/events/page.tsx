@@ -26,6 +26,13 @@ interface Event {
   spots_taken: number
   image_url?: string
   featured?: boolean
+  guest_speakers?: Array<{
+    name: string
+    occupation: string
+    bio: string
+    photo: string
+    linkedin: string
+  }>
   guest_speaker_name?: string
   guest_speaker_occupation?: string
   guest_speaker_bio?: string
@@ -81,7 +88,8 @@ export default function EventsPage() {
     setLoading(true)
 
     try {
-      const url = showPastEvents ? '/api/events' : '/api/events?upcoming=true'
+      // Show all events by default to ensure nothing is filtered out
+      const url = '/api/events'
       console.log('Fetching from:', url)
 
       const response = await fetch(url)
@@ -107,6 +115,9 @@ export default function EventsPage() {
 
   const filterEvents = () => {
     console.log('filterEvents called')
+    console.log('Current filters:', filters)
+    console.log('Search term:', searchTerm)
+    console.log('Total events:', events.length)
     let filtered = [...events]
 
     // Search filter
@@ -116,16 +127,19 @@ export default function EventsPage() {
         event.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         event.location?.toLowerCase().includes(searchTerm.toLowerCase())
       )
+      console.log('After search filter:', filtered.length)
     }
 
     // Type filter
     if (filters.type) {
       filtered = filtered.filter(event => event.event_type === filters.type)
+      console.log('After type filter:', filtered.length)
     }
 
     // Format filter
     if (filters.format) {
       filtered = filtered.filter(event => event.event_format === filters.format)
+      console.log('After format filter:', filtered.length)
     }
 
     // Location filter
@@ -135,6 +149,7 @@ export default function EventsPage() {
         event.city?.toLowerCase().includes(filters.location.toLowerCase()) ||
         event.campus?.toLowerCase().includes(filters.location.toLowerCase())
       )
+      console.log('After location filter:', filtered.length)
     }
 
     // Available spots filter
@@ -143,6 +158,7 @@ export default function EventsPage() {
         const spotsLeft = event.capacity - event.spots_taken
         return spotsLeft > 0
       })
+      console.log('After available spots filter:', filtered.length)
     }
 
     // When filter
@@ -171,9 +187,10 @@ export default function EventsPage() {
             return true
         }
       })
+      console.log('After when filter:', filtered.length)
     }
 
-    console.log('Filtered events:', filtered.length)
+    console.log('Final filtered events:', filtered.length)
     setFilteredEvents(filtered)
   }
 
@@ -194,11 +211,11 @@ export default function EventsPage() {
       return
     }
 
+    // Close details modal and open RSVP modal with smooth transition
     setShowDetailsModal(false)
-    // Small delay to ensure smooth transition
     setTimeout(() => {
       setShowRSVPModal(true)
-    }, 100)
+    }, 300) // Increased delay for smoother animation
   }
 
   const handleRSVPSuccess = () => {
@@ -512,13 +529,20 @@ export default function EventsPage() {
         .event-image {
           position: relative;
           height: 180px;
-          background: linear-gradient(135deg, #00A651, #00C853);
+          background: linear-gradient(135deg, #00A651 0%, #00C853 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
         }
 
-        .event-image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
+        .event-image-title {
+          font-size: 22px;
+          font-weight: 700;
+          color: white;
+          text-align: center;
+          line-height: 1.3;
+          z-index: 1;
         }
 
         .event-badges {
@@ -852,14 +876,7 @@ export default function EventsPage() {
               {filteredEvents.map(event => (
                 <div key={event.id} className="event-card" onClick={() => handleEventClick(event)}>
                   <div className="event-image">
-                    {event.image_url && (
-                      <Image
-                        src={event.image_url}
-                        alt={event.title}
-                        fill
-                        style={{ objectFit: 'cover' }}
-                      />
-                    )}
+                    <h3 className="event-image-title">{event.title}</h3>
                     <div className="event-badges">
                       <span className={`event-badge ${getFormatBadgeClass(event.event_format)}`}>
                         {event.event_format}
@@ -879,7 +896,6 @@ export default function EventsPage() {
                       <i className={`fas ${getTypeIcon(event.event_type)}`}></i>
                       <span>{event.event_type}</span>
                     </div>
-                    <h3 className="event-title">{event.title}</h3>
                     <div className="event-details">
                       <div className="detail-row">
                         <i className="far fa-clock"></i>
@@ -917,6 +933,7 @@ export default function EventsPage() {
             setSelectedEvent(null)
           }}
           onRSVP={handleRSVP}
+          onSuccess={fetchEvents}
         />
       )}
 

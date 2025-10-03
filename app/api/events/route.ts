@@ -17,7 +17,11 @@ export async function GET(request: NextRequest) {
 
     // Only filter by upcoming status if specifically requested
     if (upcoming) {
-      query = query.gte('event_date', new Date().toISOString().split('T')[0])
+      // Get today's date at midnight in local timezone
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const todayStr = today.toISOString().split('T')[0]
+      query = query.gte('event_date', todayStr)
     }
 
     // Only filter by status if the column exists and has upcoming events

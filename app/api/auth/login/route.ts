@@ -7,7 +7,7 @@ const JWT_SECRET = 'emsi-career-center-secret-2024' // Hardcoded for consistency
 
 // Fallback admin credentials when Supabase is not configured
 const FALLBACK_ADMIN_USERNAME = 'admin'
-const FALLBACK_ADMIN_PASSWORD_HASH = '$2a$10$8KqGkZf3cGJ7xWJZLPqPOuPxB9W.kGXQP5cGHvq5nG0M4kMkMDnW6' // admin123
+const FALLBACK_ADMIN_PASSWORD_HASH = '$2a$10$NF83M7443VbN1wrE.wtNjeAEQToylt4NhkrZUiPcHOpihJQGbuE/q' // admin123
 
 export async function POST(request: NextRequest) {
   try {

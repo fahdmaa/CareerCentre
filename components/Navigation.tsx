@@ -12,10 +12,10 @@ export default function Navigation() {
 
   useEffect(() => {
     let ticking = false
-    
+
     const updateScrollDirection = () => {
       const currentScrollY = window.scrollY
-      
+
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         // Scrolling down & not at top
         setScrollDirection('down')
@@ -25,11 +25,11 @@ export default function Navigation() {
         setScrollDirection('up')
         setIsVisible(true)
       }
-      
+
       setLastScrollY(currentScrollY)
       ticking = false
     }
-    
+
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(updateScrollDirection)

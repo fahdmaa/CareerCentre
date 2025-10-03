@@ -125,8 +125,8 @@ export default function HomePage() {
         
         <style jsx>{`
           .kpi-section {
-            padding: 5rem 1rem;
-            background: #f9fafb;
+            padding: 4rem 1rem 3rem 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #ffffff 60%, rgba(0, 166, 81, 0.05) 100%);
             position: relative;
           }
           
@@ -483,8 +483,8 @@ export default function HomePage() {
                 <StarBorder
                   as="button"
                   onClick={() => setShowContactForm(true)}
-                  className="transparent"
-                  color="white"
+                  className="cta-white"
+                  color="#00A651"
                   speed="4s"
                 >
                   <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">

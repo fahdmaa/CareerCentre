@@ -298,7 +298,7 @@
 /* Services Section */
 .services-section {
   padding: 4rem 1rem 6rem;
-  background: #f9fafb;
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 60%, rgba(0, 166, 81, 0.05) 100%);
 }
 
 .section-header {
@@ -376,7 +376,7 @@
 /* How We Help Section */
 .help-section {
   padding: 4rem 1rem 6rem;
-  background: white;
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 60%, rgba(0, 166, 81, 0.05) 100%);
 }
 
 .help-grid {
@@ -425,7 +425,7 @@
 /* Partners Section */
 .partners-section {
   padding: 4rem 1rem;
-  background: #f9fafb;
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 60%, rgba(0, 166, 81, 0.05) 100%);
 }
 
 .partners-container {
@@ -502,7 +502,7 @@
 /* Testimonial Section */
 .testimonial-section {
   padding: 4rem 1rem 6rem;
-  background: white;
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 60%, rgba(0, 166, 81, 0.05) 100%);
 }
 
 .testimonial-container {
